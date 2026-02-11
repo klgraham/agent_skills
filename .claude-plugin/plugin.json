@@ -1,0 +1,24 @@
+{
+  "name": "agent_skills",
+  "version": "1.0.0",
+  "description": "A collection of Claude Code skills for Obsidian power users, including CLI integration and plugin development",
+  "author": "Ken Graham",
+  "license": "MIT",
+  "repository": "https://github.com/klgraham/agent_skills",
+  "skills": [
+    {
+      "name": "obsidian-cli",
+      "path": "obsidian-cli/SKILL.md",
+      "description": "Interact with Obsidian vaults using the Obsidian CLI tool. Read, create, search, and manage notes, tasks, tags, properties, plugins, and more."
+    },
+    {
+      "name": "obsidian-plugin",
+      "path": "obsidian-plugin/skill.md",
+      "description": "Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows."
+    }
+  ],
+  "requirements": {
+    "obsidian": "For obsidian-cli skill: Obsidian desktop app must be running and obsidian CLI must be installed",
+    "node": "For obsidian-plugin skill: Node.js and npm/yarn for plugin development"
+  }
+}

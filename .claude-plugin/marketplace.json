@@ -1,0 +1,26 @@
+{
+  "title": "AI Agent Skills",
+  "shortDescription": "Some Claude Code skills",
+  "longDescription": "A collection of skills that empower Claude Code to work with AI agents.",
+  "category": "productivity",
+  "tags": [
+    "obsidian",
+    "note-taking",
+    "knowledge-management",
+    "plugin-development",
+    "cli",
+    "typescript",
+    "automation"
+  ],
+  "author": {
+    "name": "Ken Graham",
+    "github": "klgraham"
+  },
+  "links": {
+    "repository": "https://github.com/klgraham/agent_skills",
+    "issues": "https://github.com/klgraham/agent_skills/issues"
+  },
+  "compatibility": {
+    "claudeCode": ">=1.0.0"
+  }
+}
