@@ -4,30 +4,16 @@ Agent Skills for AI coding assistants.
 
 ## Installation
 
-### Marketplace
+### Claude Code
+
+#### Marketplace
 
 ```bash
 /plugin marketplace add klgraham/agent_skills
 /plugin install obsidian-cli@agent_skills
-/plugin install obsidian-plugin@agent_skills
 ```
 
-### Manually
-
-#### Claude Code
-
-**Quick Install**
-
-Use the npx installer:
-
-```bash
-# Install both skills at once
-npx @claude-code/plugin-installer install klgraham/agent_skills
-```
-
-The installer will prompt you to select which skills to install (or choose "All skills").
-
-**Manual Install**
+#### Manually
 
 ```bash
 # Clone the repository
@@ -35,16 +21,15 @@ git clone https://github.com/klgraham/agent_skills.git
 
 # Copy skills to Claude Code's skills directory
 cp -r agent_skills/obsidian-cli ~/.claude/skills/
-cp -r agent_skills/obsidian-plugin ~/.claude/skills/
 ```
 
 See the [Claude Code skills folder](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/skills) documentation for more information.
 
-#### Cursor
+### Cursor
 
 Cursor supports both project-level and global skills installation.
 
-**Project-Level Installation**
+#### Project-Level Installation
 
 ```bash
 # Create project skills directory
@@ -52,10 +37,9 @@ mkdir -p .cursor/skills
 
 # Copy skills to project
 cp -r /path/to/agent_skills/obsidian-cli .cursor/skills/
-cp -r /path/to/agent_skills/obsidian-plugin .cursor/skills/
 ```
 
-**Global Installation**
+#### Global Installation
 
 ```bash
 # Create global skills directory
@@ -63,46 +47,34 @@ mkdir -p ~/.cursor/skills
 
 # Copy skills globally
 cp -r /path/to/agent_skills/obsidian-cli ~/.cursor/skills/
-cp -r /path/to/agent_skills/obsidian-plugin ~/.cursor/skills/
 ```
 
-**Usage in Cursor**
-
-Invoke skills using slash commands in the chat:
-- `/obsidian-cli` - For vault operations
-- `/obsidian-plugin` - For plugin development
-
-#### Warp
+### Warp
 
 Warp AI supports project-level and user-level skills.
 
-**Project-Level Installation**
+#### Project-Level Installation
 
 ```bash
 # Create project skills directory
 mkdir -p .warp/skills/obsidian-cli
-mkdir -p .warp/skills/obsidian-plugin
 
 # Copy skill files (note: each skill needs its own subdirectory with SKILL.md)
 cp agent_skills/obsidian-cli/SKILL.md .warp/skills/obsidian-cli/
-cp agent_skills/obsidian-plugin/skill.md .warp/skills/obsidian-plugin/SKILL.md
 ```
 
-**User-Level Installation**
+#### User-Level Installation
 
 ```bash
 # Create user skills directory
 mkdir -p ~/.warp/skills/obsidian-cli
-mkdir -p ~/.warp/skills/obsidian-plugin
 
 # Copy skill files
 cp agent_skills/obsidian-cli/SKILL.md ~/.warp/skills/obsidian-cli/
-cp agent_skills/obsidian-plugin/skill.md ~/.warp/skills/obsidian-plugin/SKILL.md
 ```
 
 **Important Note for Warp:**
 - Each skill must be in its own subdirectory
-- The skill documentation file must be named `SKILL.md` (case-sensitive)
 
 **Usage in Warp**
 
