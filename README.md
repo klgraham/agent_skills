@@ -90,3 +90,4 @@ Place the contents of this repository in `~/.codex/skills`. See the [Agent Skill
 |-------|-------------|
 | [obsidian-cli](obsidian-cli/SKILL.md) | Interact with Obsidian vaults using CLI commands. Read, create, search notes, manage tasks, tags, properties, plugins, and more. 60+ commands for complete vault automation. |
 | [obsidian-plugin](obsidian-plugin/skill.md) | Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows. |
+| [zig-programming](zig-programming/SKILL.md) | Programming assistance for the Zig programming language. |
