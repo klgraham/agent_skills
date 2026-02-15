@@ -8,12 +8,28 @@ Agent Skills for AI coding assistants.
 
 #### Marketplace
 
+From your terminal:
+
 ```bash
+claude plugin marketplace add klgraham/agent_skills
+claude plugin install agent-skills@agent-skills-marketplace
+```
+
+Or from inside Claude Code's interactive chat:
+
+```
 /plugin marketplace add klgraham/agent_skills
 /plugin install agent-skills@agent-skills-marketplace
 ```
 
-#### Manually
+For local development, you can add the marketplace from a local path:
+
+```bash
+claude plugin marketplace add /path/to/agent_skills
+claude plugin install agent-skills@agent-skills-marketplace
+```
+
+#### Manual Installation
 
 ```bash
 # Clone the repository
@@ -28,7 +44,7 @@ cp -r agent_skills/agent-skills/skills/obsidian-plugin ~/.claude/skills/
 cp -r agent_skills/agent-skills/skills/zig-programming ~/.claude/skills/
 ```
 
-See the [Claude Code skills folder](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/skills) documentation for more information.
+See the [Claude Code plugins](https://docs.anthropic.com/en/docs/claude-code/plugin-marketplaces) and [skills](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/skills) documentation for more information.
 
 ### Cursor
 

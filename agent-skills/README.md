@@ -73,11 +73,25 @@ Programming assistance for Zig development. Includes:
 
 ### Claude Code
 
-Install from the marketplace:
+Install from the marketplace using your terminal:
 
 ```bash
+claude plugin marketplace add klgraham/agent_skills
+claude plugin install agent-skills@agent-skills-marketplace
+```
+
+Or from inside Claude Code's interactive chat:
+
+```
 /plugin marketplace add klgraham/agent_skills
 /plugin install agent-skills@agent-skills-marketplace
+```
+
+For local development, you can add the marketplace from a local path:
+
+```bash
+claude plugin marketplace add /path/to/agent_skills
+claude plugin install agent-skills@agent-skills-marketplace
 ```
 
 ### Manual Installation
