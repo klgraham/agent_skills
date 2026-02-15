@@ -1,26 +1,19 @@
 {
-  "title": "AI Agent Skills",
-  "shortDescription": "Some Claude Code skills",
-  "longDescription": "A collection of skills that empower Claude Code to work with AI agents.",
-  "category": "productivity",
-  "tags": [
-    "obsidian",
-    "note-taking",
-    "knowledge-management",
-    "plugin-development",
-    "cli",
-    "typescript",
-    "automation"
-  ],
-  "author": {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "agent-skills-marketplace",
+  "description": "Marketplace of Claude agent skills for Obsidian workflows and Zig programming.",
+  "owner": {
     "name": "Ken Graham",
-    "github": "klgraham"
+    "url": "https://github.com/klgraham"
   },
-  "links": {
-    "repository": "https://github.com/klgraham/agent_skills",
-    "issues": "https://github.com/klgraham/agent_skills/issues"
-  },
-  "compatibility": {
-    "claudeCode": ">=1.0.0"
-  }
+  "plugins": [
+    {
+      "id": "agent-skills",
+      "name": "Agent Skills",
+      "description": "A plugin bundling obsidian-cli, obsidian-plugin, and zig-programming skills.",
+      "version": "1.0.0",
+      "path": "agent-skills",
+      "strict": false
+    }
+  ]
 }

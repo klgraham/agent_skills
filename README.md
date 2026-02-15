@@ -10,7 +10,7 @@ Agent Skills for AI coding assistants.
 
 ```bash
 /plugin marketplace add klgraham/agent_skills
-/plugin install obsidian-cli@agent_skills
+/plugin install agent-skills@agent-skills-marketplace
 ```
 
 #### Manually
@@ -19,8 +19,13 @@ Agent Skills for AI coding assistants.
 # Clone the repository
 git clone https://github.com/klgraham/agent_skills.git
 
-# Copy skills to Claude Code's skills directory
-cp -r agent_skills/obsidian-cli ~/.claude/skills/
+# Install the plugin (which includes all three skills)
+cp -r agent_skills/agent-skills ~/.claude/plugins/
+
+# Or copy individual skills to Claude Code's skills directory
+cp -r agent_skills/agent-skills/skills/obsidian-cli ~/.claude/skills/
+cp -r agent_skills/agent-skills/skills/obsidian-plugin ~/.claude/skills/
+cp -r agent_skills/agent-skills/skills/zig-programming ~/.claude/skills/
 ```
 
 See the [Claude Code skills folder](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/skills) documentation for more information.
@@ -35,8 +40,10 @@ Cursor supports both project-level and global skills installation.
 # Create project skills directory
 mkdir -p .cursor/skills
 
-# Copy skills to project
-cp -r /path/to/agent_skills/obsidian-cli .cursor/skills/
+# Copy individual skills to project
+cp -r /path/to/agent_skills/agent-skills/skills/obsidian-cli .cursor/skills/
+cp -r /path/to/agent_skills/agent-skills/skills/obsidian-plugin .cursor/skills/
+cp -r /path/to/agent_skills/agent-skills/skills/zig-programming .cursor/skills/
 ```
 
 #### Global Installation
@@ -46,7 +53,9 @@ cp -r /path/to/agent_skills/obsidian-cli .cursor/skills/
 mkdir -p ~/.cursor/skills
 
 # Copy skills globally
-cp -r /path/to/agent_skills/obsidian-cli ~/.cursor/skills/
+cp -r /path/to/agent_skills/agent-skills/skills/obsidian-cli ~/.cursor/skills/
+cp -r /path/to/agent_skills/agent-skills/skills/obsidian-plugin ~/.cursor/skills/
+cp -r /path/to/agent_skills/agent-skills/skills/zig-programming ~/.cursor/skills/
 ```
 
 ### Warp
@@ -56,21 +65,25 @@ Warp AI supports project-level and user-level skills.
 #### Project-Level Installation
 
 ```bash
-# Create project skills directory
-mkdir -p .warp/skills/obsidian-cli
+# Create project skills directories
+mkdir -p .warp/skills/obsidian-cli .warp/skills/obsidian-plugin .warp/skills/zig-programming
 
 # Copy skill files (note: each skill needs its own subdirectory with SKILL.md)
-cp agent_skills/obsidian-cli/SKILL.md .warp/skills/obsidian-cli/
+cp agent_skills/agent-skills/skills/obsidian-cli/SKILL.md .warp/skills/obsidian-cli/
+cp agent_skills/agent-skills/skills/obsidian-plugin/SKILL.md .warp/skills/obsidian-plugin/
+cp agent_skills/agent-skills/skills/zig-programming/SKILL.md .warp/skills/zig-programming/
 ```
 
 #### User-Level Installation
 
 ```bash
-# Create user skills directory
-mkdir -p ~/.warp/skills/obsidian-cli
+# Create user skills directories
+mkdir -p ~/.warp/skills/obsidian-cli ~/.warp/skills/obsidian-plugin ~/.warp/skills/zig-programming
 
 # Copy skill files
-cp agent_skills/obsidian-cli/SKILL.md ~/.warp/skills/obsidian-cli/
+cp agent_skills/agent-skills/skills/obsidian-cli/SKILL.md ~/.warp/skills/obsidian-cli/
+cp agent_skills/agent-skills/skills/obsidian-plugin/SKILL.md ~/.warp/skills/obsidian-plugin/
+cp agent_skills/agent-skills/skills/zig-programming/SKILL.md ~/.warp/skills/zig-programming/
 ```
 
 **Important Note for Warp:**
@@ -88,6 +101,6 @@ Place the contents of this repository in `~/.codex/skills`. See the [Agent Skill
 
 | Skill | Description |
 |-------|-------------|
-| [obsidian-cli](obsidian-cli/SKILL.md) | Interact with Obsidian vaults using CLI commands. Read, create, search notes, manage tasks, tags, properties, plugins, and more. 60+ commands for complete vault automation. |
-| [obsidian-plugin](obsidian-plugin/skill.md) | Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows. |
-| [zig-programming](zig-programming/SKILL.md) | Programming assistance for the Zig programming language. |
+| [obsidian-cli](agent-skills/skills/obsidian-cli/SKILL.md) | Interact with Obsidian vaults using CLI commands. Read, create, search notes, manage tasks, tags, properties, plugins, and more. 60+ commands for complete vault automation. |
+| [obsidian-plugin](agent-skills/skills/obsidian-plugin/SKILL.md) | Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows. |
+| [zig-programming](agent-skills/skills/zig-programming/SKILL.md) | Programming assistance for the Zig programming language. |
