@@ -1,0 +1,12 @@
+{
+  "name": "obsidian-plugin",
+  "version": "1.0.0",
+  "description": "Build and edit Obsidian plugins using TypeScript and the Obsidian API.",
+  "keywords": ["obsidian", "plugin", "typescript", "agent-skills"],
+  "author": {
+    "name": "Ken Graham",
+    "url": "https://github.com/klgraham"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/klgraham/agent_skills"
+}

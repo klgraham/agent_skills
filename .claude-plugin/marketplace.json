@@ -1,26 +1,39 @@
 {
-  "title": "AI Agent Skills",
-  "shortDescription": "Some Claude Code skills",
-  "longDescription": "A collection of skills that empower Claude Code to work with AI agents.",
-  "category": "productivity",
-  "tags": [
-    "obsidian",
-    "note-taking",
-    "knowledge-management",
-    "plugin-development",
-    "cli",
-    "typescript",
-    "automation"
-  ],
-  "author": {
-    "name": "Ken Graham",
-    "github": "klgraham"
+  "name": "agent-skills-marketplace",
+  "owner": {
+    "name": "Ken Graham"
   },
-  "links": {
-    "repository": "https://github.com/klgraham/agent_skills",
-    "issues": "https://github.com/klgraham/agent_skills/issues"
+  "metadata": {
+    "description": "Marketplace of Claude agent skills. Install individual skills or all of them at once."
   },
-  "compatibility": {
-    "claudeCode": ">=1.0.0"
-  }
+  "plugins": [
+    {
+      "name": "all-skills",
+      "source": "./all-skills",
+      "description": "All skills in one install: obsidian-cli, obsidian-plugin, and zig-programming.",
+      "version": "1.0.0",
+      "strict": false
+    },
+    {
+      "name": "obsidian-cli",
+      "source": "./obsidian-cli",
+      "description": "Interact with Obsidian vaults using CLI commands. 60+ commands for complete vault automation.",
+      "version": "1.0.0",
+      "strict": false
+    },
+    {
+      "name": "obsidian-plugin",
+      "source": "./obsidian-plugin",
+      "description": "Build and edit Obsidian plugins using TypeScript and the Obsidian API.",
+      "version": "1.0.0",
+      "strict": false
+    },
+    {
+      "name": "zig-programming",
+      "source": "./zig-programming",
+      "description": "Programming assistance for the Zig language with reference documentation and project scaffolding.",
+      "version": "1.0.0",
+      "strict": false
+    }
+  ]
 }

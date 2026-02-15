@@ -1,0 +1,12 @@
+{
+  "name": "all-skills",
+  "version": "1.0.0",
+  "description": "All agent skills in one install: obsidian-cli, obsidian-plugin, and zig-programming.",
+  "keywords": ["obsidian", "zig", "agent-skills"],
+  "author": {
+    "name": "Ken Graham",
+    "url": "https://github.com/klgraham"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/klgraham/agent_skills"
+}
