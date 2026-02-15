@@ -4,13 +4,34 @@
     "name": "Ken Graham"
   },
   "metadata": {
-    "description": "Marketplace of Claude agent skills for Obsidian workflows and Zig programming."
+    "description": "Marketplace of Claude agent skills. Install individual skills or all of them at once."
   },
   "plugins": [
     {
-      "name": "agent-skills",
-      "source": "./agent-skills",
-      "description": "A plugin bundling obsidian-cli, obsidian-plugin, and zig-programming skills.",
+      "name": "all-skills",
+      "source": "./all-skills",
+      "description": "All skills in one install: obsidian-cli, obsidian-plugin, and zig-programming.",
+      "version": "1.0.0",
+      "strict": false
+    },
+    {
+      "name": "obsidian-cli",
+      "source": "./obsidian-cli",
+      "description": "Interact with Obsidian vaults using CLI commands. 60+ commands for complete vault automation.",
+      "version": "1.0.0",
+      "strict": false
+    },
+    {
+      "name": "obsidian-plugin",
+      "source": "./obsidian-plugin",
+      "description": "Build and edit Obsidian plugins using TypeScript and the Obsidian API.",
+      "version": "1.0.0",
+      "strict": false
+    },
+    {
+      "name": "zig-programming",
+      "source": "./zig-programming",
+      "description": "Programming assistance for the Zig language with reference documentation and project scaffolding.",
       "version": "1.0.0",
       "strict": false
     }
