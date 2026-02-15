@@ -1,18 +1,17 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "agent-skills-marketplace",
-  "description": "Marketplace of Claude agent skills for Obsidian workflows and Zig programming.",
   "owner": {
-    "name": "Ken Graham",
-    "url": "https://github.com/klgraham"
+    "name": "Ken Graham"
+  },
+  "metadata": {
+    "description": "Marketplace of Claude agent skills for Obsidian workflows and Zig programming."
   },
   "plugins": [
     {
-      "id": "agent-skills",
-      "name": "Agent Skills",
+      "name": "agent-skills",
+      "source": "./agent-skills",
       "description": "A plugin bundling obsidian-cli, obsidian-plugin, and zig-programming skills.",
       "version": "1.0.0",
-      "path": "agent-skills",
       "strict": false
     }
   ]
