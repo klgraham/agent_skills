@@ -8,6 +8,7 @@ Agent Skills for AI coding assistants.
 |-------|-------------|
 | [obsidian-cli](obsidian-cli/skills/obsidian-cli/SKILL.md) | Interact with Obsidian vaults using CLI commands. Read, create, search notes, manage tasks, tags, properties, plugins, and more. 60+ commands for complete vault automation. |
 | [obsidian-plugin](obsidian-plugin/skills/obsidian-plugin/SKILL.md) | Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows. |
+| [obsidian-theme](obsidian-theme/skills/obsidian-theme/SKILL.md) | Create and publish Obsidian themes using CSS. Includes dark/light mode support, CSS variable reference, and community gallery publishing workflow. |
 | [zig-programming](zig-programming/skills/zig-programming/SKILL.md) | Programming assistance for the Zig programming language. |
 
 ## Installation
@@ -30,6 +31,7 @@ claude plugin install all-skills@agent-skills-marketplace
 # Or install individual skills
 claude plugin install obsidian-cli@agent-skills-marketplace
 claude plugin install obsidian-plugin@agent-skills-marketplace
+claude plugin install obsidian-theme@agent-skills-marketplace
 claude plugin install zig-programming@agent-skills-marketplace
 ```
 
@@ -44,6 +46,7 @@ Or from inside Claude Code's interactive chat:
 # Or install individual skills
 /plugin install obsidian-cli@agent-skills-marketplace
 /plugin install obsidian-plugin@agent-skills-marketplace
+/plugin install obsidian-theme@agent-skills-marketplace
 /plugin install zig-programming@agent-skills-marketplace
 ```
 
@@ -66,11 +69,13 @@ cp -r agent_skills/all-skills ~/.claude/plugins/
 # Or install individual skill plugins
 cp -r agent_skills/obsidian-cli ~/.claude/plugins/
 cp -r agent_skills/obsidian-plugin ~/.claude/plugins/
+cp -r agent_skills/obsidian-theme ~/.claude/plugins/
 cp -r agent_skills/zig-programming ~/.claude/plugins/
 
 # Or copy individual skills to Claude Code's skills directory
 cp -r agent_skills/obsidian-cli/skills/obsidian-cli ~/.claude/skills/
 cp -r agent_skills/obsidian-plugin/skills/obsidian-plugin ~/.claude/skills/
+cp -r agent_skills/obsidian-theme/skills/obsidian-theme ~/.claude/skills/
 cp -r agent_skills/zig-programming/skills/zig-programming ~/.claude/skills/
 ```
 
@@ -89,6 +94,7 @@ mkdir -p .cursor/skills
 # Copy individual skills to project
 cp -r /path/to/agent_skills/obsidian-cli/skills/obsidian-cli .cursor/skills/
 cp -r /path/to/agent_skills/obsidian-plugin/skills/obsidian-plugin .cursor/skills/
+cp -r /path/to/agent_skills/obsidian-theme/skills/obsidian-theme .cursor/skills/
 cp -r /path/to/agent_skills/zig-programming/skills/zig-programming .cursor/skills/
 ```
 
@@ -101,6 +107,7 @@ mkdir -p ~/.cursor/skills
 # Copy skills globally
 cp -r /path/to/agent_skills/obsidian-cli/skills/obsidian-cli ~/.cursor/skills/
 cp -r /path/to/agent_skills/obsidian-plugin/skills/obsidian-plugin ~/.cursor/skills/
+cp -r /path/to/agent_skills/obsidian-theme/skills/obsidian-theme ~/.cursor/skills/
 cp -r /path/to/agent_skills/zig-programming/skills/zig-programming ~/.cursor/skills/
 ```
 
@@ -112,11 +119,12 @@ Warp AI supports project-level and user-level skills.
 
 ```bash
 # Create project skills directories
-mkdir -p .warp/skills/obsidian-cli .warp/skills/obsidian-plugin .warp/skills/zig-programming
+mkdir -p .warp/skills/obsidian-cli .warp/skills/obsidian-plugin .warp/skills/obsidian-theme .warp/skills/zig-programming
 
 # Copy skill files (note: each skill needs its own subdirectory with SKILL.md)
 cp agent_skills/obsidian-cli/skills/obsidian-cli/SKILL.md .warp/skills/obsidian-cli/
 cp agent_skills/obsidian-plugin/skills/obsidian-plugin/SKILL.md .warp/skills/obsidian-plugin/
+cp agent_skills/obsidian-theme/skills/obsidian-theme/SKILL.md .warp/skills/obsidian-theme/
 cp agent_skills/zig-programming/skills/zig-programming/SKILL.md .warp/skills/zig-programming/
 ```
 
@@ -124,11 +132,12 @@ cp agent_skills/zig-programming/skills/zig-programming/SKILL.md .warp/skills/zig
 
 ```bash
 # Create user skills directories
-mkdir -p ~/.warp/skills/obsidian-cli ~/.warp/skills/obsidian-plugin ~/.warp/skills/zig-programming
+mkdir -p ~/.warp/skills/obsidian-cli ~/.warp/skills/obsidian-plugin ~/.warp/skills/obsidian-theme ~/.warp/skills/zig-programming
 
 # Copy skill files
 cp agent_skills/obsidian-cli/skills/obsidian-cli/SKILL.md ~/.warp/skills/obsidian-cli/
 cp agent_skills/obsidian-plugin/skills/obsidian-plugin/SKILL.md ~/.warp/skills/obsidian-plugin/
+cp agent_skills/obsidian-theme/skills/obsidian-theme/SKILL.md ~/.warp/skills/obsidian-theme/
 cp agent_skills/zig-programming/skills/zig-programming/SKILL.md ~/.warp/skills/zig-programming/
 ```
 

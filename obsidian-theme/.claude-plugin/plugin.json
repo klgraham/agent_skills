@@ -1,0 +1,12 @@
+{
+  "name": "obsidian-theme",
+  "version": "1.0.0",
+  "description": "Create and publish Obsidian themes using CSS variables with dark/light mode support.",
+  "keywords": ["obsidian", "theme", "css", "agent-skills"],
+  "author": {
+    "name": "Ken Graham",
+    "url": "https://github.com/klgraham"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/klgraham/agent_skills"
+}
