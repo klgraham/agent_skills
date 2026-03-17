@@ -10,7 +10,14 @@
     {
       "name": "all-skills",
       "source": "./all-skills",
-      "description": "All skills in one install: obsidian-cli, obsidian-plugin, obsidian-theme, and zig-programming.",
+      "description": "All skills in one install: obsidian-bases, obsidian-cli, obsidian-plugin, obsidian-theme, and zig-programming.",
+      "version": "1.0.0",
+      "strict": false
+    },
+    {
+      "name": "obsidian-bases",
+      "source": "./obsidian-bases",
+      "description": "Expert assistance for Obsidian Bases — create .base files, write filters and formulas, and build structured database views of your vault.",
       "version": "1.0.0",
       "strict": false
     },
