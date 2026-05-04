@@ -6,67 +6,68 @@ Agent Skills for AI coding assistants.
 
 | Skill | Description |
 |-------|-------------|
-| [obsidian-cli](obsidian-cli/skills/obsidian-cli/SKILL.md) | Interact with Obsidian vaults using CLI commands. Read, create, search notes, manage tasks, tags, properties, plugins, and more. 60+ commands for complete vault automation. |
-| [obsidian-plugin](obsidian-plugin/skills/obsidian-plugin/SKILL.md) | Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows. |
-| [obsidian-theme](obsidian-theme/skills/obsidian-theme/SKILL.md) | Create and publish Obsidian themes using CSS. Includes dark/light mode support, CSS variable reference, and community gallery publishing workflow. |
-| [zig-programming](zig-programming/skills/zig-programming/SKILL.md) | Programming assistance for the Zig programming language. |
+| [obsidian-bases](obsidian-bases/SKILL.md) | Expert assistance for Obsidian Bases — the native database/query layer in Obsidian. Create and edit `.base` files, write filter expressions, build formulas, and design table views. |
+| [obsidian-cli](obsidian-cli/SKILL.md) | Interact with Obsidian vaults using CLI commands. Read, create, search notes, manage tasks, tags, properties, plugins, and more. 60+ commands for complete vault automation. |
+| [obsidian-plugin](obsidian-plugin/SKILL.md) | Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows. |
+| [obsidian-theme](obsidian-theme/SKILL.md) | Create and publish Obsidian themes using CSS. Includes dark/light mode support, CSS variable reference, and community gallery publishing workflow. |
+| [zig-programming](zig-programming/SKILL.md) | Programming assistance for the Zig programming language. |
+
+## Usage
+
+Each skill is a self-contained markdown file (plus any referenced assets) that can be loaded by an AI agent that supports skill files.
 
 ## Installation
 
-### Claude Code
+### Hermes Agent
 
-#### Marketplace
+Many AI agents (Claude Code, Codex, Hermes) support a skills directory. Here is how to install and load these skills in Hermes specifically.
 
-Add the marketplace, then install individual skills or all of them at once.
+**1. Place the skill directory in `~/.hermes/skills/`**
 
-From your terminal:
+The directory name must match the skill name. Hermes uses the folder name as the skill identifier.
+
+**Copy (snapshot):**
+```bash
+for d in obsidian-cli obsidian-plugin obsidian-theme zig-programming obsidian-bases; do
+  cp -r agent_skills/$d ~/.hermes/skills/
+done
+```
+
+**Symlink (live updates as repo changes):**
+```bash
+for d in obsidian-cli obsidian-plugin obsidian-theme zig-programming obsidian-bases; do
+  ln -s $(realpath agent_skills/$d) ~/.hermes/skills/$d
+done
+```
+
+**2. Load in a session**
+
+Start or restart a Hermes session, then run:
+```
+/skill obsidian-cli
+/skill zig-programming
+```
+
+Or preload skills at startup:
+```bash
+hermes -s obsidian-cli -s zig-programming
+```
+
+**3. Verify**
+
+```
+skills_list
+```
+
+### Other Agents
 
 ```bash
-# Add the marketplace
-claude plugin marketplace add klgraham/agent_skills
-
-# Or install individual skills
-claude plugin install obsidian-cli@agent-skills-marketplace
-claude plugin install obsidian-plugin@agent-skills-marketplace
-claude plugin install obsidian-theme@agent-skills-marketplace
-claude plugin install zig-programming@agent-skills-marketplace
+# Example for an agent with a ~/.config/agent/skills/ directory
+cp -r agent_skills/obsidian-cli ~/.config/agent/skills/
+cp -r agent_skills/obsidian-plugin ~/.config/agent/skills/
+cp -r agent_skills/obsidian-theme ~/.config/agent/skills/
+cp -r agent_skills/zig-programming ~/.config/agent/skills/
+cp -r agent_skills/obsidian-bases ~/.config/agent/skills/
 ```
 
-Or from inside Claude Code's interactive chat:
-
-```
-/plugin marketplace add klgraham/agent_skills
-
-# Or install individual skills
-/plugin install obsidian-cli@agent-skills-marketplace
-/plugin install obsidian-plugin@agent-skills-marketplace
-/plugin install obsidian-theme@agent-skills-marketplace
-/plugin install zig-programming@agent-skills-marketplace
-```
-
-For local development, you can add the marketplace from a local path:
-
-```bash
-claude plugin marketplace add /path/to/agent_skills
-```
-
-#### Manual Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/klgraham/agent_skills.git
-
-# Or install individual skill plugins
-cp -r agent_skills/obsidian-cli ~/.claude/plugins/
-cp -r agent_skills/obsidian-plugin ~/.claude/plugins/
-cp -r agent_skills/obsidian-theme ~/.claude/plugins/
-cp -r agent_skills/zig-programming ~/.claude/plugins/
-
-# Or copy individual skills to Claude Code's skills directory
-cp -r agent_skills/obsidian-cli/skills/obsidian-cli ~/.claude/skills/
-cp -r agent_skills/obsidian-plugin/skills/obsidian-plugin ~/.claude/skills/
-cp -r agent_skills/obsidian-theme/skills/obsidian-theme ~/.claude/skills/
-cp -r agent_skills/zig-programming/skills/zig-programming ~/.claude/skills/
-```
-
-See the [Claude Code plugins](https://docs.anthropic.com/en/docs/claude-code/plugin-marketplaces) and [skills](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/skills) documentation for more information.
+Refer to your agent's documentation for the exact skill loading mechanism.
