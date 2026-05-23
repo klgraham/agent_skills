@@ -1,0 +1,5 @@
+# Ignore any local test projects or generated artifacts
+test-*/
+zig-out/
+zig-cache/
+.zig-cache/
