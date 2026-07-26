@@ -17,6 +17,7 @@ For a complex, fast-evolving domain like Zig (especially around 0.16+ releases),
   - `zig-build-from-source`
   - `zig-data-oriented-programming`
   - `zig-mmap-project-template`
+  - `zig-memory-safety-review`
   - Future narrow skills as gaps appear
 
 ## Public Sharing Model

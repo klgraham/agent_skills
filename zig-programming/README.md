@@ -1,6 +1,6 @@
-# Zig Skills for Hermes Agent
+# Zig Programming Skills
 
-A collection of specialized, high-signal skills for writing, debugging, and building production Zig code on Zig 0.16+.
+A collection of specialized, high-signal agent skills for writing, debugging, reviewing, and building production Zig code on Zig 0.16+.
 
 These skills follow a **narrow, focused** design instead of one large monolithic skill. Each skill owns a specific domain so the agent (and humans) can load only what they need.
 
@@ -14,10 +14,11 @@ These skills follow a **narrow, focused** design instead of one large monolithic
 | **zig-build-from-source** | Building the Zig compiler itself (self-hosted vs CMake path) | When you need a newer Zig or want to contribute to the compiler |
 | **zig-data-oriented-programming** | SoA, `@Vector` SIMD, arena patterns, cache-friendly design | Performance-sensitive code, hot loops, bulk data processing |
 | **zig-mmap-project-template** | Zero-copy memory-mapped data structures, flat binary formats | Building high-performance libraries with mmap-backed storage |
+| **zig-memory-safety-review** | Ownership, borrow lifetime, invalidation, cleanup, and concurrency audit workflow with a bundled heuristic scanner | Reviewing allocators, owner types, C ABI code, callbacks, threads, or memory-safety-sensitive PRs |
 
 ## Recommended Usage
 
-1. Copy the skill directories you want into your Hermes skills folder:
+1. Copy the skill directories you want into your agent's skills folder. For Hermes Agent, for example:
    ```bash
    cp -r zig-build-system ~/.hermes/skills/software-development/
    ```
@@ -30,7 +31,7 @@ These skills follow a **narrow, focused** design instead of one large monolithic
 
 - **Specialized > Monolithic**: Each skill stays small, up-to-date, and easy to maintain.
 - **Practical first**: Heavy emphasis on copy-pasteable code + "what changed in 0.16" notes.
-- **Tested on real work**: Born from migrating and building systems-level Zig projects (including Ken's personal projects).
+- **Tested on real work**: Born from migrating, reviewing, and building systems-level Zig projects.
 
 ## Contributing / Updating
 

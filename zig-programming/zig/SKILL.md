@@ -136,6 +136,14 @@ Key patterns:
 
 See `zig-0.16-stdlib-patterns` skill for complete code patterns and common error fixes.
 
+### Memory-Safety Review (`zig-memory-safety-review`)
+
+Audit temporal safety, single ownership, borrow validity, pointer invalidation, cleanup, allocator domains, and concurrency protocols. The skill includes a dependency-free Python scanner that inventories review candidates without presenting heuristic matches as confirmed defects.
+
+Use it for owner types, allocator-heavy code, C ABI boundaries, callbacks, threads, storage mutation, and PRs that change ownership or lifetimes. It extends the lightweight workflow above with ownership ledgers, call-path tracing, failure-path exercises, severity guidance, and source-grounded reporting.
+
+See `zig-memory-safety-review` for the full workflow and scanner usage.
+
 ### mmap Template (`zig-mmap-project-template`)
 **Path:** `software-development/zig-mmap-project-template/`
 
@@ -184,5 +192,6 @@ Documents `ss_last_error()` ownership semantics (caller owns returned copy, erro
 | Build Zig compiler from source | `zig-build-from-source` |
 | stdlib API (HTTP, fs, compress) | `zig-0.16-stdlib-patterns` |
 | mmap-friendly library / data structures | `zig-mmap-project-template` |
+| Memory safety, ownership, borrow, or concurrency audit | `zig-memory-safety-review` |
 | General Zig 0.16 development | This skill (zig) |
 | Maintaining Zig agent skills for new Zig releases | This skill (zig) + `references/updating-zig-skills-for-new-releases.md` |
