@@ -7,6 +7,8 @@ Agent Skills for AI coding assistants.
 | Skill | Description |
 |-------|-------------|
 | [dynamic-workflow](dynamic-workflow/SKILL.md) | Design and run script-backed multi-agent Codex workflows with isolated workers, structured outputs, verification stages, bounded loops, and resumable checkpoints. |
+| [interactive-walkthrough (Codex)](codex/interactive-walkthrough/SKILL.md) | Build evidence-grounded, self-contained interactive HTML walkthroughs of code, repositories, systems, and technical processes using Codex-native browser verification. |
+| [interactive-walkthrough (Hermes)](hermes/interactive-walkthrough/SKILL.md) | Original Hermes version of the interactive walkthrough skill. |
 | [obsidian-bases](obsidian-bases/SKILL.md) | Expert assistance for Obsidian Bases — the native database/query layer in Obsidian. Create and edit `.base` files, write filter expressions, build formulas, and design table views. |
 | [obsidian-cli](obsidian-cli/SKILL.md) | Interact with Obsidian vaults using CLI commands. Read, create, search notes, manage tasks, tags, properties, plugins, and more. 60+ commands for complete vault automation. |
 | [obsidian-plugin](obsidian-plugin/SKILL.md) | Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows. |
@@ -21,10 +23,11 @@ Each skill is a self-contained markdown file (plus any referenced assets) that c
 
 ### Codex
 
-Install the Dynamic Workflow skill into your personal Codex skills directory:
+Install the Codex-specific skills into your personal Codex skills directory:
 
 ```bash
 cp -r agent_skills/dynamic-workflow ~/.codex/skills/
+cp -r agent_skills/codex/interactive-walkthrough ~/.codex/skills/
 ```
 
 ### Hermes Agent
@@ -40,6 +43,8 @@ The directory name must match the skill name. Hermes uses the folder name as the
 for d in obsidian-cli obsidian-plugin obsidian-theme zig-programming obsidian-bases; do
   cp -r agent_skills/$d ~/.hermes/skills/
 done
+mkdir -p ~/.hermes/skills/creative
+cp -r agent_skills/hermes/interactive-walkthrough ~/.hermes/skills/creative/
 ```
 
 **Symlink (live updates as repo changes):**
