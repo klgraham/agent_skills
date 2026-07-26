@@ -6,6 +6,7 @@ Agent Skills for AI coding assistants.
 
 | Skill | Description |
 |-------|-------------|
+| [dynamic-workflow](dynamic-workflow/SKILL.md) | Design and run script-backed multi-agent Codex workflows with isolated workers, structured outputs, verification stages, bounded loops, and resumable checkpoints. |
 | [obsidian-bases](obsidian-bases/SKILL.md) | Expert assistance for Obsidian Bases — the native database/query layer in Obsidian. Create and edit `.base` files, write filter expressions, build formulas, and design table views. |
 | [obsidian-cli](obsidian-cli/SKILL.md) | Interact with Obsidian vaults using CLI commands. Read, create, search notes, manage tasks, tags, properties, plugins, and more. 60+ commands for complete vault automation. |
 | [obsidian-plugin](obsidian-plugin/SKILL.md) | Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows. |
@@ -17,6 +18,14 @@ Agent Skills for AI coding assistants.
 Each skill is a self-contained markdown file (plus any referenced assets) that can be loaded by an AI agent that supports skill files.
 
 ## Installation
+
+### Codex
+
+Install the Dynamic Workflow skill into your personal Codex skills directory:
+
+```bash
+cp -r agent_skills/dynamic-workflow ~/.codex/skills/
+```
 
 ### Hermes Agent
 
