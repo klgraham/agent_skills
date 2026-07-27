@@ -13,6 +13,7 @@ Agent Skills for AI coding assistants.
 | [obsidian-cli](obsidian-cli/SKILL.md) | Interact with Obsidian vaults using CLI commands. Read, create, search notes, manage tasks, tags, properties, plugins, and more. 60+ commands for complete vault automation. |
 | [obsidian-plugin](obsidian-plugin/SKILL.md) | Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows. |
 | [obsidian-theme](obsidian-theme/SKILL.md) | Create and publish Obsidian themes using CSS. Includes dark/light mode support, CSS variable reference, and community gallery publishing workflow. |
+| [systems-thinking-reviewer](systems-thinking-reviewer/SKILL.md) | Review repositories, pull requests, and architecture descriptions through evidence-linked causal analysis of system behavior, feedback, coupling, failure propagation, operations, and evolution. |
 | [zig-programming](zig-programming/SKILL.md) | Programming assistance for the Zig programming language. |
 
 ## Usage
@@ -23,11 +24,12 @@ Each skill is a self-contained markdown file (plus any referenced assets) that c
 
 ### Codex
 
-Install the Codex-specific skills into your personal Codex skills directory:
+Install the Codex-compatible skills into your personal Codex skills directory:
 
 ```bash
 cp -r agent_skills/dynamic-workflow ~/.codex/skills/
 cp -r agent_skills/codex/interactive-walkthrough ~/.codex/skills/
+cp -r agent_skills/systems-thinking-reviewer ~/.codex/skills/
 ```
 
 ### Hermes Agent
@@ -40,7 +42,7 @@ The directory name must match the skill name. Hermes uses the folder name as the
 
 **Copy (snapshot):**
 ```bash
-for d in obsidian-cli obsidian-plugin obsidian-theme zig-programming obsidian-bases; do
+for d in obsidian-cli obsidian-plugin obsidian-theme zig-programming obsidian-bases systems-thinking-reviewer; do
   cp -r agent_skills/$d ~/.hermes/skills/
 done
 mkdir -p ~/.hermes/skills/creative
@@ -49,7 +51,7 @@ cp -r agent_skills/hermes/interactive-walkthrough ~/.hermes/skills/creative/
 
 **Symlink (live updates as repo changes):**
 ```bash
-for d in obsidian-cli obsidian-plugin obsidian-theme zig-programming obsidian-bases; do
+for d in obsidian-cli obsidian-plugin obsidian-theme zig-programming obsidian-bases systems-thinking-reviewer; do
   ln -s $(realpath agent_skills/$d) ~/.hermes/skills/$d
 done
 ```
@@ -82,6 +84,7 @@ cp -r agent_skills/obsidian-plugin ~/.config/agent/skills/
 cp -r agent_skills/obsidian-theme ~/.config/agent/skills/
 cp -r agent_skills/zig-programming ~/.config/agent/skills/
 cp -r agent_skills/obsidian-bases ~/.config/agent/skills/
+cp -r agent_skills/systems-thinking-reviewer ~/.config/agent/skills/
 ```
 
 Refer to your agent's documentation for the exact skill loading mechanism.
