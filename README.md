@@ -7,6 +7,7 @@ Agent Skills for AI coding assistants.
 | Skill | Description |
 |-------|-------------|
 | [dynamic-workflow](dynamic-workflow/SKILL.md) | Design and run script-backed multi-agent Codex workflows with isolated workers, structured outputs, verification stages, bounded loops, and resumable checkpoints. |
+| [echo-skill](echo-skill/SKILL.md) | Create portable, evidence-grounded persona-and-work skills from source material about colleagues, mentors, collaborators, or public figures. |
 | [interactive-walkthrough (Codex)](codex/interactive-walkthrough/SKILL.md) | Build evidence-grounded, self-contained interactive HTML walkthroughs of code, repositories, systems, and technical processes using Codex-native browser verification. |
 | [interactive-walkthrough (Hermes)](hermes/interactive-walkthrough/SKILL.md) | Original Hermes version of the interactive walkthrough skill. |
 | [obsidian-bases](obsidian-bases/SKILL.md) | Expert assistance for Obsidian Bases — the native database/query layer in Obsidian. Create and edit `.base` files, write filter expressions, build formulas, and design table views. |
@@ -22,69 +23,12 @@ Each skill is a self-contained markdown file (plus any referenced assets) that c
 
 ## Installation
 
-### Codex
-
-Install the Codex-compatible skills into your personal Codex skills directory:
+Choose a skill from the table above and replace the placeholders with its directory name and your agent's skills directory:
 
 ```bash
-cp -r agent_skills/dynamic-workflow ~/.codex/skills/
-cp -r agent_skills/codex/interactive-walkthrough ~/.codex/skills/
-cp -r agent_skills/systems-thinking-reviewer ~/.codex/skills/
+SKILL_NAME="<skill-name>"
+AGENT_SKILLS_DIR="<path-to-agent-skills-directory>"
+cp -r "agent_skills/$SKILL_NAME" "$AGENT_SKILLS_DIR/"
 ```
 
-### Hermes Agent
-
-Many AI agents (Claude Code, Codex, Hermes) support a skills directory. Here is how to install and load these skills in Hermes specifically.
-
-**1. Place the skill directory in `~/.hermes/skills/`**
-
-The directory name must match the skill name. Hermes uses the folder name as the skill identifier.
-
-**Copy (snapshot):**
-```bash
-for d in obsidian-cli obsidian-plugin obsidian-theme zig-programming obsidian-bases systems-thinking-reviewer; do
-  cp -r agent_skills/$d ~/.hermes/skills/
-done
-mkdir -p ~/.hermes/skills/creative
-cp -r agent_skills/hermes/interactive-walkthrough ~/.hermes/skills/creative/
-```
-
-**Symlink (live updates as repo changes):**
-```bash
-for d in obsidian-cli obsidian-plugin obsidian-theme zig-programming obsidian-bases systems-thinking-reviewer; do
-  ln -s $(realpath agent_skills/$d) ~/.hermes/skills/$d
-done
-```
-
-**2. Load in a session**
-
-Start or restart a Hermes session, then run:
-```
-/skill obsidian-cli
-/skill zig-programming
-```
-
-Or preload skills at startup:
-```bash
-hermes -s obsidian-cli -s zig-programming
-```
-
-**3. Verify**
-
-```
-skills_list
-```
-
-### Other Agents
-
-```bash
-# Example for an agent with a ~/.config/agent/skills/ directory
-cp -r agent_skills/obsidian-cli ~/.config/agent/skills/
-cp -r agent_skills/obsidian-plugin ~/.config/agent/skills/
-cp -r agent_skills/obsidian-theme ~/.config/agent/skills/
-cp -r agent_skills/zig-programming ~/.config/agent/skills/
-cp -r agent_skills/obsidian-bases ~/.config/agent/skills/
-cp -r agent_skills/systems-thinking-reviewer ~/.config/agent/skills/
-```
-
-Refer to your agent's documentation for the exact skill loading mechanism.
+Restart the agent if necessary, then follow its documentation to load or invoke the skill.
