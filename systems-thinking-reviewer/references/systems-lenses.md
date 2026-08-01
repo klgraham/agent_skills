@@ -18,7 +18,7 @@ Use this reference while generating candidate findings. Apply a lens only when t
 12. Operational burden
 13. Security and permissions
 14. Incentives and organizational fit
-15. AI-era comprehension debt
+15. Automation and AI-era comprehension debt
 
 ## 1. Purpose and boundary
 
@@ -312,7 +312,9 @@ Ask:
 
 Treat undocumented human procedure as a dependency. It may be acceptable, but its capacity, reliability, and ownership should be visible.
 
-## 15. AI-era comprehension debt
+## 15. Automation and AI-era comprehension debt
+
+Apply this lens only when automation, generated code, or agent-assisted change materially affects the review surface.
 
 Generation and comprehension are asymmetric:
 

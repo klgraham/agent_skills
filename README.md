@@ -14,7 +14,7 @@ Agent Skills for AI coding assistants.
 | [obsidian-cli](obsidian-cli/SKILL.md) | Interact with Obsidian vaults using CLI commands. Read, create, search notes, manage tasks, tags, properties, plugins, and more. 60+ commands for complete vault automation. |
 | [obsidian-plugin](obsidian-plugin/SKILL.md) | Build and edit Obsidian plugins using TypeScript and the Obsidian API. Supports plugin development, feature implementation, and publishing workflows. |
 | [obsidian-theme](obsidian-theme/SKILL.md) | Create and publish Obsidian themes using CSS. Includes dark/light mode support, CSS variable reference, and community gallery publishing workflow. |
-| [systems-thinking-reviewer](systems-thinking-reviewer/SKILL.md) | Review repositories, pull requests, and architecture descriptions through evidence-linked causal analysis of system behavior, feedback, coupling, failure propagation, operations, and evolution. |
+| [systems-thinking-reviewer](systems-thinking-reviewer/SKILL.md) | Review repositories, pull requests or diffs, ADRs, diagrams, and architecture descriptions through evidence-linked causal analysis of system behavior, feedback, coupling, failure propagation, operations, and evolution. |
 | [zig-programming](zig-programming/SKILL.md) | Programming assistance for the Zig programming language. |
 
 ## Usage

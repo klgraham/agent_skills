@@ -1,4 +1,4 @@
 interface:
   display_name: "Systems Thinking Reviewer"
   short_description: "Review software through system-level causal analysis"
-  default_prompt: "Use $systems-thinking-reviewer to review this repository, pull request, or architecture and produce an evidence-linked systems report."
+  default_prompt: "Use $systems-thinking-reviewer for an evidence-grounded repository, pull request/diff, ADR, diagram, or architecture review with a structured Markdown report."
