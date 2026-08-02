@@ -1,4 +1,0 @@
-interface:
-  display_name: "Describe Image for Generation"
-  short_description: "Reconstruct images as faithful text prompts"
-  default_prompt: "Use $describe-image-for-generation to turn the attached image into a faithful, generation-ready text description."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Describe Image"
+  short_description: "Reconstruct images as faithful text prompts"
+  default_prompt: "Use $describe-image to turn the attached image into a faithful, generation-ready text description."

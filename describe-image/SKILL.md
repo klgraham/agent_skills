@@ -1,9 +1,9 @@
 ---
-name: describe-image-for-generation
+name: describe-image
 description: Convert an attached or referenced image into a faithful, detailed plain-text description suitable as a text-to-image prompt. Use when a user wants to recreate, reconstruct, reverse-prompt, or closely match a photograph, illustration, render, poster, frame, or other visual. Analyze composition, subject appearance and pose, environment, lighting with estimated color temperature in Kelvin, palette, camera or rendering characteristics, and style; reconcile any user-provided description with visible evidence; independently validate people with a Fair Witness subagent; omit watermarks and unsupported embellishment; and return only the final description.
 ---
 
-# Describe Image for Generation
+# Describe Image
 
 Produce a visually grounded reconstruction prompt, not a critique, interpretation, story, or improved version of the source image. Preserve the image's specific choices, including awkward, ordinary, asymmetrical, partially obscured, or imperfect details.
 

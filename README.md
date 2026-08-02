@@ -6,7 +6,7 @@ Agent Skills for AI coding assistants.
 
 | Skill | Description |
 |-------|-------------|
-| [describe-image-for-generation](describe-image-for-generation/SKILL.md) | Convert an image into a faithful, detailed text-to-image reconstruction description, with objective subject and pose analysis, Kelvin lighting estimates, palette and style extraction, and independent Fair Witness validation. |
+| [describe-image](describe-image/SKILL.md) | Convert an image into a faithful, detailed text-to-image reconstruction description, with objective subject and pose analysis, Kelvin lighting estimates, palette and style extraction, and independent Fair Witness validation. |
 | [dynamic-workflow](dynamic-workflow/SKILL.md) | Design and run script-backed multi-agent Codex workflows with isolated workers, structured outputs, verification stages, bounded loops, and resumable checkpoints. |
 | [echo-skill](echo-skill/SKILL.md) | Create portable, evidence-grounded persona-and-work skills from source material about colleagues, mentors, collaborators, or public figures. |
 | [interactive-walkthrough (Codex)](codex/interactive-walkthrough/SKILL.md) | Build evidence-grounded, self-contained interactive HTML walkthroughs of code, repositories, systems, and technical processes using Codex-native browser verification. |
