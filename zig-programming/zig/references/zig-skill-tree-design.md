@@ -12,6 +12,7 @@ For a complex, fast-evolving domain like Zig (especially around 0.16+ releases),
   - Rich `references/` for durable process knowledge (e.g. release update audit, error handling patterns)
 
 - Narrow specialized siblings (each with its own rich SKILL.md + `references/`):
+  - `write-legible-zig`
   - `zig-build-system`
   - `zig-0.16-stdlib-patterns`
   - `zig-build-from-source`

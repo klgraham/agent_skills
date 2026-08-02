@@ -1,14 +1,16 @@
 ---
 name: zig-memory-safety-review
-description: Use when auditing Zig memory safety and ownership.
-version: 1.0.0
-author: Hermes Agent
+description: >
+  Audit Zig ownership, allocator, borrowing, invalidation, cleanup, C ABI,
+  callback, and concurrency contracts. Use when reviewing owner types,
+  init/deinit paths, allocation failure, collection mutation, stale pointers,
+  or lifetime-sensitive changes and pull requests.
 license: MIT
 metadata:
   hermes:
     tags: [zig, memory-safety, ownership, lifetimes, concurrency, static-analysis, code-review]
     category: software-development
-    related_skills: [zig, zig-data-oriented-programming, zig-mmap-project-template]
+    related_skills: [zig, write-legible-zig, zig-data-oriented-programming, zig-mmap-project-template]
 ---
 
 # Zig Memory-Safety Review
@@ -204,6 +206,12 @@ python3 "$ZMS_SKILL_DIR/scripts/zig_memory_safety_scan.py" . --format json
 
 Lower `--min-severity` to `low` or `inventory` when building the ownership ledger. The summary always counts all candidates even when detailed output is filtered.
 
+When changing the scanner, run its standard-library-only regression test:
+
+```bash
+python3 "$ZMS_SKILL_DIR/scripts/test_zig_memory_safety_scan.py"
+```
+
 The scanner inventories:
 
 - unsafe pointer conversions and casts;
@@ -349,4 +357,7 @@ Therefore use the scanner to reduce search cost, then use agent reasoning to tra
 - [ ] Thread and callback shutdown precedes captured-data cleanup.
 - [ ] Every confirmed finding has a reachable path and regression test.
 - [ ] Important false positives are documented as verified non-findings.
+- [ ] The repository formatter was run on changed Zig files (`zig fmt --check` where supported).
+- [ ] The exact focused build/test command was run; direct `zig test` was used when the build harness could be vacuous.
+- [ ] `git diff --check` is clean for a code change.
 - [ ] Final report distinguishes proof, evidence, risk, and unknowns.

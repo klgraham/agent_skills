@@ -1,14 +1,12 @@
 ---
 name: zig-data-oriented-programming
 description: Data-oriented programming patterns in Zig 0.16 — SoA transforms, SIMD with @Vector, arena lifecycle, cache-line alignment, existential processing. Use when optimizing Zig code for throughput, designing bulk data pipelines, or refactoring hot loops for cache efficiency.
-version: 1.0.0
-author: Hermes Agent
 license: MIT
 metadata:
   hermes:
     tags: [zig, data-oriented-design, simd, cache, arena, performance, zig-0.16]
     category: software-development
-    related_skills: [zig, zig-mmap-project-template, zig-0.16-stdlib-patterns]
+    related_skills: [zig, write-legible-zig, zig-memory-safety-review, zig-mmap-project-template, zig-0.16-stdlib-patterns]
     wiki: [[data-oriented-programming/index]]
 ---
 
@@ -22,18 +20,18 @@ Write Zig code that respects the hardware. Design for data flow, not object mode
 - Designing bulk data pipelines (ETL, vector search, particle systems)
 - Building mmap-friendly data structures for cross-process sharing
 - Refactoring pointer-heavy OOP-style code that's cache-miss-bound
-- Any time `perf stat -e cache-misses` makes you wince
+- Any time the target profiler shows a hot, cache-sensitive path
 
 **Don't reach for this skill** when:
 - The code isn't performance-critical (prefer readability)
 - You're doing I/O-bound work (network, disk)
-- The data set is small (<1000 items — overhead of SoA > benefit)
+- The data set or hot loop is too small for the layout and maintenance cost to matter; measure instead of using a fixed item-count cutoff
 - You haven't profiled first
 
 ## Core Principles
 
 1. **Data transformation is the purpose of any program** (Mike Acton). Design the data layout first, then write the code that transforms it.
-2. **Measure, don't guess.** `perf stat -e cache-misses,cache-references,instructions,cycles` before and after every change.
+2. **Measure, don't guess.** Use a platform-appropriate profiler before and after every change. On Linux this may be `perf` or Cachegrind; on macOS use Instruments or `xctrace`; record the target, workload, and measurement noise.
 3. **Process in bulk.** Linear scans over contiguous arrays beat pointer-chasing through sparse graphs.
 4. **Separate hot from cold.** Don't load fields you won't use in the hot loop.
 5. **Delete branches.** Use data separation (existential processing) instead of runtime `if`/`switch`.
@@ -47,12 +45,14 @@ Wiki knowledge base: [[data-oriented-programming/index]] covers the philosophy, 
 Before touching any code, establish a baseline. Without numbers, you're doing religion, not engineering.
 
 ```bash
-# Cache miss baseline
+# Linux cache-miss baseline
 perf stat -e cache-misses,cache-references,cycles,instructions ./benchmark
 
-# Detailed cache simulation (slow but precise)
+# Linux detailed cache simulation (slow but precise)
 valgrind --tool=cachegrind ./benchmark
 cg_annotate cachegrind.out.<pid>
+
+# On macOS, use Instruments or xctrace with the same benchmark workload.
 
 # Zig: build with -Doptimize=ReleaseFast for realistic measurements
 zig build -Doptimize=ReleaseFast
@@ -71,7 +71,7 @@ pub fn benchmark(comptime name: []const u8, iterations: usize, f: fn () void) vo
 }
 ```
 
-**Rule**: Never claim "faster" without a benchmark with timings. Never claim "better cache" without `perf stat` numbers.
+**Rule**: Never claim "faster" without benchmark timings. Never claim "better cache" without measurements from a profiler appropriate to the target platform.
 
 ### 2. SoA Transform
 
@@ -91,7 +91,9 @@ particles: std.ArrayList(Particle),  // each Particle is 36 bytes; position+velo
 
 **After (SoA — cache-friendly):**
 ```zig
+// The examples in this section assume: const std = @import("std");
 const Particles = struct {
+    allocator: std.mem.Allocator,
     positions_x: []f32,
     positions_y: []f32,
     positions_z: []f32,
@@ -102,80 +104,144 @@ const Particles = struct {
     texture_ids: []u32,  // only touched during render, not physics
 
     pub fn init(allocator: std.mem.Allocator, count: usize) !Particles {
+        const positions_x = try allocator.alloc(f32, count);
+        errdefer allocator.free(positions_x);
+        const positions_y = try allocator.alloc(f32, count);
+        errdefer allocator.free(positions_y);
+        const positions_z = try allocator.alloc(f32, count);
+        errdefer allocator.free(positions_z);
+        const velocities_x = try allocator.alloc(f32, count);
+        errdefer allocator.free(velocities_x);
+        const velocities_y = try allocator.alloc(f32, count);
+        errdefer allocator.free(velocities_y);
+        const velocities_z = try allocator.alloc(f32, count);
+        errdefer allocator.free(velocities_z);
+        const lifes = try allocator.alloc(f32, count);
+        errdefer allocator.free(lifes);
+        const texture_ids = try allocator.alloc(u32, count);
+        errdefer allocator.free(texture_ids);
+
         return .{
-            .positions_x = try allocator.alloc(f32, count),
-            .positions_y = try allocator.alloc(f32, count),
-            .positions_z = try allocator.alloc(f32, count),
-            .velocities_x = try allocator.alloc(f32, count),
-            .velocities_y = try allocator.alloc(f32, count),
-            .velocities_z = try allocator.alloc(f32, count),
-            .lifes = try allocator.alloc(f32, count),
-            .texture_ids = try allocator.alloc(u32, count),
+            .allocator = allocator,
+            .positions_x = positions_x,
+            .positions_y = positions_y,
+            .positions_z = positions_z,
+            .velocities_x = velocities_x,
+            .velocities_y = velocities_y,
+            .velocities_z = velocities_z,
+            .lifes = lifes,
+            .texture_ids = texture_ids,
         };
     }
 
-    pub fn deinit(self: *Particles, allocator: std.mem.Allocator) void {
-        allocator.free(self.positions_x);
-        allocator.free(self.positions_y);
-        allocator.free(self.positions_z);
-        allocator.free(self.velocities_x);
-        allocator.free(self.velocities_y);
-        allocator.free(self.velocities_z);
-        allocator.free(self.lifes);
-        allocator.free(self.texture_ids);
+    /// Release all arrays with the allocator captured by `init`.
+    /// Do not use the slices after this call; they are reset to empty.
+    pub fn deinit(self: *Particles) void {
+        self.allocator.free(self.positions_x);
+        self.allocator.free(self.positions_y);
+        self.allocator.free(self.positions_z);
+        self.allocator.free(self.velocities_x);
+        self.allocator.free(self.velocities_y);
+        self.allocator.free(self.velocities_z);
+        self.allocator.free(self.lifes);
+        self.allocator.free(self.texture_ids);
+        self.positions_x = &[_]f32{};
+        self.positions_y = &[_]f32{};
+        self.positions_z = &[_]f32{};
+        self.velocities_x = &[_]f32{};
+        self.velocities_y = &[_]f32{};
+        self.velocities_z = &[_]f32{};
+        self.lifes = &[_]f32{};
+        self.texture_ids = &[_]u32{};
     }
 };
 ```
+
+`Particles` owns every slice, captures its allocator, and uses one `errdefer`
+per completed allocation so later allocation failure rolls back safely.
 
 **Comptime SoA generator** (for when you have many types to transform):
 
 ```zig
 fn SoA(comptime T: type) type {
-    const fields = @typeInfo(T).Struct.fields;
+    const fields = @typeInfo(T).@"struct".fields;
+    const max_alignment = comptime blk: {
+        var alignment: usize = 1;
+        for (fields) |field| {
+            alignment = @max(alignment, @alignOf(field.type));
+        }
+        break :blk alignment;
+    };
     return struct {
         const Self = @This();
+        allocator: std.mem.Allocator,
         count: usize,
-        // One array per field, keyed by field index
-        arrays: [fields.len][]u8, // type-erased; cast on access
+        // One type-erased array per field, all using the common maximum
+        // alignment so the allocator's free contract remains intact.
+        arrays: [fields.len][]align(max_alignment) u8,
 
         pub fn init(allocator: std.mem.Allocator, count: usize) !Self {
-            var arrays: [fields.len][]u8 = undefined;
+            var arrays: [fields.len][]align(max_alignment) u8 = undefined;
+            var initialized: usize = 0;
+            errdefer {
+                for (arrays[0..initialized]) |array| allocator.free(array);
+            }
             inline for (fields, 0..) |field, i| {
                 const byte_count = @sizeOf(field.type) * count;
-                arrays[i] = try allocator.alloc(u8, byte_count);
+                arrays[i] = try allocator.alignedAlloc(
+                    u8,
+                    std.mem.Alignment.fromByteUnits(max_alignment),
+                    byte_count,
+                );
+                initialized += 1;
             }
-            return .{ .count = count, .arrays = arrays };
+            return .{ .allocator = allocator, .count = count, .arrays = arrays };
         }
 
-        pub fn get(self: Self, comptime field_idx: usize, index: usize) *fields[field_idx].type {
-            const ptr: [*]fields[field_idx].type = @ptrCast(@alignCast(self.arrays[field_idx].ptr));
+        /// Borrow a field value until `deinit`; this type never resizes arrays.
+        pub fn get(self: *const Self, comptime field_idx: usize, index: usize) *fields[field_idx].type {
+            // The common alignment is at least the field's alignment.
+            const ptr: [*]fields[field_idx].type = @ptrCast(self.arrays[field_idx].ptr);
             return &ptr[index];
         }
 
-        pub fn deinit(self: *Self, allocator: std.mem.Allocator) void {
-            for (self.arrays) |arr| allocator.free(arr);
+        pub fn deinit(self: *Self) void {
+            for (self.arrays, 0..) |array, i| {
+                self.allocator.free(array);
+                const empty: *align(max_alignment) [0]u8 = @alignCast(@constCast(&[_]u8{}));
+                self.arrays[i] = empty[0..];
+            }
         }
     };
 }
 ```
 
+The common `alignedAlloc` preserves typed-access and matching-`free` alignment
+for the type-erased arrays; the captured allocator must remain valid through `deinit`.
+
 **When to use SoA:**
-- Hot loop touches <50% of struct fields → SoA wins
+- Hot loop touches a small subset of struct fields → SoA may win; measure the working set
 - Processing is linear and homogeneous → SoA + SIMD
-- Data set > L2 cache size (256KB+) → SoA matters more
+- The working set exceeds the relevant target cache → SoA may matter more; do not assume a universal L2 size
 
 **When to stay AoS:**
 - All fields accessed together in every iteration
-- Struct is ≤2 cache lines (128 bytes) and fits in L1
+- All fields are accessed together and the struct fits comfortably in the target cache hierarchy
 - Code is not in a hot path (readability > micro-optimization)
 
 ### 3. SIMD Batch Processing with @Vector
 
-Zig's `@Vector(N, T)` maps directly to SIMD registers. Combine with SoA for maximum throughput.
+Zig's `@Vector(N, T)` expresses element-wise vector operations. The compiler
+may lower them to SIMD instructions or scalar code depending on the target,
+backend, optimization mode, and operation. Combine them with SoA only after
+measurement shows that the layout and vector width help.
 
 **Real pattern from zig-hnsw (`src/vector.zig`):**
 
 ```zig
+const std = @import("std");
+const math = std.math;
+
 /// Compute Euclidean distance with @Vector(8, f32) — 8-way SIMD.
 pub fn euclidean(a: [*]const f32, b: [*]const f32, dim: u16) f32 {
     var sum: f32 = 0;
@@ -204,17 +270,20 @@ pub fn euclidean(a: [*]const f32, b: [*]const f32, dim: u16) f32 {
 ```
 
 **Vector width selection:**
-- `@Vector(4, f32)` — SSE (128-bit). Always available on x86-64.
-- `@Vector(8, f32)` — AVX/AVX2 (256-bit). Available on most CPUs post-2013.
-- `@Vector(16, f32)` — AVX-512 (512-bit). Server CPUs, some recent desktop.
-- Use `comptime` to select width based on target CPU features:
+- Start with a width supported by the target baseline, then benchmark it.
+- Do not equate a vector width with a guaranteed instruction set: lowering is target- and backend-dependent.
+- Use `comptime` to select a width from the compilation target, not as runtime CPU detection:
   ```zig
-  const simd_width = if (@hasDecl(@import("builtin"), "cpu") and
-      std.Target.x86.featureSetHas(builtin.cpu.features, .avx2))
+  const builtin = @import("builtin");
+  const simd_width = if (builtin.cpu.arch == .x86_64 and builtin.cpu.has(.x86, .avx2))
       @Vector(8, f32)
   else
       @Vector(4, f32);
   ```
+
+For one binary that must run across different runtime CPUs, keep target-
+specific kernels behind a runtime dispatch boundary and test the baseline
+path. Do not treat this compile-time selection as a hardware probe.
 
 **Common SIMD operations in Zig:**
 
@@ -278,7 +347,7 @@ for (0..frame_count) |_| {
 
 Prevent false sharing in multi-threaded code and ensure hot data fits cache lines.
 
-**Align to cache line (64 bytes on x86-64/ARM):**
+**Align to a target cache line (often 64 bytes, but verify the target ABI):**
 
 ```zig
 const cache_line = 64;
@@ -312,11 +381,12 @@ comptime {
 **When alignment matters:**
 - Per-thread counters/handles (false sharing kills multi-core scaling)
 - Freelist nodes (often accessed in tight allocation loops)
-- Hot data that should never split across two cache lines (align to `@sizeOf(T)` rounded up to next power of 2 that's ≥ cache_line)
+- Hot data that should not split across cache lines; use target-specific measurements rather than assuming one cache-line size
 
 ### 6. Existential Processing (Branch Elimination)
 
-Separate data by state so hot loops contain zero branches.
+Separate data by state so the hot loop contains no per-entity classification
+branch. The maintenance cost is paid when entities change state.
 
 **Before (branch per element):**
 ```zig
@@ -346,47 +416,46 @@ for (living_ai.items) |*ai| {
 **Table-Driven FSM (Zig):**
 
 ```zig
-const StateFn = *const fn (data: *anyopaque, dt: f32) StateTransition;
+const StateFn = *const fn (data: *anyopaque, dt: f32) void;
+
+const StateBatch = struct {
+    state_fn: StateFn,
+    // Borrowed: the owner must keep this array and its entity data alive
+    // through `StateTable.update` and rebuild the batches after state changes.
+    entities: []const *anyopaque,
+};
 
 const StateTable = struct {
-    states: []StateFn,
-    entity_state: []u8,     // state index per entity
-    entity_data: []*anyopaque,
+    // Borrowed batch storage; `update` does not resize or retain it.
+    batches: []const StateBatch,
 
-    pub fn update(self: *StateTable, dt: f32) void {
-        // Process all entities in each state — homogeneous, branchless
-        for (0..self.states.len) |state_idx| {
-            const state_fn = self.states[state_idx];
-            for (self.entity_state, 0..) |entity_state, i| {
-                if (entity_state == state_idx) {
-                    _ = state_fn(self.entity_data[i], dt);
-                }
+    pub fn update(self: *const StateTable, dt: f32) void {
+        // Process homogeneous batches; state classification happened earlier.
+        for (self.batches) |batch| {
+            for (batch.entities) |entity_data| {
+                batch.state_fn(entity_data, dt);
             }
         }
     }
 };
 ```
 
+If a state function needs to request a transition, queue that request and
+rebuild the batches after the update pass. Do not reintroduce an entity-state
+branch into the hot loop just to make transitions immediate.
+
 ## Real-World Example: zig-hnsw
 
-zig-hnsw applies multiple DOD patterns:
-
-| Pattern | Where | Why |
-|---|---|---|
-| SoA storage | `graph.zig`: node_data, edge_offsets, edge_lengths as separate arrays | Node metadata, edge topology, and vector data have different access patterns |
-| SIMD @Vector | `vector.zig`: euclidean(), dot() | Distance computation is the inner loop — 8-way SIMD essential |
-| Flat arrays over pointers | Entire codebase: `ArrayListUnmanaged`, no heap pointers in serialized structs | mmap-friendly; no pointer fixup on load |
-| External vs internal IDs | `graph.zig`: `ExternalId` (u32) vs `NodeIndex` (u32) | Dense internal indexing for array access; callers use stable external IDs |
-| Bulk deallocation | `graph.zig:deinit()` frees all arrays in sequence | No per-node alloc/free; predictable, fragmentation-free |
-
-Key lesson: the graph is an HNSW — a pointer-chasing data structure by nature — but zig-hnsw flattens it into arrays so the hot path (distance computation + neighbor traversal) stays contiguous.
+`zig-hnsw` uses flat arrays, separate external/internal IDs, bulk cleanup, and
+vectorized distance kernels. Treat those as measured design examples, not
+universal claims about every graph workload.
 
 ## Pitfalls
 
 ### Premature optimization
 - Don't SoA-transform code that isn't in a hot path. The readability cost is real.
 - Don't SIMD-ify loops that run 100 times/frame. The scalar version is fine.
-- **Always profile first.** `perf stat` before and after.
+- **Always profile first.** Use `perf`, Instruments, `xctrace`, or the target's equivalent before and after.
 
 ### Comptime blowup
 - Generating SoA layouts via comptime for types with 50+ fields can blow up compile times.
@@ -394,44 +463,37 @@ Key lesson: the graph is an HNSW — a pointer-chasing data structure by nature 
 - If `zig build` hangs or takes >5s for a single type, fall back to explicit SoA.
 
 ### @Vector portability
-- `@Vector(8, f32)` requires AVX on x86-64. SSE-only CPUs (pre-2011) will scalarize.
-- ARM NEON is `@Vector(4, f32)`. Use comptime feature detection.
+- A vector type does not by itself promise a particular instruction set or runtime speed. Verify generated code and benchmark the target.
+- Use compile-time target features for separate kernels; use a runtime dispatch boundary when one binary must support multiple CPU feature sets.
 - `@reduce` enum literal syntax changed in 0.16. Test that your Zig version supports it.
 
-### Alignment gotchas
+### Alignment and layout gotchas
 - `@ptrCast(@alignCast(...))` will compile but crash at runtime if alignment is wrong.
-- `std.ArrayList` doesn't guarantee alignment > `@alignOf(T)`. For cache-line alignment, use `allocator.alignedAlloc`.
-- `align(N)` on struct fields only works with `extern struct`. Regular structs may reorder.
+- `std.ArrayList` does not guarantee alignment beyond the element type; use `allocator.alignedAlloc` and retain the proof in the type or its owning abstraction.
+- Use `extern struct` when ABI layout is required; regular structs may choose their field layout, so assert the properties the algorithm actually depends on.
 
 ### Arena leaks
-- Forgetting `defer arena.deinit()` leaks everything allocated in the arena.
-- Nested arenas: child arena's `deinit()` only frees child arena's metadata, not the data. The data lives in parent arena. Call `child_arena.deinit()` to release metadata.
-- Long-running arenas grow unboundedly. For persistent state, use a general-purpose allocator.
+- Forgetting `defer arena.deinit()` leaks everything allocated in the arena. Nested child arenas free their metadata; parent arenas own the data.
+- Long-running arenas grow unboundedly. For persistent state, use a general-purpose/debug allocator appropriate to the project.
 
-### False sharing
+### False sharing and existential-processing maintenance
 - Two atomic counters on the same cache line: `ThreadPool` with per-thread task counts in an array of `u64` — adjacent counters are 8 bytes apart, 8 of them per cache line → massive false sharing. Pad each counter to 64 bytes.
-
-### Existential processing maintenance cost
 - Separate arrays require manual synchronization: when an entity dies, remove from `living_ai` array. When it gains a mesh, add to `renderables`.
 - For systems with frequent state changes, maintain dirty flags and rebuild separated arrays once per frame rather than updating incrementally.
 
 ## Verification Checklist
 
-After applying DOD patterns, verify:
-
-- [ ] `perf stat -e cache-misses,cache-references` shows reduced miss rate
-- [ ] Benchmark shows measurable improvement (not noise — run >100 iterations)
-- [ ] Correctness: same inputs produce same outputs (write a property test)
+- [ ] A platform-appropriate profiler (Linux `perf`/Cachegrind, macOS Instruments/`xctrace`, or equivalent) shows a meaningful target-metric change
+- [ ] Benchmark shows measurable improvement with enough repetitions to characterize noise, and a property test preserves correctness
 - [ ] `zig build test` passes with `-Doptimize=ReleaseFast` and `-Doptimize=Debug`
-- [ ] No undefined behavior under valgrind: `valgrind ./benchmark`
-- [ ] SIMD fallback path works: test on a CPU without AVX (or set `--test-cpu baseline`)
+- [ ] If available, Valgrind or sanitizer instrumentation reports no new issue, and the SIMD fallback works under the project baseline target
 - [ ] Arena lifecycle: `defer arena.deinit()` is present and correct
+- [ ] Multi-allocation initializers roll back partial success with `errdefer` or an equivalent owner
+- [ ] Allocator pairing, borrowed lifetimes, and invalidation rules are documented for public data structures
 - [ ] No alignment assertions firing at runtime (ReleaseSafe build)
-- [ ] README updated: explain the data layout so future readers understand why it's flat arrays, not objects
+- [ ] `zig fmt --check` (or the repository formatter) and `git diff --check` pass
+- [ ] If a public layout changed, documentation explains why it is flat arrays rather than objects
 
 ## Related Skills
 
-- [[zig]] — General Zig 0.16 development, build system, stdlib patterns
-- [[zig-mmap-project-template]] — mmap-friendly library design with flat binary formats
-- [[zig-0.16-stdlib-patterns]] — HTTP, filesystem, SIMD, and other stdlib APIs
-- Wiki: [[data-oriented-programming/index]] — Full conceptual background
+`zig` routes general work; `write-legible-zig` covers structure and verification; `zig-memory-safety-review` covers ownership and invalidation; `zig-mmap-project-template` covers flat storage; `zig-0.16-stdlib-patterns` covers runtime APIs; the wiki provides broader DOD background.

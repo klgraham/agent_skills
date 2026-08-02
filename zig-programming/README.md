@@ -26,7 +26,8 @@ These skills follow a **narrow, focused** design instead of one large monolithic
 
 2. The `zig` skill acts as the entry point and router — start there for most tasks.
 
-3. For the latest patterns, always prefer the narrow skills over older generalist documentation.
+3. Load `write-legible-zig` for every Zig code change, then add the narrow skill for the task's domain.
+4. For the latest patterns, always prefer the narrow skills over older generalist documentation.
 
 ## Philosophy
 
@@ -39,8 +40,8 @@ These skills follow a **narrow, focused** design instead of one large monolithic
 These skills are maintained against the current stable Zig release. When a new Zig version ships:
 
 1. Run the audit workflow documented in `zig/references/updating-zig-skills-for-new-releases.md`
-2. Update the affected narrow skills
-3. Bump versions and test with real projects
+2. Update the affected narrow skills and their trigger metadata
+3. Validate the skills and test code examples with real projects
 
 ## License
 
