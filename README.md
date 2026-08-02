@@ -16,6 +16,7 @@ Agent Skills for AI coding assistants.
 | [obsidian-theme](obsidian-theme/SKILL.md) | Create and publish Obsidian themes using CSS. Includes dark/light mode support, CSS variable reference, and community gallery publishing workflow. |
 | [systems-thinking-reviewer](systems-thinking-reviewer/SKILL.md) | Review repositories, pull requests or diffs, ADRs, diagrams, and architecture descriptions through evidence-linked causal analysis of system behavior, feedback, coupling, failure propagation, operations, and evolution. |
 | [zig-programming](zig-programming/SKILL.md) | Programming assistance for the Zig programming language. |
+| [write-legible-zig](zig-programming/write-legible-zig/SKILL.md) | Apply a machine-legible, ownership-aware, and verifiable structure when writing or reviewing Zig code. |
 
 ## Usage
 

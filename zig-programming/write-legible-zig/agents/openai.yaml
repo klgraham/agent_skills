@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Legible Zig"
+  short_description: "Enforce legible, idiomatic Zig code"
+  default_prompt: "Use $write-legible-zig to make this Zig change clear, ownership-safe, and easy to verify."

@@ -15,6 +15,7 @@ These skills follow a **narrow, focused** design instead of one large monolithic
 | **zig-data-oriented-programming** | SoA, `@Vector` SIMD, arena patterns, cache-friendly design | Performance-sensitive code, hot loops, bulk data processing |
 | **zig-mmap-project-template** | Zero-copy memory-mapped data structures, flat binary formats | Building high-performance libraries with mmap-backed storage |
 | **zig-memory-safety-review** | Ownership, borrow lifetime, invalidation, cleanup, and concurrency audit workflow with a bundled heuristic scanner | Reviewing allocators, owner types, C ABI code, callbacks, threads, or memory-safety-sensitive PRs |
+| **write-legible-zig** | Machine-legible Zig structure, naming, error handling, ownership boundaries, and verification checklist | Creating, editing, reviewing, or presenting Zig code that should be easy for agents and humans to change |
 
 ## Recommended Usage
 
