@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run declarative, checkpointed workflows with isolated `codex exec` workers."""
+"""Run declarative, checkpointed workflows with isolated Codex or Claude workers."""
 
 from __future__ import annotations
 
@@ -26,6 +26,10 @@ SANDBOXES = {"read-only", "workspace-write"}
 MODEL_STRATEGIES = {"inherit", "economy", "balanced", "quality"}
 MODEL_TIERS = {"fast", "standard", "strong"}
 MODEL_ROLES = {"discovery", "worker", "verification", "repair", "synthesis"}
+HARNESSES = {"codex", "claude"}
+CLAUDE_READ_TOOLS = ["Read", "Glob", "Grep", "WebFetch", "WebSearch"]
+CLAUDE_WRITE_TOOLS = CLAUDE_READ_TOOLS + ["Edit", "Write"]
+CLAUDE_READ_ONLY_FORBIDDEN = {"Bash", "Edit", "Write", "NotebookEdit"}
 DEFAULT_ROLES = {"agent": "worker", "map": "worker", "reduce": "synthesis", "loop": "repair"}
 POLICY_ROUTES = {
     "economy": {
@@ -81,6 +85,28 @@ def validate_spec(spec: dict[str, Any]) -> None:
     sandbox = spec.get("sandbox", "read-only")
     if sandbox not in SANDBOXES:
         raise WorkflowError("sandbox must be read-only or workspace-write")
+    harness = spec.get("harness", "codex")
+    if harness not in HARNESSES:
+        raise WorkflowError(f"harness must be one of {sorted(HARNESSES)}")
+    claude_tools = spec.get("claude_tools")
+    if claude_tools is not None:
+        if not isinstance(claude_tools, list) or not claude_tools or not all(
+            isinstance(tool, str) and tool.strip() for tool in claude_tools
+        ):
+            raise WorkflowError("claude_tools must be a non-empty array of tool names")
+        if sandbox == "read-only":
+            forbidden = {
+                tool
+                for tool in claude_tools
+                if any(
+                    tool == blocked or tool.startswith(f"{blocked}(")
+                    for blocked in CLAUDE_READ_ONLY_FORBIDDEN
+                )
+            }
+            if forbidden:
+                raise WorkflowError(
+                    "read-only Claude workflows cannot enable: " + ", ".join(sorted(forbidden))
+                )
     require_int(spec.get("max_concurrency", 4), "max_concurrency", 1, 16)
     require_int(spec.get("timeout_seconds", 900), "timeout_seconds", 1, 86400)
     require_int(spec.get("retries", 0), "retries", 0, 3)
@@ -209,14 +235,16 @@ class Runner:
         self,
         spec: dict[str, Any],
         state_dir: Path,
-        codex_bin: str,
+        harness: str,
+        agent_bin: str,
         allow_writes: bool,
         resume: bool,
         restart: bool,
     ) -> None:
         self.spec = spec
         self.state_dir = state_dir
-        self.codex_bin = codex_bin
+        self.harness = harness
+        self.agent_bin = agent_bin
         self.allow_writes = allow_writes
         self.resume = resume
         self.restart = restart
@@ -269,27 +297,50 @@ class Runner:
             output_path = self.logs_dir / f"{safe_label}.result.txt"
             event_path = self.logs_dir / f"{safe_label}.events.jsonl"
             schema_path = self.schemas_dir / f"{safe_label}.schema.json"
-            command = [
-                self.codex_bin,
-                "exec",
-                "--ephemeral",
-                "--skip-git-repo-check",
-                "--color",
-                "never",
-                "--json",
-                "--sandbox",
-                self.spec.get("sandbox", "read-only"),
-                "--cd",
-                self.spec["workdir"],
-                "--output-last-message",
-                str(output_path),
-            ]
-            if model:
-                command.extend(["--model", model])
-            if schema is not None:
-                schema_path.write_text(json.dumps(schema, indent=2) + "\n", encoding="utf-8")
-                command.extend(["--output-schema", str(schema_path)])
-            command.append("-")
+            if self.harness == "codex":
+                command = [
+                    self.agent_bin,
+                    "exec",
+                    "--ephemeral",
+                    "--skip-git-repo-check",
+                    "--color",
+                    "never",
+                    "--json",
+                    "--sandbox",
+                    self.spec.get("sandbox", "read-only"),
+                    "--cd",
+                    self.spec["workdir"],
+                    "--output-last-message",
+                    str(output_path),
+                ]
+                if model:
+                    command.extend(["--model", model])
+                if schema is not None:
+                    schema_path.write_text(json.dumps(schema, indent=2) + "\n", encoding="utf-8")
+                    command.extend(["--output-schema", str(schema_path)])
+                command.append("-")
+            else:
+                sandbox = self.spec.get("sandbox", "read-only")
+                tools = self.spec.get("claude_tools") or (
+                    CLAUDE_READ_TOOLS if sandbox == "read-only" else CLAUDE_WRITE_TOOLS
+                )
+                command = [
+                    self.agent_bin,
+                    "--print",
+                    "--output-format",
+                    "json",
+                    "--no-session-persistence",
+                    "--permission-mode",
+                    "dontAsk" if sandbox == "read-only" else "acceptEdits",
+                    "--tools",
+                    ",".join(tools),
+                ]
+                if model:
+                    command.extend(["--model", model])
+                if schema is not None:
+                    command.extend(
+                        ["--json-schema", json.dumps(schema, separators=(",", ":"))]
+                    )
             attempts = self.spec.get("retries", 0) + 1
             last_error = "unknown worker failure"
             for attempt in range(1, attempts + 1):
@@ -297,6 +348,7 @@ class Runner:
                 try:
                     process = await asyncio.create_subprocess_exec(
                         *command,
+                        cwd=self.spec["workdir"],
                         stdin=asyncio.subprocess.PIPE,
                         stdout=asyncio.subprocess.PIPE,
                         stderr=asyncio.subprocess.PIPE,
@@ -311,12 +363,36 @@ class Runner:
                     continue
                 event_path.write_bytes(stdout)
                 if process.returncode != 0:
-                    last_error = stderr.decode(errors="replace").strip() or f"codex exited {process.returncode}"
+                    last_error = (
+                        stderr.decode(errors="replace").strip()
+                        or f"{self.harness} exited {process.returncode}"
+                    )
                     continue
-                if not output_path.exists():
-                    last_error = "codex did not write a final result"
-                    continue
-                raw = output_path.read_text(encoding="utf-8")
+                if self.harness == "codex":
+                    if not output_path.exists():
+                        last_error = "codex did not write a final result"
+                        continue
+                    raw = output_path.read_text(encoding="utf-8")
+                else:
+                    try:
+                        envelope = json.loads(stdout.decode(encoding="utf-8"))
+                    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+                        last_error = f"Claude output is not a valid JSON envelope: {exc}"
+                        continue
+                    value = envelope.get("structured_output") if schema is not None else None
+                    if value is None:
+                        value = envelope.get("result")
+                    if value is None:
+                        last_error = "Claude JSON envelope contains no result"
+                        continue
+                    if schema is not None and isinstance(value, str):
+                        try:
+                            value = json.loads(value)
+                        except json.JSONDecodeError as exc:
+                            last_error = f"Claude structured result is not valid JSON: {exc}"
+                            continue
+                    raw = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+                    output_path.write_text(raw, encoding="utf-8")
                 if schema is None:
                     print(f"[{label}] completed", flush=True)
                     return raw
@@ -427,8 +503,8 @@ def upper_bound(spec: dict[str, Any]) -> tuple[int, bool]:
     return total, dynamic
 
 
-def default_state_dir(spec: dict[str, Any]) -> Path:
-    return Path(spec["workdir"]) / ".codex" / "workflow-runs" / spec["name"]
+def default_state_dir(spec: dict[str, Any], harness: str) -> Path:
+    return Path(spec["workdir"]) / f".{harness}" / "workflow-runs" / spec["name"]
 
 
 def parser() -> argparse.ArgumentParser:
@@ -444,7 +520,9 @@ def parser() -> argparse.ArgumentParser:
     run.add_argument("--resume", action="store_true")
     run.add_argument("--restart", action="store_true")
     run.add_argument("--state-dir", type=Path)
-    run.add_argument("--codex-bin", default="codex")
+    run.add_argument("--harness", choices=sorted(HARNESSES), help="override workflow harness")
+    run.add_argument("--agent-bin", help="override the selected harness executable")
+    run.add_argument("--codex-bin", help="deprecated alias for --agent-bin with the Codex harness")
     return value
 
 
@@ -457,14 +535,22 @@ def main() -> int:
             print("workflow is valid")
             return 0
         bound, dynamic = upper_bound(spec)
+        harness = getattr(args, "harness", None) or spec.get("harness", "codex")
         print(f"Workflow: {spec['name']}")
         print(f"Description: {spec.get('description', '(none)')}")
+        print(f"Harness: {harness}")
         print(f"Workdir: {spec['workdir']}")
         print(f"Sandbox: {spec.get('sandbox', 'read-only')}")
+        if harness == "claude":
+            sandbox = spec.get("sandbox", "read-only")
+            tools = spec.get("claude_tools") or (
+                CLAUDE_READ_TOOLS if sandbox == "read-only" else CLAUDE_WRITE_TOOLS
+            )
+            print(f"Claude tools: {', '.join(tools)}")
         print(f"Max concurrency: {spec.get('max_concurrency', 4)}")
         suffix = " plus dynamically discovered map items" if dynamic else ""
         print(f"Worker upper bound: {bound}{suffix}")
-        preview_runner = Runner(spec, Path("."), "codex", False, False, False)
+        preview_runner = Runner(spec, Path("."), harness, harness, False, False, False)
         policy = spec.get("model_policy")
         if policy:
             print(f"Model policy: {policy['strategy']}")
@@ -481,12 +567,23 @@ def main() -> int:
             return 0
         if not args.approve:
             raise WorkflowError("run requires --approve after reviewing preview")
-        if shutil.which(args.codex_bin) is None and not Path(args.codex_bin).is_file():
-            raise WorkflowError(f"codex executable not found: {args.codex_bin}")
+        if args.codex_bin and harness != "codex":
+            raise WorkflowError("--codex-bin cannot be combined with the Claude harness; use --agent-bin")
+        agent_bin = args.agent_bin or args.codex_bin or harness
+        if shutil.which(agent_bin) is None and not Path(agent_bin).is_file():
+            raise WorkflowError(f"{harness} executable not found: {agent_bin}")
         if args.resume and args.restart:
             raise WorkflowError("choose either --resume or --restart")
-        state_dir = (args.state_dir or default_state_dir(spec)).resolve()
-        runner = Runner(spec, state_dir, args.codex_bin, args.allow_writes, args.resume, args.restart)
+        state_dir = (args.state_dir or default_state_dir(spec, harness)).resolve()
+        runner = Runner(
+            spec,
+            state_dir,
+            harness,
+            agent_bin,
+            args.allow_writes,
+            args.resume,
+            args.restart,
+        )
         asyncio.run(runner.run())
         print(f"Result: {runner.result_path}")
         return 0

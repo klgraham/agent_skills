@@ -8,7 +8,7 @@ requires a deviation, explain it at the deviation site.
 
 This standard targets Zig 0.16+ as used by this skill collection. Verify
 version-sensitive APIs against the repository's compiler and load
-`zig-0.16-stdlib-patterns` when the code touches the standard library.
+`zig-0-16-stdlib-patterns` when the code touches the standard library.
 
 ## Contents
 
@@ -324,7 +324,7 @@ Treat every view into a collection as borrowed until proven otherwise.
   tests, snapshots, logs, or wire formats require deterministic order.
 - Use the collection initializer and deinitializer required by the pinned Zig
   version. For this repository's Zig 0.16 guidance, confirm the `.empty`,
-  allocator, and `deinit` forms in `zig-0.16-stdlib-patterns` rather than
+  allocator, and `deinit` forms in `zig-0-16-stdlib-patterns` rather than
   copying an older version's pattern.
 
 ## 12. Concurrency

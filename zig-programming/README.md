@@ -10,7 +10,7 @@ These skills follow a **narrow, focused** design instead of one large monolithic
 |-------|---------|--------------|
 | **zig** | Lightweight hub + 0.16 gotchas, memory safety workflow, cross-links | General Zig 0.16 development, migration help, "what changed" |
 | **zig-build-system** | Modern `build.zig` + `build.zig.zon`, Module system, executables/libraries/tests, dependencies | Setting up or modernizing projects, cross-compilation, package manifests |
-| **zig-0.16-stdlib-patterns** | Current stdlib runtime APIs (HTTP, fs, compress, etc.) and 0.15→0.16 differences | Working with `std.http`, `std.fs`, `std.compress`, allocators, writers |
+| **zig-0-16-stdlib-patterns** | Current stdlib runtime APIs (HTTP, fs, compress, etc.) and 0.15→0.16 differences | Working with `std.http`, `std.fs`, `std.compress`, allocators, writers |
 | **zig-build-from-source** | Building the Zig compiler itself (self-hosted vs CMake path) | When you need a newer Zig or want to contribute to the compiler |
 | **zig-data-oriented-programming** | SoA, `@Vector` SIMD, arena patterns, cache-friendly design | Performance-sensitive code, hot loops, bulk data processing |
 | **zig-mmap-project-template** | Zero-copy memory-mapped data structures, flat binary formats | Building high-performance libraries with mmap-backed storage |

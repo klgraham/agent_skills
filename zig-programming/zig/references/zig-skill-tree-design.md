@@ -14,7 +14,7 @@ For a complex, fast-evolving domain like Zig (especially around 0.16+ releases),
 - Narrow specialized siblings (each with its own rich SKILL.md + `references/`):
   - `write-legible-zig`
   - `zig-build-system`
-  - `zig-0.16-stdlib-patterns`
+  - `zig-0-16-stdlib-patterns`
   - `zig-build-from-source`
   - `zig-data-oriented-programming`
   - `zig-mmap-project-template`

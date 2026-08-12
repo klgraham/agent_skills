@@ -1,8 +1,6 @@
 ---
 name: zig-build-from-source
 description: "Build and install the Zig compiler from a git clone. Covers the self-hosted `zig build` path and the CMake/LLVM fallback when the bootstrap compiler is too old. Targets macOS (Apple Silicon) with Homebrew LLVM, but patterns generalize."
-version: 1.0.0
-author: Hermes Agent
 license: MIT
 metadata:
   hermes:

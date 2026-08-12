@@ -1,6 +1,6 @@
 ---
 name: systems-thinking-reviewer
-description: Review a software repository, pull request, diff, architecture document, ADR, diagram, or system description when interactions across components, state, operations, people, or time matter. Use for evidence-grounded analysis of system behavior, data ownership, coupling, feedback loops, delays, failure propagation, scalability, operability, security boundaries, incentives, automation-related complexity, and long-term evolution; do not use for style, lint, or purely local correctness reviews. Produce a contextual Markdown report in which every finding shows its source, direct comment, causal reasoning, affected behavior, proportionate recommendation, tradeoffs, confidence, and verification state.
+description: Review a software repository, pull request, diff, architecture document, ADR, diagram, or system description when interactions across components, state, operations, people, or time matter. Use for evidence-grounded analysis of system behavior, data ownership, coupling, feedback loops, delays, failure propagation, scalability, operability, security boundaries, incentives, automation-related complexity, and long-term evolution; do not use for style, lint, or purely local correctness reviews. Produce a contextual Markdown report, and when requested matching interactive HTML and Obsidian Markdown artifacts, in which every finding shows its source, direct comment, causal reasoning, affected behavior, proportionate recommendation, tradeoffs, confidence, and verification state.
 ---
 
 # Systems Thinking Reviewer
@@ -34,6 +34,7 @@ For a pull request, identify the base and head revisions whenever possible. Do n
 
 - Read [references/systems-lenses.md](references/systems-lenses.md) before analyzing candidate system dynamics. Apply only lenses supported by the evidence.
 - Read [references/report-template.md](references/report-template.md) before drafting the final report. Preserve its finding fields even when adapting the presentation to the user.
+- When the user requests report files or an interactive artifact, also read [references/findings-schema.md](references/findings-schema.md) before creating the structured payload used by the bundled renderer.
 
 ## Follow the review workflow
 
@@ -223,6 +224,16 @@ Include positive system patterns only when they are consequential. Include open 
 
 Assign stable IDs to all detailed findings, reference those IDs from cross-cutting recommendations and validation items, and do not introduce uncited new claims in either section. If no evidence-backed findings pass the gate, state that explicitly.
 
+Default to delivering the contextual Markdown report in the conversation. Do not create files during a read-only review unless the user requested file artifacts or the host workflow explicitly authorizes them.
+
+When file artifacts are requested, write the analysis once as the JSON payload defined in `references/findings-schema.md`, then render matching interactive HTML and Obsidian Markdown files:
+
+```bash
+python3 <skill-dir>/scripts/build_report.py <findings.json> --out-dir <output-dir>
+```
+
+The renderer validates the evidence contract, derives the HTML SVG and Markdown Mermaid diagram from one system model, and writes `<slug>-review.html` plus `<slug>-review.md`. Fix validation errors in the payload instead of hand-editing generated output. Use `--strict` before final delivery. Present both exact paths with a concise summary of scope, highest-leverage findings, and the largest open question.
+
 ## Adapt evidence to the input type
 
 ### Repository
@@ -280,3 +291,4 @@ Finish only when:
 - verification actions are clearly marked Proposed, Executed, or Blocked;
 - uncertainties and coverage limits are visible;
 - the report prioritizes system behavior and leverage over comment count.
+- any requested report artifacts were rendered from one validated payload and their exact paths were provided.

@@ -1,8 +1,6 @@
 ---
 name: zig-build-system
 description: "Zig 0.16 build system essentials: modern build.zig + build.zig.zon patterns, the Module system, executables/libraries/tests, dependencies, and cross-compilation. Use when setting up new Zig projects or modernizing build files."
-version: 1.0.0
-author: Hermes Agent
 license: MIT
 metadata:
   hermes:
@@ -25,7 +23,7 @@ Focused reference for writing and maintaining `build.zig` / `build.zig.zon` in Z
 
 Do **not** use for:
 - Building the Zig compiler itself (see `zig-build-from-source`)
-- Deep stdlib runtime patterns (see `zig-0.16-stdlib-patterns`)
+- Deep stdlib runtime patterns (see `zig-0-16-stdlib-patterns`)
 
 ## Canonical Project Layout (from `zig init`)
 
@@ -215,7 +213,7 @@ zig build test
 ## Related Skills
 
 - `zig` (hub) — overall 0.16 gotchas and memory safety
-- `zig-0.16-stdlib-patterns`
+- `zig-0-16-stdlib-patterns`
 - `zig-build-from-source`
 - `zig-mmap-project-template`
 

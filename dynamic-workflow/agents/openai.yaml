@@ -1,4 +1,4 @@
 interface:
   display_name: "Dynamic Workflow"
-  short_description: "Orchestrate large tasks with isolated Codex workers"
+  short_description: "Orchestrate large tasks across agent workers"
   default_prompt: "Use $dynamic-workflow to plan and run this task as a verified multi-agent workflow."

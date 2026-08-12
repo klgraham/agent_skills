@@ -1,0 +1,11 @@
+{
+  "name": "skill-development",
+  "description": "Mine reusable workflows from transcripts and build evidence-grounded persona skills.",
+  "author": {
+    "name": "Ken Graham"
+  },
+  "homepage": "https://github.com/klgraham/agent_skills",
+  "repository": "https://github.com/klgraham/agent_skills",
+  "license": "MIT",
+  "keywords": ["skills", "transcripts", "personas", "automation"]
+}

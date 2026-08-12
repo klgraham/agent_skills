@@ -1,0 +1,11 @@
+{
+  "name": "zig-programming",
+  "description": "Develop, review, optimize, and package Zig 0.16 software.",
+  "author": {
+    "name": "Ken Graham"
+  },
+  "homepage": "https://github.com/klgraham/agent_skills",
+  "repository": "https://github.com/klgraham/agent_skills",
+  "license": "MIT",
+  "keywords": ["zig", "memory-safety", "performance", "mmap"]
+}

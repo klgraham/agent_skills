@@ -1,6 +1,6 @@
 ---
 name: interactive-walkthrough
-description: Create evidence-grounded, self-contained interactive HTML walkthroughs of pull requests, Git repositories, subsystems, request lifecycles, protocols, algorithms, and technical, scientific, or industrial processes. Use when the user asks to explore or explain a subject through a clickable visual artifact, guided sequence, repository map, before-and-after comparison, or reader-driven simulation. Do not use for a chat-paced PR review, a static diagram alone, a generic landing page, or prose-only documentation.
+description: Create evidence-grounded, self-contained interactive HTML walkthroughs of pull requests, Git repositories, subsystems, request lifecycles, protocols, algorithms, and technical, scientific, or industrial processes. Use when the user asks to explore or explain a subject through a clickable visual artifact, guided sequence, repository map, before-and-after comparison, or reader-driven simulation. Do not use for a chat-paced PR review handled by pr-walkthrough, a static diagram alone, a generic landing page, or prose-only documentation.
 ---
 
 # Interactive Walkthrough
@@ -128,11 +128,15 @@ Use by default:
 
 ### Sites deployment
 
-If `.openai/hosting.json` exists, use the Sites building and hosting skills and preserve its project ID. Also use Sites when the user asks to publish, deploy, or host the walkthrough. Finish deployable work with a production deployment unless the user asks for local-only output.
+In Codex, if `.openai/hosting.json` exists, use the Sites building and hosting skills and preserve its project ID. Also use Sites when the user asks to publish, deploy, or host the walkthrough. Finish deployable work with a production deployment unless the user asks for local-only output.
+
+In a Claude host that provides Artifact publishing, use it only when the user asks to publish or the surrounding workflow explicitly requires an Artifact. Follow that host's HTML and content-security contract, update the same source path on revisions, and keep the published identity stable.
 
 Do not make deployment a prerequisite when the user only asked for a local artifact.
 
 ## Choose the container
+
+Default to a slide deck for a presentation-paced walkthrough. Choose a scrolling act page when the artifact is primarily a long-form reference or exploratory repository map.
 
 ### Slide deck
 
@@ -204,6 +208,17 @@ For scientific or industrial processes, end with **What this model omits**, safe
 - Support light and dark themes unless the design deliberately commits to one theme.
 - Prefer legible diagrams and state changes over decoration.
 
+Use this telemetry-oriented palette as the default family identity when the subject does not call for another visual language:
+
+| Role | Light theme | Dark theme |
+|---|---|---|
+| signal / active / attention | amber `#c67d10` | amber `#f2a340` |
+| calm / resolved / done | teal `#2b8a6f` | green `#84c793` |
+| structural / data | steel `#2f6d8f` | cyan `#6fc6da` |
+| reject / critical / failed | rust `#b0432c` | red `#e08484` |
+
+Map accents to actual states rather than using them decoratively.
+
 ## Mark certainty and hazards
 
 Use visible labels such as:
@@ -232,8 +247,8 @@ Always show the clean core and the tax: what the model clarifies, what remains c
 5. Build the interaction before polishing the visual design.
 6. Add citations, caveats, accessibility, responsive behavior, and print behavior.
 7. Validate the HTML structure and inspect the generated source.
-8. Load the browser-control skill before using Codex browser automation.
-9. Open the exact local artifact. If direct local-file navigation is unavailable, serve its directory through a temporary local HTTP server.
+8. Load the current host's browser-control capability before using browser automation.
+9. Open the exact local artifact in the available browser. If direct local-file navigation is unavailable, serve its directory through a temporary local HTTP server.
 10. Exercise every primary control and at least one alternate branch.
 11. Check keyboard navigation, focus states, disabled states, reset behavior, and hash links.
 12. Inspect the browser console and fix uncaught errors.

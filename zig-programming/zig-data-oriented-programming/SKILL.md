@@ -6,7 +6,7 @@ metadata:
   hermes:
     tags: [zig, data-oriented-design, simd, cache, arena, performance, zig-0.16]
     category: software-development
-    related_skills: [zig, write-legible-zig, zig-memory-safety-review, zig-mmap-project-template, zig-0.16-stdlib-patterns]
+    related_skills: [zig, write-legible-zig, zig-memory-safety-review, zig-mmap-project-template, zig-0-16-stdlib-patterns]
     wiki: [[data-oriented-programming/index]]
 ---
 
@@ -496,4 +496,4 @@ universal claims about every graph workload.
 
 ## Related Skills
 
-`zig` routes general work; `write-legible-zig` covers structure and verification; `zig-memory-safety-review` covers ownership and invalidation; `zig-mmap-project-template` covers flat storage; `zig-0.16-stdlib-patterns` covers runtime APIs; the wiki provides broader DOD background.
+`zig` routes general work; `write-legible-zig` covers structure and verification; `zig-memory-safety-review` covers ownership and invalidation; `zig-mmap-project-template` covers flat storage; `zig-0-16-stdlib-patterns` covers runtime APIs; the wiki provides broader DOD background.

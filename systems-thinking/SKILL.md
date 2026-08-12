@@ -1,7 +1,6 @@
 ---
 name: systems-thinking
 description: "Analyze complex situations as systems using first-principles reasoning: define the irreducible elements, map components and relationships, identify feedback loops and delays, find constraints and leverage points, then choose the smallest effective intervention. Includes Obsidian-friendly output."
-category: decision-making
 ---
 
 # systems-thinking

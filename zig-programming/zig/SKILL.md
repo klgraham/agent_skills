@@ -72,7 +72,7 @@ reporting workflow.
 | SoA, SIMD, cache behavior, arenas, alignment, or bulk processing | [`zig-data-oriented-programming`](../zig-data-oriented-programming/SKILL.md) |
 | `build.zig`, `build.zig.zon`, modules, tests, dependencies, or cross-compilation | [`zig-build-system`](../zig-build-system/SKILL.md) |
 | Building or installing the Zig compiler | [`zig-build-from-source`](../zig-build-from-source/SKILL.md) |
-| Zig 0.16 HTTP, filesystem, compression, binary parsing, or runtime stdlib APIs | [`zig-0.16-stdlib-patterns`](../zig-0.16-stdlib-patterns/SKILL.md) |
+| Zig 0.16 HTTP, filesystem, compression, binary parsing, or runtime stdlib APIs | [`zig-0-16-stdlib-patterns`](../zig-0-16-stdlib-patterns/SKILL.md) |
 | mmap-friendly flat-file storage or zero-copy layouts | [`zig-mmap-project-template`](../zig-mmap-project-template/SKILL.md) |
 
 ## Hub references
