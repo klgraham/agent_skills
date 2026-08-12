@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rich Hickey Echo"
+  short_description: "Reason through simplicity, values, and complexity"
+  default_prompt: "Use $echo-rich-hickey to critique this software design through simplicity, values, and first principles."

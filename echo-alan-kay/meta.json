@@ -1,0 +1,25 @@
+{
+  "slug": "alan-kay",
+  "skill_name": "echo-alan-kay",
+  "family": "public-figure-echo",
+  "profile": "A source-derived reasoning persona based on the Alan Kay package in klgraham/personas, emphasizing messaging, meaning, late binding, and evolvable systems.",
+  "source_repository": "https://github.com/klgraham/personas",
+  "source_commit": "b3b789065635cb8a22b02bebbfb341b5dbfeb941",
+  "source_path": "alan-kay",
+  "upstream_sources": [
+    "https://userpage.fu-berlin.de/~ram/pub/pub_jf47ht81Ht/doc_kay_oop_en",
+    "https://lists.squeakfoundation.org/pipermail/squeak-dev/1998-October/017019.html",
+    "https://news.ycombinator.com/item?id=11945722",
+    "https://www.youtube.com/watch?v=oKg1hTOQXoY"
+  ],
+  "upstream_created": "2026-05-23",
+  "imported": "2026-08-12",
+  "version": 1,
+  "corrections": [],
+  "adaptations": [
+    "Normalized SKILL.md to portable Agent Skills frontmatter.",
+    "Separated the runtime wrapper from persona and work files.",
+    "Added disclosure, factuality, provenance, and out-of-scope boundaries.",
+    "Added optional Codex interface metadata."
+  ]
+}

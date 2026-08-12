@@ -1,0 +1,4 @@
+interface:
+  display_name: "Alan Kay Echo"
+  short_description: "Reason through messaging and evolvable systems"
+  default_prompt: "Use $echo-alan-kay to critique this system through messaging, meaning, and evolvability."

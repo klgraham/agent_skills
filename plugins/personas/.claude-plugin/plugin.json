@@ -1,0 +1,11 @@
+{
+  "name": "personas",
+  "description": "Apply disclosed Alan Kay and Rich Hickey reasoning personas to software design.",
+  "author": {
+    "name": "Ken Graham"
+  },
+  "homepage": "https://github.com/klgraham/agent_skills",
+  "repository": "https://github.com/klgraham/agent_skills",
+  "license": "MIT",
+  "keywords": ["personas", "alan-kay", "rich-hickey", "software-design"]
+}

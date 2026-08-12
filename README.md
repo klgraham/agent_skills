@@ -1,6 +1,6 @@
 # Agent Skills
 
-Reusable skills for Codex and Claude Code. The skill directories are the canonical source for both hosts: Codex loads them directly, while the Claude marketplace packages them into focused plugins.
+Reusable skills for Claude Code, Codex, and other Agent Skills-compatible harnesses. The skill directories are the canonical portable source: compatible harnesses load them directly, while the Claude marketplace packages them into focused plugins.
 
 The image-description skill is intentionally Codex-only and is not included in any Claude plugin.
 
@@ -19,6 +19,7 @@ claude plugin install obsidian-toolkit@klogram-agent-skills
 claude plugin install systems-thinking@klogram-agent-skills
 claude plugin install workflows@klogram-agent-skills
 claude plugin install skill-development@klogram-agent-skills
+claude plugin install personas@klogram-agent-skills
 claude plugin install zig-programming@klogram-agent-skills
 ```
 
@@ -34,6 +35,7 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | `systems-thinking` | `systems-thinking`, `systems-thinking-reviewer` |
 | `workflows` | `dynamic-workflow`, `interactive-walkthrough`, `pr-walkthrough` |
 | `skill-development` | `echo-skill`, `transcript-skill-miner` |
+| `personas` | `echo-alan-kay`, `echo-rich-hickey` |
 | `zig-programming` | `zig`, `write-legible-zig`, `zig-0-16-stdlib-patterns`, `zig-build-from-source`, `zig-build-system`, `zig-data-oriented-programming`, `zig-memory-safety-review`, `zig-mmap-project-template` |
 
 Claude namespaces installed skills by plugin. For example, invoke `/workflows:pr-walkthrough` or ask Claude naturally for an interactive PR walkthrough.
@@ -59,15 +61,15 @@ claude plugin marketplace add .
 claude plugin install workflows@klogram-agent-skills --scope local
 ```
 
-## Codex installation
+## Codex and other Agent Skills harnesses
 
-Clone the repository, choose a skill directory, and link or copy it into the Codex skills directory:
+Clone the repository, choose a canonical skill directory, and link or copy it into the harness's skill-discovery directory. For Codex:
 
 ```bash
 git clone https://github.com/klgraham/agent_skills.git
 cd agent_skills
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
-ln -s "$PWD/systems-thinking-reviewer" "${CODEX_HOME:-$HOME/.codex}/skills/systems-thinking-reviewer"
+ln -s "$PWD/echo-rich-hickey" "${CODEX_HOME:-$HOME/.codex}/skills/echo-rich-hickey"
 ```
 
 Restart Codex if the skill does not appear immediately. To update a linked installation, pull the repository:
@@ -76,7 +78,7 @@ Restart Codex if the skill does not appear immediately. To update a linked insta
 git pull --ff-only
 ```
 
-Every skill in the Claude plugins is also a Codex-compatible skill directory with a `SKILL.md`. The interactive walkthrough's canonical Codex path is `codex/interactive-walkthrough`; Zig skills live under `zig-programming/`.
+Every skill in the Claude plugins is also a portable skill directory with a `SKILL.md`; `agents/openai.yaml` is optional Codex interface metadata and does not change the portable runtime instructions. Other compatible harnesses can discover the same directory according to their own installation convention. The interactive walkthrough's canonical Codex path is `codex/interactive-walkthrough`; Zig skills live under `zig-programming/`.
 
 ## Codex-only skills
 
@@ -92,6 +94,7 @@ Image-description skills are excluded from `.claude-plugin/marketplace.json` and
 .claude-plugin/marketplace.json   Claude marketplace catalog
 plugins/                         Claude plugin manifests and skill links
 <skill>/SKILL.md                 Canonical portable skills
+<skill>/agents/openai.yaml       Optional Codex interface metadata
 codex/interactive-walkthrough/   Canonical interactive walkthrough skill
 zig-programming/                 Canonical Zig skill family
 ```

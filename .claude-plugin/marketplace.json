@@ -1,8 +1,10 @@
 {
   "name": "klogram-agent-skills",
-  "description": "Portable engineering, Obsidian, workflow, systems-thinking, and Zig skills for Claude Code.",
   "owner": {
     "name": "Ken Graham"
+  },
+  "metadata": {
+    "description": "Portable engineering, Obsidian, workflow, persona, systems-thinking, and Zig skills for Claude Code."
   },
   "plugins": [
     {
@@ -27,6 +29,12 @@
       "name": "skill-development",
       "source": "./plugins/skill-development",
       "description": "Mine reusable workflows from transcripts and build evidence-grounded persona skills.",
+      "category": "development"
+    },
+    {
+      "name": "personas",
+      "source": "./plugins/personas",
+      "description": "Apply disclosed Alan Kay and Rich Hickey reasoning personas to software design.",
       "category": "development"
     },
     {

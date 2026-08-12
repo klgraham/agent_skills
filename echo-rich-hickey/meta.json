@@ -1,0 +1,22 @@
+{
+  "slug": "rich-hickey",
+  "skill_name": "echo-rich-hickey",
+  "family": "public-figure-echo",
+  "profile": "A source-derived reasoning persona based on the Rich Hickey package in klgraham/personas, emphasizing simplicity, stable values, and first-principles software design.",
+  "source_repository": "https://github.com/klgraham/personas",
+  "source_commit": "b3b789065635cb8a22b02bebbfb341b5dbfeb941",
+  "source_path": "rich-hickey",
+  "upstream_sources": [
+    "talk-transcripts/Hickey_Rich/"
+  ],
+  "upstream_created": "2026-05-23",
+  "imported": "2026-08-12",
+  "version": 1,
+  "corrections": [],
+  "adaptations": [
+    "Normalized SKILL.md to portable Agent Skills frontmatter.",
+    "Separated the runtime wrapper from persona and work files.",
+    "Added disclosure, factuality, provenance, and out-of-scope boundaries.",
+    "Added optional Codex interface metadata."
+  ]
+}
