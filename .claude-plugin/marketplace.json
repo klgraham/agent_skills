@@ -1,0 +1,39 @@
+{
+  "name": "klogram-agent-skills",
+  "description": "Portable engineering, Obsidian, workflow, systems-thinking, and Zig skills for Claude Code.",
+  "owner": {
+    "name": "Ken Graham"
+  },
+  "plugins": [
+    {
+      "name": "obsidian-toolkit",
+      "source": "./plugins/obsidian-toolkit",
+      "description": "Create and maintain Obsidian vault content, Bases, plugins, and themes.",
+      "category": "productivity"
+    },
+    {
+      "name": "systems-thinking",
+      "source": "./plugins/systems-thinking",
+      "description": "Analyze systems and perform evidence-grounded sociotechnical reviews.",
+      "category": "development"
+    },
+    {
+      "name": "workflows",
+      "source": "./plugins/workflows",
+      "description": "Run dynamic multi-agent workflows and guide interactive PR or HTML walkthroughs.",
+      "category": "development"
+    },
+    {
+      "name": "skill-development",
+      "source": "./plugins/skill-development",
+      "description": "Mine reusable workflows from transcripts and build evidence-grounded persona skills.",
+      "category": "development"
+    },
+    {
+      "name": "zig-programming",
+      "source": "./plugins/zig-programming",
+      "description": "Develop, review, optimize, and package Zig 0.16 software.",
+      "category": "development"
+    }
+  ]
+}

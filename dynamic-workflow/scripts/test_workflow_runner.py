@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Self-contained tests for workflow_runner.py using a fake Codex executable."""
+"""Self-contained tests for workflow_runner.py using fake Codex and Claude executables."""
 
 from __future__ import annotations
 
@@ -53,6 +53,23 @@ print(json.dumps({'type': 'fake.complete'}))
             encoding="utf-8",
         )
         fake.chmod(0o755)
+        fake_claude = root / "fake-claude"
+        fake_claude.write_text(
+            """#!/usr/bin/env python3
+import json, sys
+args = sys.argv[1:]
+model = args[args.index('--model') + 1] if '--model' in args else 'inherit'
+prompt = sys.stdin.read()
+value = {'harness': 'claude', 'prompt': prompt, '_model': model,
+         '_tools': args[args.index('--tools') + 1]}
+envelope = {'type': 'result', 'result': json.dumps(value)}
+if '--json-schema' in args:
+    envelope['structured_output'] = value
+print(json.dumps(envelope))
+""",
+            encoding="utf-8",
+        )
+        fake_claude.chmod(0o755)
         schema = {"type": "object"}
         spec = {
             "version": 1,
@@ -109,6 +126,7 @@ print(json.dumps({'type': 'fake.complete'}))
         preview = run("preview", str(workflow))
         assert "Worker upper bound: 5 plus dynamically discovered map items" in preview.stdout
         assert "Model policy: balanced" in preview.stdout
+        assert "Harness: codex" in preview.stdout
         assert "discover: agent; role=discovery; model=test-fast" in preview.stdout
         assert "inspect: map; role=verification; model=test-strong" in preview.stdout
         run("run", str(workflow), "--state-dir", str(state), "--codex-bin", str(fake), expected=2)
@@ -167,6 +185,48 @@ print(json.dumps({'type': 'fake.complete'}))
         invalid_workflow.write_text(json.dumps(invalid_policy), encoding="utf-8")
         invalid = run("validate", str(invalid_workflow), expected=2)
         assert "missing tiers: strong" in invalid.stderr
+
+        claude_spec = {
+            "version": 1,
+            "name": "claude-self-test",
+            "harness": "claude",
+            "workdir": str(root),
+            "sandbox": "read-only",
+            "stages": [
+                {
+                    "id": "inspect",
+                    "type": "agent",
+                    "prompt": "Inspect with Claude.",
+                    "output_schema": schema,
+                }
+            ],
+        }
+        claude_workflow = root / "claude.json"
+        claude_workflow.write_text(json.dumps(claude_spec), encoding="utf-8")
+        claude_preview = run("preview", str(claude_workflow))
+        assert "Harness: claude" in claude_preview.stdout
+        assert "Claude tools: Read, Glob, Grep, WebFetch, WebSearch" in claude_preview.stdout
+        claude_state = root / "claude-state"
+        run(
+            "run",
+            str(claude_workflow),
+            "--approve",
+            "--state-dir",
+            str(claude_state),
+            "--agent-bin",
+            str(fake_claude),
+        )
+        claude_result = json.loads((claude_state / "result.json").read_text(encoding="utf-8"))
+        assert claude_result["result"]["harness"] == "claude"
+        assert claude_result["result"]["prompt"] == "Inspect with Claude."
+        assert "Read" in claude_result["result"]["_tools"]
+        assert "Edit" not in claude_result["result"]["_tools"]
+
+        unsafe_claude = dict(claude_spec, name="unsafe-claude", claude_tools=["Read", "Bash"])
+        unsafe_workflow = root / "unsafe-claude.json"
+        unsafe_workflow.write_text(json.dumps(unsafe_claude), encoding="utf-8")
+        unsafe = run("validate", str(unsafe_workflow), expected=2)
+        assert "read-only Claude workflows cannot enable: Bash" in unsafe.stderr
 
     print("all workflow runner tests passed")
     return 0

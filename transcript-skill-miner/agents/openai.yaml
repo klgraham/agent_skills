@@ -1,0 +1,4 @@
+interface:
+  display_name: "Transcript Skill Miner"
+  short_description: "Find reusable skills in agent transcripts"
+  default_prompt: "Use $transcript-skill-miner to find reusable skill opportunities in my current agent session."

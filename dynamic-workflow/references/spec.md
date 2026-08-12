@@ -18,6 +18,7 @@ The workflow file is JSON. Required fields are `version`, `name`, `workdir`, and
   "version": 1,
   "name": "audit-routes",
   "description": "Audit and verify route authentication",
+  "harness": "codex",
   "workdir": "/absolute/path/to/repository",
   "sandbox": "read-only",
   "max_concurrency": 4,
@@ -37,6 +38,7 @@ The workflow file is JSON. Required fields are `version`, `name`, `workdir`, and
 ```
 
 - `name` must contain only lowercase letters, digits, and hyphens.
+- `harness` is `codex` or `claude` and defaults to `codex`. The `run --harness` option can override it.
 - `workdir` must be an existing absolute directory.
 - `sandbox` is `read-only` or `workspace-write`. The latter also requires the runner's `--allow-writes` flag.
 - `max_concurrency` is 1 through 16 and applies to map workers.
@@ -44,6 +46,7 @@ The workflow file is JSON. Required fields are `version`, `name`, `workdir`, and
 - `model` is an optional single-model override for every stage. Do not combine it with `model_policy`.
 - `model_policy` selects models by semantic stage role. See the next section.
 - `args` contains invocation data available to templates.
+- `claude_tools` optionally replaces the Claude backend's default tool list. Read-only workflows cannot enable `Bash`, `Edit`, `Write`, or `NotebookEdit`. Workspace-write workflows still require `--allow-writes`.
 
 Stages execute in listed order. Each stage is a barrier: the next begins only after the current stage finishes and its checkpoint is written.
 
@@ -76,7 +79,7 @@ The supported strategies are:
 | `balanced` | fast | fast | strong | standard | strong |
 | `quality` | strong | strong | strong | strong | strong |
 
-For any non-`inherit` strategy, `models` must provide every tier used by that strategy. Codex must choose exact model IDs that are currently available in the user's Codex environment. The runner intentionally contains no hard-coded model catalog.
+For any non-`inherit` strategy, `models` must provide every tier used by that strategy. Choose exact model IDs currently available in the selected harness. The runner intentionally contains no hard-coded model catalog.
 
 Stages default to these roles: `agent` and `map` use `worker`, `reduce` uses `synthesis`, and `loop` uses `repair`. Set `model_role` when semantics differ:
 
@@ -109,7 +112,7 @@ Values ending in `_json` are JSON encoded. Other objects are also encoded rather
 
 ### Agent
 
-Run one isolated Codex worker.
+Run one isolated worker in the selected harness.
 
 ```json
 {
@@ -178,7 +181,7 @@ Loop output records all rounds and whether the stop condition was satisfied. Rea
 
 ## Safety and checkpoints
 
-The runner invokes `codex exec` directly without a shell. Workers are ephemeral and receive the workflow's sandbox and working directory. The workflow itself has no command-execution primitive.
+The runner invokes either `codex exec` or `claude --print` directly without a shell. Codex workers receive the selected sandbox and working directory. Claude workers run with no session persistence, `dontAsk` permission mode, and an explicit tool allowlist; the default read-only list excludes Bash and editing tools. The workflow itself has no command-execution primitive.
 
 Checkpoints include a SHA-256 hash of the complete spec. `--resume` refuses a checkpoint created from a different spec. `--restart` discards checkpoint progress for the run directory while leaving the workflow file untouched.
 
@@ -188,6 +191,7 @@ Checkpoints include a SHA-256 hash of the complete spec. `--resume` refuses a ch
 {
   "version": 1,
   "name": "verified-route-audit",
+  "harness": "codex",
   "workdir": "/absolute/path/to/repository",
   "sandbox": "read-only",
   "max_concurrency": 4,

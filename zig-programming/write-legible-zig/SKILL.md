@@ -69,7 +69,7 @@ exhaustive `switch` are part of the legibility surface.
   `zig-memory-safety-review` and prove the lifetime in the source and tests.
 - **Build-file work:** also load `zig-build-system`; keep build configuration
   legible without duplicating its canonical templates here.
-- **Version-sensitive stdlib work:** also load `zig-0.16-stdlib-patterns` and
+- **Version-sensitive stdlib work:** also load `zig-0-16-stdlib-patterns` and
   verify the installed compiler rather than relying on remembered APIs.
 
 ## Apply the final gate

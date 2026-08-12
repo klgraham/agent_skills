@@ -1,6 +1,6 @@
 ---
 name: dynamic-workflow
-description: Design and run script-backed multi-agent workflows with isolated Codex workers, structured outputs, barriers, verification stages, bounded loops, and resumable checkpoints. Use when the user explicitly asks for a workflow, ultracode, broad parallelism, or subagent orchestration; or when a task is too wide, long-running, repetitive, or self-grading for one context, such as codebase-wide audits, large migrations, cross-checked research, adversarial verification, per-item classification, or loop-until-clean repair. Do not use for small tasks that fit comfortably in one Codex turn.
+description: Design and run script-backed multi-agent workflows with isolated Codex or Claude workers, structured outputs, barriers, verification stages, bounded loops, and resumable checkpoints. Use when the user explicitly asks for a workflow, ultracode, broad parallelism, or subagent orchestration; or when a task is too wide, long-running, repetitive, or self-grading for one context, such as codebase-wide audits, large migrations, cross-checked research, adversarial verification, per-item classification, or loop-until-clean repair. Do not use for small tasks that fit comfortably in one agent turn.
 ---
 
 # Dynamic Workflow
@@ -9,7 +9,7 @@ Move orchestration state out of the conversation and into a declarative JSON wor
 
 ## Choose the execution path
 
-Use direct Codex collaboration tools when the work needs only a few workers and the parent can comfortably retain every result. Use the runner when any of these apply:
+Use the current host's direct collaboration or subagent tools when the work needs only a few workers and the parent can comfortably retain every result. Use the runner when any of these apply:
 
 - Process many independent items with the same prompt.
 - Preserve intermediate results outside the parent context.
@@ -30,8 +30,8 @@ Do not pay the workflow overhead for one-file edits, small bug fixes, or fewer t
    - generate then filter;
    - generate candidates then compare;
    - bounded loop until a structured condition passes.
-4. Write the workflow under the current workspace, normally `.codex/workflows/<name>.json`. Never write generated workflows inside this skill directory.
-5. Select a model policy and record current, available model IDs for its tiers. Do not guess model names or embed "latest" aliases without checking the current Codex environment or official model guidance.
+4. Write the workflow under the current workspace, normally `.codex/workflows/<name>.json` in Codex or `.claude/workflows/<name>.json` in Claude Code. Never write generated workflows inside this skill directory.
+5. Set `harness` to `codex` or `claude` for the host that should execute workers. Select a model policy and record current, available model IDs for its tiers. Do not guess model names or embed "latest" aliases without checking the selected environment or official model guidance.
 6. Run `preview`, show the user the stages, resolved model per stage, worker upper bound, sandbox, and write policy, and obtain confirmation before a materially expensive or write-capable run.
 
 Commands:
@@ -43,6 +43,8 @@ python3 <skill-dir>/scripts/workflow_runner.py run .codex/workflows/<name>.json 
 ```
 
 Use `--allow-writes` in addition to `--approve` only when the workflow declares `workspace-write` and the user has authorized edits. Never generate or use `danger-full-access`.
+
+The Claude backend defaults to read-only tools (`Read`, `Glob`, `Grep`, and web reads). A Claude `workspace-write` workflow adds `Edit` and `Write` only after `--allow-writes`. If a workflow needs a different Claude tool set, declare and preview `claude_tools`; read-only workflows cannot enable Bash or editing tools.
 
 ## Select models by policy
 
@@ -76,7 +78,7 @@ Use roles `discovery`, `worker`, `verification`, `repair`, and `synthesis`. Reco
 
 ## Resume and synthesize
 
-The runner writes checkpoints under `.codex/workflow-runs/<workflow-name>/` unless `--state-dir` overrides it. Re-running the same spec with `--resume` skips completed stages. A changed spec cannot reuse an old checkpoint.
+The runner writes checkpoints under `.<harness>/workflow-runs/<workflow-name>/` unless `--state-dir` overrides it. Re-running the same spec with `--resume` skips completed stages. A changed spec cannot reuse an old checkpoint.
 
 After completion:
 

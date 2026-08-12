@@ -1,10 +1,11 @@
 ---
 name: zig-mmap-project-template
 description: Create a new Zig 0.16 library with mmap-friendly flat-file storage. Template and patterns for zero-copy memory-mapped data structures.
-version: 1.0.0
-author: Hermes Agent
-tags: [zig, mmap, data-structures, template]
-category: software-development
+license: MIT
+metadata:
+  hermes:
+    tags: [zig, mmap, data-structures, template]
+    category: software-development
 ---
 
 # Zig mmap Library Template
@@ -276,7 +277,7 @@ pub fn loadFile(_allocator: mem.Allocator, path: []const u8) !LoadedData {
 2. **Unused parameters**: Prefix with `_` or use `var`/`const` with underscore: `_allocator`
 3. **Struct field ordering**: `extern struct` fields cannot be reordered; use explicit byte offsets
 4. **Tail vectors**: When slicing remaining data, ensure bounds checking: `data[offset..][0..remaining]`
-5. **`ArrayListUnmanaged` Zig 0.16 breaking change**: `std.ArrayListUnmanaged` is now an alias for the managed `std.ArrayList` (with `allocator` field). Any `.{ }` zero-init of `ArrayListUnmanaged` fields fails with `error: missing struct field: items`. Replace all `.{ }` with `.empty`. This affects every `Graph.init`, `HnswIndex.init`, `compactEdges`, and local `ArrayListUnmanaged` variables. See `zig-0.16-stdlib-patterns` → `references/zig-0.16-arraylist-migration.md`.
+5. **`ArrayListUnmanaged` Zig 0.16 breaking change**: `std.ArrayListUnmanaged` is now an alias for the managed `std.ArrayList` (with `allocator` field). Any `.{ }` zero-init of `ArrayListUnmanaged` fields fails with `error: missing struct field: items`. Replace all `.{ }` with `.empty`. This affects every `Graph.init`, `HnswIndex.init`, `compactEdges`, and local `ArrayListUnmanaged` variables. See `zig-0-16-stdlib-patterns` → `references/zig-0.16-arraylist-migration.md`.
 6. **Nested `ArrayListUnmanaged` cleanup**: If runtime construction uses `ArrayListUnmanaged(ArrayListUnmanaged(T))`, deinit every inner list before deiniting the outer list. If rolling back a just-appended inner list, Zig 0.16 `pop()` returns an optional, so use `var inner = outer.pop().?; inner.deinit(allocator);`.
 6. **Flat read path after mutable adjacency changes**: If `getEdges()` reads compact flat arrays but `addEdge()` mutates construction adjacency, call `compactEdges()` before any search/serialization that depends on `getEdges()`. Minimal safe pattern is compact once after each node insertion; faster later pattern is make construction-time search read adjacency directly and compact only before snapshot/save.
 7. **Serialization stale-flat guard**: For graph snapshots, add a cheap `isCompacted()` invariant check and assert it in `saveFile()` so stale flat `offsets/lengths/data` never silently hit disk.

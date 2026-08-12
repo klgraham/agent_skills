@@ -1,8 +1,6 @@
 ---
-name: zig-0.16-stdlib-patterns
+name: zig-0-16-stdlib-patterns
 description: "Zig 0.16 stdlib runtime API patterns: HTTP client, file I/O, gzip decompression, binary parsing, and common stdlib API differences from 0.15. Use when writing or debugging Zig code that uses std.http, std.fs, or std.compress."
-version: 1.0.0
-author: Hermes Agent
 license: MIT
 metadata:
   hermes:
