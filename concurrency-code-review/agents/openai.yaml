@@ -1,0 +1,4 @@
+interface:
+  display_name: "Concurrency Code Review"
+  short_description: "Prove concurrent and async code is correct"
+  default_prompt: "Use $concurrency-code-review to audit this change for concurrency and async correctness."

@@ -1,8 +1,10 @@
 {
   "name": "klogram-agent-skills",
-  "description": "Portable engineering, Obsidian, workflow, systems-thinking, and Zig skills for Claude Code.",
   "owner": {
     "name": "Ken Graham"
+  },
+  "metadata": {
+    "description": "Portable engineering and productivity skills for Claude Code."
   },
   "plugins": [
     {
@@ -15,6 +17,12 @@
       "name": "systems-thinking",
       "source": "./plugins/systems-thinking",
       "description": "Analyze systems and perform evidence-grounded sociotechnical reviews.",
+      "category": "development"
+    },
+    {
+      "name": "code-review",
+      "source": "./plugins/code-review",
+      "description": "Audit concurrent and asynchronous code for correctness.",
       "category": "development"
     },
     {
