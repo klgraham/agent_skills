@@ -17,6 +17,7 @@ Then install any plugin:
 ```bash
 claude plugin install obsidian-toolkit@klogram-agent-skills
 claude plugin install systems-thinking@klogram-agent-skills
+claude plugin install code-review@klogram-agent-skills
 claude plugin install workflows@klogram-agent-skills
 claude plugin install skill-development@klogram-agent-skills
 claude plugin install zig-programming@klogram-agent-skills
@@ -32,6 +33,7 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 |---|---|
 | `obsidian-toolkit` | `obsidian-bases`, `obsidian-cli`, `obsidian-plugin`, `obsidian-theme` |
 | `systems-thinking` | `systems-thinking`, `systems-thinking-reviewer` |
+| `code-review` | `concurrency-code-review` |
 | `workflows` | `dynamic-workflow`, `interactive-walkthrough`, `pr-walkthrough` |
 | `skill-development` | `echo-skill`, `transcript-skill-miner` |
 | `zig-programming` | `zig`, `write-legible-zig`, `zig-0-16-stdlib-patterns`, `zig-build-from-source`, `zig-build-system`, `zig-data-oriented-programming`, `zig-memory-safety-review`, `zig-mmap-project-template` |
@@ -95,5 +97,7 @@ plugins/                         Claude plugin manifests and skill links
 codex/interactive-walkthrough/   Canonical interactive walkthrough skill
 zig-programming/                 Canonical Zig skill family
 ```
+
+The `code-review` plugin includes a standalone concurrency audit with Python-specific `asyncio`, thread, executor, process, and queue checks.
 
 Claude plugin skill entries are relative symlinks to canonical directories in this repository. Claude Code dereferences same-marketplace links when it copies a plugin into its cache, so each installed plugin remains self-contained without maintaining duplicate skill copies.
