@@ -1,4 +1,0 @@
-interface:
-  display_name: "Interactive Walkthrough"
-  short_description: "Build evidence-grounded interactive explainers"
-  default_prompt: "Use $interactive-walkthrough to create and verify a self-contained interactive HTML walkthrough of this subject."

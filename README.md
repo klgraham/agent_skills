@@ -18,7 +18,6 @@ Then install any plugin:
 claude plugin install obsidian-toolkit@klogram-agent-skills
 claude plugin install systems-thinking@klogram-agent-skills
 claude plugin install code-review@klogram-agent-skills
-claude plugin install workflows@klogram-agent-skills
 claude plugin install skill-development@klogram-agent-skills
 claude plugin install zig-programming@klogram-agent-skills
 ```
@@ -34,11 +33,10 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | `obsidian-toolkit` | `obsidian-bases`, `obsidian-cli`, `obsidian-plugin`, `obsidian-theme` |
 | `systems-thinking` | `systems-thinking`, `systems-thinking-reviewer` |
 | `code-review` | `concurrency-code-review` |
-| `workflows` | `dynamic-workflow`, `interactive-walkthrough`, `pr-walkthrough` |
 | `skill-development` | `transcript-skill-miner` |
 | `zig-programming` | `zig`, `write-legible-zig`, `zig-0-16-stdlib-patterns`, `zig-build-from-source`, `zig-build-system`, `zig-data-oriented-programming`, `zig-memory-safety-review`, `zig-mmap-project-template` |
 
-Claude namespaces installed skills by plugin. For example, invoke `/workflows:pr-walkthrough` or ask Claude naturally for an interactive PR walkthrough.
+Claude namespaces installed skills by plugin. For example, invoke `/code-review:concurrency-code-review` or ask Claude naturally for a concurrency review.
 
 ### Update Claude plugins
 
@@ -46,7 +44,7 @@ Refresh the marketplace and update an installed plugin:
 
 ```bash
 claude plugin marketplace update klogram-agent-skills
-claude plugin update workflows@klogram-agent-skills
+claude plugin update code-review@klogram-agent-skills
 ```
 
 The marketplace intentionally omits fixed plugin versions, so each new Git commit can be resolved as an update.
@@ -58,7 +56,7 @@ From the repository root:
 ```bash
 claude plugin validate .
 claude plugin marketplace add .
-claude plugin install workflows@klogram-agent-skills --scope local
+claude plugin install code-review@klogram-agent-skills --scope local
 ```
 
 ## Codex installation
@@ -78,7 +76,7 @@ Restart Codex if the skill does not appear immediately. To update a linked insta
 git pull --ff-only
 ```
 
-Every skill in the Claude plugins is also a Codex-compatible skill directory with a `SKILL.md`. The interactive walkthrough's canonical Codex path is `codex/interactive-walkthrough`; Zig skills live under `zig-programming/`.
+Every skill in the Claude plugins is also a Codex-compatible skill directory with a `SKILL.md`. Zig skills live under `zig-programming/`.
 
 ## Codex-only skills
 
@@ -94,7 +92,6 @@ Image-description skills are excluded from `.claude-plugin/marketplace.json` and
 .claude-plugin/marketplace.json   Claude marketplace catalog
 plugins/                         Claude plugin manifests and skill links
 <skill>/SKILL.md                 Canonical portable skills
-codex/interactive-walkthrough/   Canonical interactive walkthrough skill
 zig-programming/                 Canonical Zig skill family
 ```
 
