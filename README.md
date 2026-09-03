@@ -33,7 +33,7 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | `obsidian-toolkit` | `obsidian-bases`, `obsidian-cli`, `obsidian-plugin`, `obsidian-theme` |
 | `systems-thinking` | `systems-thinking`, `systems-thinking-reviewer` |
 | `code-review` | `concurrency-code-review` |
-| `skill-development` | `echo-skill`, `transcript-skill-miner` |
+| `skill-development` | `transcript-skill-miner` |
 | `zig-programming` | `zig`, `write-legible-zig`, `zig-0-16-stdlib-patterns`, `zig-build-from-source`, `zig-build-system`, `zig-data-oriented-programming`, `zig-memory-safety-review`, `zig-mmap-project-template` |
 
 Claude namespaces installed skills by plugin. For example, invoke `/code-review:concurrency-code-review` or ask Claude naturally for a concurrency review.

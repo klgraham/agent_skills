@@ -28,7 +28,7 @@
     {
       "name": "skill-development",
       "source": "./plugins/skill-development",
-      "description": "Mine reusable workflows from transcripts and build evidence-grounded persona skills.",
+      "description": "Mine reusable workflows from transcripts.",
       "category": "development"
     },
     {
