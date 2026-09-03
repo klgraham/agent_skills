@@ -26,12 +26,6 @@
       "category": "development"
     },
     {
-      "name": "workflows",
-      "source": "./plugins/workflows",
-      "description": "Run dynamic multi-agent workflows and guide interactive PR or HTML walkthroughs.",
-      "category": "development"
-    },
-    {
       "name": "skill-development",
       "source": "./plugins/skill-development",
       "description": "Mine reusable workflows from transcripts and build evidence-grounded persona skills.",
