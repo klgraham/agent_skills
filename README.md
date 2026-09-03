@@ -35,7 +35,7 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | `systems-thinking` | `systems-thinking`, `systems-thinking-reviewer` |
 | `code-review` | `concurrency-code-review` |
 | `workflows` | `dynamic-workflow`, `interactive-walkthrough`, `pr-walkthrough` |
-| `skill-development` | `echo-skill`, `transcript-skill-miner` |
+| `skill-development` | `transcript-skill-miner` |
 | `zig-programming` | `zig`, `write-legible-zig`, `zig-0-16-stdlib-patterns`, `zig-build-from-source`, `zig-build-system`, `zig-data-oriented-programming`, `zig-memory-safety-review`, `zig-mmap-project-template` |
 
 Claude namespaces installed skills by plugin. For example, invoke `/workflows:pr-walkthrough` or ask Claude naturally for an interactive PR walkthrough.
