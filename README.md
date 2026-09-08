@@ -18,6 +18,7 @@ Then install any plugin:
 claude plugin install obsidian-toolkit@klogram-agent-skills
 claude plugin install systems-thinking@klogram-agent-skills
 claude plugin install code-review@klogram-agent-skills
+claude plugin install pr-visualizer@klogram-agent-skills
 claude plugin install skill-development@klogram-agent-skills
 claude plugin install zig-programming@klogram-agent-skills
 ```
@@ -33,10 +34,11 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | `obsidian-toolkit` | `obsidian-bases`, `obsidian-cli`, `obsidian-plugin`, `obsidian-theme` |
 | `systems-thinking` | `systems-thinking`, `systems-thinking-reviewer` |
 | `code-review` | `concurrency-code-review` |
+| `pr-visualizer` | `pr-visualizer` |
 | `skill-development` | `transcript-skill-miner` |
 | `zig-programming` | `zig`, `write-legible-zig`, `zig-0-16-stdlib-patterns`, `zig-build-from-source`, `zig-build-system`, `zig-data-oriented-programming`, `zig-memory-safety-review`, `zig-mmap-project-template` |
 
-Claude namespaces installed skills by plugin. For example, invoke `/code-review:concurrency-code-review` or ask Claude naturally for a concurrency review.
+Claude namespaces installed skills by plugin. For example, invoke `/pr-visualizer:pr-visualizer` or ask Claude to visualize a pull request.
 
 ### Update Claude plugins
 
@@ -44,7 +46,7 @@ Refresh the marketplace and update an installed plugin:
 
 ```bash
 claude plugin marketplace update klogram-agent-skills
-claude plugin update code-review@klogram-agent-skills
+claude plugin update pr-visualizer@klogram-agent-skills
 ```
 
 The marketplace intentionally omits fixed plugin versions, so each new Git commit can be resolved as an update.
@@ -56,7 +58,7 @@ From the repository root:
 ```bash
 claude plugin validate .
 claude plugin marketplace add .
-claude plugin install code-review@klogram-agent-skills --scope local
+claude plugin install pr-visualizer@klogram-agent-skills --scope local
 ```
 
 ## Codex installation
@@ -77,6 +79,8 @@ git pull --ff-only
 ```
 
 Every skill in the Claude plugins is also a Codex-compatible skill directory with a `SKILL.md`. Zig skills live under `zig-programming/`.
+
+`pr-visualizer` combines PR Lens diagrams with source-grounded walkthroughs. It validates and renders a bundled graph example with `python3 pr-visualizer/scripts/verify_example.py`.
 
 ## Codex-only skills
 
