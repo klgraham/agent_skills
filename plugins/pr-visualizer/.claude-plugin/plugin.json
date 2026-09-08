@@ -1,0 +1,11 @@
+{
+  "name": "pr-visualizer",
+  "description": "Create source-grounded PR Lens diagrams and guided pull-request walkthroughs.",
+  "author": {
+    "name": "Ken Graham"
+  },
+  "homepage": "https://github.com/klgraham/agent_skills",
+  "repository": "https://github.com/klgraham/agent_skills",
+  "license": "MIT",
+  "keywords": ["pull-request", "visualization", "architecture", "data-flow", "pr-lens"]
+}
