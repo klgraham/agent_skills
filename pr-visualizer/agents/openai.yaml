@@ -1,4 +1,0 @@
-interface:
-  display_name: "PR Visualizer"
-  short_description: "Build source-grounded PR Lens walkthroughs"
-  default_prompt: "Use $pr-visualizer to turn this pull request into a verified architecture and data-flow walkthrough."
