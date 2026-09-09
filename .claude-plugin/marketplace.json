@@ -26,12 +26,6 @@
       "category": "development"
     },
     {
-      "name": "pr-visualizer",
-      "source": "./plugins/pr-visualizer",
-      "description": "Create source-grounded PR Lens diagrams and guided pull-request walkthroughs.",
-      "category": "development"
-    },
-    {
       "name": "skill-development",
       "source": "./plugins/skill-development",
       "description": "Mine reusable workflows from transcripts.",
