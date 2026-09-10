@@ -78,11 +78,7 @@ reporting workflow.
 ## Hub references
 
 - [`references/error_handling.md`](references/error_handling.md) — focused
-  `errdefer`, allocator pairing, and Zig 0.16 error-handling patterns.
-- [`references/updating-zig-skills-for-new-releases.md`](references/updating-zig-skills-for-new-releases.md) — the release-audit process for
-  this skill family.
-- [`references/zig-skill-tree-design.md`](references/zig-skill-tree-design.md) —
-  the lightweight-hub and narrow-sibling design contract.
+  `errdefer` and allocator-pairing patterns.
 
 ## Final handoff
 
