@@ -61,7 +61,4 @@ This captures the reproducible audit process developed while aligning the `zig-p
 - Assuming simple `pub fn main() !void` is the only pattern (juicy main is now the rich recommended one).
 - Initial grep missing stragglers — always compile the full test suite iteratively after bulk edits.
 
-## Related Session Knowledge (in this umbrella)
-- `references/error_handling.md` — 0.16-specific errdefer and var/const strictness notes.
-
-Use this reference when the user next asks to bring any Zig-related documentation or skill up to the current stable release. The process is deterministic and works for any future X.Y.Z bump.
+Use this reference when bringing any Zig-related documentation or skill up to the current stable release. The process is deterministic and works for any future X.Y.Z bump.
