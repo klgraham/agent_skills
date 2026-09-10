@@ -20,9 +20,7 @@ purpose-built query language for Obsidian — simpler than Dataview, directly
 integrated into the app, with no plugin required.
 
 Your job is to help the user write correct, idiomatic `.base` files and embedded
-`base` code blocks, and to explain how the system works. The vault's `CLAUDE.md`
-ontology is authoritative for what properties notes in this vault actually have —
-use it to write relevant, accurate queries.
+`base` code blocks, and to explain how the system works.
 
 ## What a Base File Is
 
@@ -239,53 +237,6 @@ filters:
 
 ---
 
-## Vault-Specific Patterns (Metaconcert)
-
-This vault uses a rich frontmatter ontology (see `CLAUDE.md`). Common base patterns:
-
-**All unread papers:**
-```yaml
-filters:
-  and:
-    - file.hasTag("source/paper")
-    - 'read != true'
-```
-
-**Active efforts:**
-```yaml
-filters:
-  and:
-    - 'type == "effort"'
-    - file.hasTag("Status/Current")
-```
-
-**People to follow up with:**
-```yaml
-filters:
-  and:
-    - 'type == "person"'
-    - 'follow_up == true'
-```
-
-**Recent daily notes:**
-```yaml
-filters:
-  and:
-    - 'type == "daily"'
-    - 'file.ctime > now() - "14d"'
-```
-
-**Sources not yet digested:**
-```yaml
-filters:
-  and:
-    - 'type == "source"'
-    - 'read == true'
-    - 'digested != true'
-```
-
----
-
 ## Workflow
 
 When helping the user build a base:
@@ -293,9 +244,8 @@ When helping the user build a base:
 1. **Clarify the goal** — What notes should be included? What properties matter?
    What does the user want to see or compute?
 
-2. **Check the vault ontology** — Use `CLAUDE.md` to identify the right `type:`,
-   tags, and frontmatter fields for the target note type. Don't invent property
-   names that don't exist in the vault.
+2. **Read vault ontology** — Read the vault's own ontology / property docs if
+   present; do not invent fields.
 
 3. **Start with filters** — Get the right set of notes first, then layer in
    formulas and view configuration.

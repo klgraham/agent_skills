@@ -117,9 +117,9 @@ When a filter is a string, it's a boolean expression evaluated per-note:
 
 ```
 file.hasTag("MachineLearning")
-file.inFolder("Atlas/Sources/Papers")
+file.inFolder("Projects")
 file.hasLink("causal inference")
-'type == "effort"'
+'status == "active"'
 'read != true'
 'priority == "high"'
 'file.mtime > now() - "7d"'
@@ -361,13 +361,6 @@ filters:
 ---
 
 ## Common Patterns
-
-### Filter by type (Metaconcert vault)
-
-```yaml
-filters:
-  - 'type == "source"'
-```
 
 ### Multi-tag filter
 
