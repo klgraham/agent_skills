@@ -304,49 +304,6 @@ Do not:
 - Prefer changing incentives or interfaces over adding policy text
 - If behavior persists, look for the loop that reproduces it
 
-## Relationship to Other Decision Frameworks
-
-These three related skills form a layered stack — use them together or independently:
-
-### First Principles Reasoning (`first-principles-reasoner`)
-Use to reduce the problem to bedrock truths before mapping structure.
-
-Key questions:
-- What are the irreducible elements?
-- What must be true for this system to exist?
-- What is the minimum viable mechanism?
-- What can be deleted without breaking correctness?
-
-### OODA Loop (`ooda-loop`)
-Use to decide and execute the next bounded move inside the mapped structure.
-
-Key questions:
-- What is the smallest move with the highest information gain?
-- What is the predicted result?
-- What triggers a re-loop vs. stop?
-
-### Systems-Thinking + OODA Combined (`systems-thinking-ooda`)
-Use when the problem is both structurally messy and operationally urgent.
-This meta-skill composes all three: first-principles → systems-map → OODA move.
-
-## Relationship to OODA
-
-Use `systems-thinking` to understand structure.
-Use `ooda-loop` to decide and execute the next move inside that structure.
-
-Common pairing:
-1. systems-thinking → map system, loops, constraint, leverage point
-2. ooda-loop → choose probe, predict outcome, act, re-loop
-
-## Quick Reference
-
-| Situation | Skill to Use |
-|---|---|
-| Need to strip assumptions and find bedrock truths | `first-principles-reasoner` |
-| Need to map components, flows, loops, constraints | `systems-thinking` |
-| Need to choose and execute the next bounded action | `ooda-loop` |
-| Problem is both messy AND urgent | `systems-thinking-ooda` |
-
 ## Final Deliverable
 
 End with:

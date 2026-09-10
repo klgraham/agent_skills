@@ -33,8 +33,8 @@ For a pull request, identify the base and head revisions whenever possible. Do n
 ## Load the supporting references
 
 - Read [references/systems-lenses.md](references/systems-lenses.md) before analyzing candidate system dynamics. Apply only lenses supported by the evidence.
-- Read [references/report-template.md](references/report-template.md) before drafting the final report. Preserve its finding fields even when adapting the presentation to the user.
-- When the user requests report files or an interactive artifact, also read [references/findings-schema.md](references/findings-schema.md) before creating the structured payload used by the bundled renderer.
+- Read [references/findings-schema.md](references/findings-schema.md) for the finding field contract. Use those fields in the report and, when requested, in the structured payload.
+- Read [references/report-template.md](references/report-template.md) for the report section outline before drafting the final report.
 
 ## Follow the review workflow
 
@@ -124,10 +124,9 @@ For each candidate:
 6. Classify kind, severity, confidence, and mode-appropriate status or attribution.
 7. Recommend the smallest intervention that changes the unwanted behavior.
 8. State meaningful costs, alternatives, and acceptance conditions.
-9. Define a concrete verification method and label it Proposed, Executed, or Blocked.
+9. Define a concrete verification method and label its state (see schema).
 
 Discard or move to open questions any candidate that cannot pass the evidence gate.
-Unknown is not a finding evidence class. Put unresolved material uncertainty in Open questions and uncertainties and reference the finding IDs it affects.
 
 Do not reveal private scratch work or hidden chain-of-thought. Give the decision-relevant causal rationale needed to evaluate the comment, for example:
 
@@ -140,48 +139,15 @@ unbounded retries
 
 ### 6. Apply the evidence gate
 
-Every substantive finding must include:
-
-- a stable finding ID;
-- a file and line range, diff hunk, symbol, configuration entry, schema, document section, diagram node or edge, or exact supplied excerpt;
-- enough quoted context to understand the comment without hunting through the source;
-- a direct comment that stands on its own;
-- a causal explanation, not a generic warning;
-- a kind: Risk or Positive pattern;
-- a mode-appropriate status or attribution;
-- concrete system qualities affected;
-- a proportionate recommendation;
-- tradeoffs and alternatives;
-- confidence and assumptions;
-- a verification method and state: Proposed, Executed, or Blocked.
+Every substantive finding must satisfy the field contract in [references/findings-schema.md](references/findings-schema.md). See that schema for required fields, enums, and verification states.
 
 Never expose secrets or sensitive values in excerpts. Redact the value while preserving the structural evidence.
 
-Distinguish:
-
-- **Observed:** directly supported by reviewed material.
-- **Inferred:** follows from evidence plus stated assumptions.
-- **Unknown:** requires runtime, organizational, or domain information; record this as an open question rather than as a finding evidence class.
+Unknown is not a finding evidence class. Put unresolved material uncertainty in Open questions and uncertainties and reference the finding IDs it affects.
 
 ### 7. Classify finding kind and review-mode status accurately
 
-Every finding has a kind:
-
-- **Risk**
-- **Positive pattern**
-
-Use severity for risks only:
-
-- **Critical:** credible data loss, security compromise, cross-tenant exposure, widespread outage, unrecoverable inconsistency, or a severe one-way commitment.
-- **High:** major reliability, correctness, operability, or architectural degradation with broad effects.
-- **Medium:** meaningful maintainability, observability, scalability, coordination, or recovery risk.
-- **Low:** limited system-level improvement with a small blast radius or low likelihood.
-
-Use status or attribution as follows:
-
-- for a pull request or diff risk: **Introduced by change**, **Made more severe by change**, **Pre-existing, exposed by change**, or **Unrelated pre-existing architecture**;
-- for a repository or architecture risk: **Architectural**;
-- for a positive pattern in any review mode: **Positive pattern**.
+Use the `kind`, `severity`, `status`, `evidence_class`, and `confidence` values from [references/findings-schema.md](references/findings-schema.md).
 
 Do not require a pull request to solve unrelated architecture. Include pre-existing context only when the change depends on it, worsens it, or makes it necessary for the user to understand the risk.
 
@@ -193,11 +159,7 @@ Use judgment guided by:
 priority ≈ impact × likelihood × blast radius × difficulty of later reversal
 ```
 
-Use these confidence levels:
-
-- **High:** directly supported by clear source evidence.
-- **Medium:** evidence-supported but dependent on stated reasonable assumptions.
-- **Low:** plausible and decision-relevant, but requiring missing runtime, organizational, or domain evidence.
+Use the confidence levels in [references/findings-schema.md](references/findings-schema.md).
 
 Return up to 12 substantive findings. There is no minimum: return fewer, including zero, when fewer pass the evidence gate. If no findings pass, say so explicitly and report the coverage limits and open questions instead of manufacturing volume.
 
@@ -288,7 +250,7 @@ Finish only when:
 - findings pass the evidence gate;
 - finding kind and review-mode status or attribution are correct;
 - recommendations include tradeoffs and verification;
-- verification actions are clearly marked Proposed, Executed, or Blocked;
+- verification actions are labeled with a schema state;
 - uncertainties and coverage limits are visible;
 - the report prioritizes system behavior and leverage over comment count.
 - any requested report artifacts were rendered from one validated payload and their exact paths were provided.
