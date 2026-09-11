@@ -71,7 +71,7 @@ The selected playbook declares its required principles. Add a conditional princi
 - Requested review files: [findings schema](references/findings-schema.md), then run `scripts/build_report.py` with `--strict` to render matching HTML and Obsidian Markdown.
 - Diagram or interactive exploration: [visualization conventions](references/visualization-conventions.md).
 - Causal claims or quantitative causal questions: [causal reasoning boundary](references/causal-reasoning.md).
-- Requested general Obsidian note: [system analysis note template](references/obsidian-template.md). Review artifacts use the review schema instead.
+- Requested general Markdown note: [system analysis note template](references/markdown-template.md). Review artifacts use the review schema instead.
 
 Resolve all resource and script paths relative to this skill directory. The bundled report renderer works offline with Python's standard library. Do not require a separate visualization or causal-inference skill; use one only when it is available and appropriate.
 

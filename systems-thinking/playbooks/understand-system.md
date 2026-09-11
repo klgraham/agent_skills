@@ -21,4 +21,4 @@ Load an input mode only for repository, diff, architecture, or incident evidence
 
 Return the purpose and boundary, first-principles core, compact model, key dynamics, likely constraint, evidence, and open questions. A small table or diagram can carry the model. Do not force absent loops or stocks into the answer.
 
-Stop after explaining the system. If the user also asks what to change, pass the model to [choose an intervention](choose-intervention.md). For a requested drawing, use [visualize a system](visualize-system.md); for an Obsidian note, use the [note template](../references/obsidian-template.md).
+Stop after explaining the system. If the user also asks what to change, pass the model to [choose an intervention](choose-intervention.md). For a requested drawing, use [visualize a system](visualize-system.md); for a Markdown note, use the [note template](../references/markdown-template.md).

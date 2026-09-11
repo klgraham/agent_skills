@@ -1,7 +1,6 @@
 # System analysis note
 
-Use when an Obsidian note is requested. Omit irrelevant sections; an understanding-only note does not need an intervention. Replace example wikilinks with links that exist in the target vault.
-
+Use when a Markdown note is requested. Omit irrelevant sections; an understanding-only note does not need an intervention.
 
 ```md
 ---
@@ -72,9 +71,4 @@ objective: <one line>
 - What to track:
 - What would falsify this model:
 - Next review time:
-
-## Related
-- [[systems thinking]]
-- [[What is systems thinking?]]
-- [[OODA Loop Skill]]
 ```
