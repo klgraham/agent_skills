@@ -31,7 +31,7 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | Plugin | Skills |
 |---|---|
 | `obsidian-toolkit` | `obsidian-bases`, `obsidian-cli`, `obsidian-plugin`, `obsidian-theme` |
-| `systems-thinking` | `systems-thinking`, `systems-thinking-reviewer` |
+| `systems-thinking` | `systems-thinking` |
 | `code-review` | `concurrency-code-review` |
 | `skill-development` | `transcript-skill-miner` |
 | `zig-programming` | `zig`, `write-legible-zig`, `zig-0-16-stdlib-patterns`, `zig-build-from-source`, `zig-build-system`, `zig-data-oriented-programming`, `zig-memory-safety-review`, `zig-mmap-project-template` |
@@ -67,7 +67,7 @@ Clone the repository, choose a skill directory, and link or copy it into the Cod
 git clone https://github.com/klgraham/agent_skills.git
 cd agent_skills
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
-ln -s "$PWD/systems-thinking-reviewer" "${CODEX_HOME:-$HOME/.codex}/skills/systems-thinking-reviewer"
+ln -s "$PWD/systems-thinking" "${CODEX_HOME:-$HOME/.codex}/skills/systems-thinking"
 ```
 
 Restart Codex if the skill does not appear immediately. To update a linked installation, pull the repository:
@@ -98,3 +98,11 @@ zig-programming/                 Canonical Zig skill family
 The `code-review` plugin includes a standalone concurrency audit with Python-specific `asyncio`, thread, executor, process, and queue checks.
 
 Claude plugin skill entries are relative symlinks to canonical directories in this repository. Claude Code dereferences same-marketplace links when it copies a plugin into its cache, so each installed plugin remains self-contained without maintaining duplicate skill copies.
+
+## Systems thinking
+
+The [systems-thinking skill](systems-thinking/SKILL.md) combines system analysis and software review in one entrypoint. It selects one of eight playbooks: understand, diagnose, review, design, choose an intervention, analyze failure, visualize, or verify a model. Each playbook loads relevant principles and small input modes as needed.
+
+Use `$systems-thinking` in Codex or `/systems-thinking:systems-thinking` in Claude Code. Review requests retain the evidence gate, read-only boundary, and optional matching HTML and Obsidian reports. Understanding a system does not require recommending changes.
+
+The former `systems-thinking-reviewer` skill is retired. Replace old local links or copies with the unified `systems-thinking` directory using the installation instructions above. Existing report JSON remains compatible with `systems-thinking/scripts/build_report.py`; the renderer and HTML asset move together.
