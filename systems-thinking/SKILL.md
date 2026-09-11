@@ -67,7 +67,7 @@ The selected playbook declares its required principles. Add a conditional princi
 
 ## Load output references only when needed
 
-- Formal software review: [evidence contract and report template](references/report-template.md).
+- Formal software review: [findings schema](references/findings-schema.md) for the field contract and [report template](references/report-template.md) for the section outline.
 - Requested review files: [findings schema](references/findings-schema.md), then run `scripts/build_report.py` with `--strict` to render matching HTML and Obsidian Markdown.
 - Diagram or interactive exploration: [visualization conventions](references/visualization-conventions.md).
 - Causal claims or quantitative causal questions: [causal reasoning boundary](references/causal-reasoning.md).
