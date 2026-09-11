@@ -156,7 +156,7 @@ Assign allocator roles explicitly:
 
 Never free with a different allocator instance than the one used to allocate. Do not route library allocations through `page_allocator` or `c_allocator` when the caller supplied an allocator unless the boundary requires it and documents the rule.
 
-Arena allocation prevents individual double frees, but does not validate borrows after reset/deinit. Arena reset is a lifetime boundary and must be reviewed like a bulk free.
+Arena allocation groups reclamation, but does not enforce single ownership or validate borrows after reset/deinit. Arena reset is a lifetime boundary and must be reviewed like a bulk free.
 
 ### 8. Define a Concurrency Ownership Protocol
 
@@ -264,10 +264,10 @@ Identify thread entry functions, queues, callbacks, mutable globals, shared allo
 At minimum:
 
 1. Run tests with a debug/testing allocator.
-2. Inject allocation failures into multi-allocation constructors and mutation paths.
+2. Inject allocation failures into multi-allocation constructors and mutation paths with `std.testing.checkAllAllocationFailures`. Check both cleanup and preserved state.
 3. Test double cleanup according to the type’s contract.
 4. Test stale handles after delete/reuse.
-5. Test a borrow across every documented invalidator; safe APIs should prevent it structurally or detect it.
+5. Test safe rejection or handle validation after each documented invalidator. Do not dereference freed storage to test a lifetime contract.
 6. Stress collection growth so reallocations actually occur.
 7. Stress shutdown while work/callbacks are active.
 8. Run fuzzing or sanitizer/race tooling where supported by the selected Zig compiler/backend and platform.
@@ -361,3 +361,9 @@ Therefore use the scanner to reduce search cost, then use agent reasoning to tra
 - [ ] The exact focused build/test command was run; direct `zig test` was used when the build harness could be vacuous.
 - [ ] `git diff --check` is clean for a code change.
 - [ ] Final report distinguishes proof, evidence, risk, and unknowns.
+
+## Related 0.16.0 playbooks
+
+Use [allocator selection](../zig/references/allocators.md) before choosing a lifetime policy, [error handling](../zig/references/error_handling.md) for rollback, and [C interoperability](../zig/references/c-interop.md) for ABI adapters. Debug and ReleaseSafe checks are diagnostics, not a static ownership proof.
+
+For `std.Io` task lifetimes, also read [task concurrency](../zig-0-16-stdlib-patterns/references/io-concurrency.md) and [coordination](../zig-0-16-stdlib-patterns/references/io-coordination.md). Check inline execution, immediate cancellation cleanup, owning future results, Select result capacity, and partial queue transfers. Finishing a group does not automatically release resources stored in its result slots.

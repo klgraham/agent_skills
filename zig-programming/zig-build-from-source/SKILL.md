@@ -9,124 +9,44 @@ metadata:
     skill_type: workflow
 ---
 
-# Build and Install Zig from Source
+# Build the Zig compiler from source
 
-Use when you need to build the Zig compiler itself from a git clone, or when an existing dev build is too old to bootstrap the release you want.
+Use for compiler development or a toolchain that must be built locally. For
+normal project builds, use [zig-build-system](../zig-build-system/SKILL.md).
 
-## Quick Reference
+## Principles
 
-| Path | Command | When to use |
-|---|---|---|
-| Self-hosted bootstrap | `zig build -Doptimize=ReleaseFast --prefix ~/.local` | Your installed `zig` is new enough to build the target tag |
-| CMake/LLVM fallback | `cmake .. -DCMAKE_PREFIX_PATH="$(brew --prefix llvm)" && make -j$(sysctl -n hw.ncpu)` | Self-hosted bootstrap fails due to missing new OS targets |
+Pin the source revision and bootstrap dependencies together. A nearby version
+number does not prove a compiler can bootstrap a checkout. Follow that revision's
+README, CMake configuration, and CI rather than assuming the system LLVM matches.
+Install into a separate prefix before changing the user's active toolchain.
 
-## 1. Self-Hosted Bootstrap (Preferred)
+## Playbook
 
-If your installed `zig` is a recent dev build of the same minor version:
+1. Inspect the source checkout's status and revision. Use a separate checkout
+   for another tag when local work exists. Do not reset or overwrite it.
+2. Read its documented build prerequisites and available build options. If an
+   existing Zig can build that revision, use the documented self-hosted route.
+3. Otherwise follow the revision's CMake or bootstrap route. Pin LLVM, Clang,
+   and LLD to compatible versions, with matching development libraries.
+4. Configure a fresh build directory and a dedicated install prefix. Use
+   `cmake --build` and `cmake --install` for a CMake build. `DESTDIR` stages an
+   existing install prefix; it does not replace `CMAKE_INSTALL_PREFIX`.
+5. Keep the compiler binary with its complete installed `lib` tree. Do not
+   recover a failed install by copying only `lib/std` and ignoring errors.
+6. Run the new binary by absolute path. Check `version` and `env`, initialize a
+   scratch project, build it, and run its tests. Record the source revision and
+   bootstrap toolchain. Change PATH only if requested.
 
-```bash
-cd ~/zig   # or ~/dev/zig
-git fetch origin
-git checkout 0.16.0   # or any tag/branch
-zig build -Doptimize=ReleaseFast --prefix ~/.local
-~/.local/bin/zig version
-```
+If a bootstrap reports an unknown target or missing API, check version
+compatibility first. If CMake cannot find libraries, check dependency versions
+and prefixes before changing compiler sources. Reduce parallelism when memory
+pressure, rather than a compiler diagnostic, terminates the build.
 
-This is the fastest path. The build system compiles stage3 and installs it.
+The [0.16.0 release notes](https://ziglang.org/download/0.16.0/release-notes.html)
+identify LLVM 21.1.0 for that release. A newer source checkout can require a
+different version. The [Zig source](https://codeberg.org/ziglang/zig) README and
+build configuration at the selected revision are the build authority.
 
-## 2. CMake/LLVM Fallback (macOS Apple Silicon)
-
-Use this when `zig build` fails with errors like:
-
-```
-error: enum 'Target.Os.Tag' has no member named 'psp'
-```
-
-This means your bootstrap compiler predates the target additions in the release. You need a C++ bootstrap via CMake and LLVM.
-
-### Prerequisites
-
-- CMake (`brew install cmake`)
-- Homebrew LLVM (`brew install llvm`)
-- Xcode Command Line Tools (Apple Clang)
-
-### Build Commands
-
-```bash
-cd ~/zig   # your git clone
-git checkout 0.16.0
-
-mkdir -p build-release && cd build-release
-
-cmake .. \
-  -DCMAKE_PREFIX_PATH="$(brew --prefix llvm)" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DZIG_STATIC_LLVM=OFF
-
-make -j$(sysctl -n hw.ncpu)
-```
-
-The build produces:
-- `zig1` — C transpiled bootstrap (from `stage1/zig1.wasm`)
-- `zig2` — C++ host compiler built by `zig1`
-- `stage3/bin/zig` — final self-hosted compiler built by `zig2`
-
-### Install
-
-**Do NOT use `make install DESTDIR`** — it creates a nested path under `$HOME/.local/Users/...`.
-
-Instead, copy directly:
-
-```bash
-mkdir -p ~/.local/bin ~/.local/lib/zig
-cp stage3/bin/zig ~/.local/bin/zig
-cp -r stage3/lib/zig/* ~/.local/lib/zig/ 2>/dev/null || cp -r ../lib/std ~/.local/lib/zig/
-chmod +x ~/.local/bin/zig
-~/.local/bin/zig version   # → 0.16.0
-```
-
-## 3. PATH Setup
-
-If `~/.local/bin` is not in your PATH:
-
-```bash
-# Add to ~/.zshrc (or ~/.bash_profile)
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-## Common Failures
-
-### "enum has no member named 'psp'" (or other missing OS target)
-
-Your bootstrap `zig` is too old. Switch to the CMake/LLVM path (Section 2).
-
-### CMake can't find LLVM/Clang/LLD
-
-Ensure Homebrew LLVM is linked in the prefix path:
-
-```bash
-cmake .. -DCMAKE_PREFIX_PATH="$(brew --prefix llvm)"
-```
-
-### "zig: command not found" after install
-
-```bash
-which zig          # may show the old path
-hash -r            # clear shell command cache
-~/.local/bin/zig version
-```
-
-## Verification
-
-```bash
-zig version        # should match the tag exactly, e.g. 0.16.0
-zig targets        # should list the new targets (e.g. psp)
-zig build --help   # confirms the toolchain is functional
-```
-
-## Notes
-
-- On macOS ARM64, `make -j$(sysctl -n hw.ncpu)` uses all performance cores. The build is memory-heavy; if OOM occurs, reduce parallelism: `make -j4`.
-- The `stage3` binary is the one you want. `zig1` and `zig2` are intermediate bootstraps.
-- `ReleaseFast` produces the fastest compiler. `ReleaseSafe` leaves safety checks in but is slower.
-- The `lib/` directory contains the Zig standard library and compiler runtime. It must remain accessible to the binary.
+This playbook does not claim that a full compiler bootstrap was executed by the
+skill example verifier; that verifier tests use of the installed compiler.

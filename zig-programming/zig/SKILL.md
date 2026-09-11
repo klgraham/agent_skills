@@ -1,10 +1,6 @@
 ---
 name: zig
-description: >
-  Route Zig 0.16 work to the focused skills in this collection and provide a
-  small set of verified version-specific gotchas. Use when choosing the right
-  Zig skill, starting a general Zig task, or checking cross-cutting build,
-  stdlib, memory-safety, readability, and data-layout concerns.
+description: "Zig 0.16.0 principles and playbooks for implementation, migration, allocators, C interoperability, comptime, builds, runtime I/O, and verification. Use for general Zig work or to select a focused Zig skill."
 license: MIT
 metadata:
   hermes:
@@ -12,77 +8,65 @@ metadata:
     category: software-development
 ---
 
-# Zig 0.16 Skill Hub
+# Zig 0.16.0
 
-Use this skill as the entrypoint for the Zig skill family. Keep this file
-small: route detailed work to one focused sibling instead of duplicating its
-workflow. The public repository links below are relative to this directory;
-installed skill collections may resolve the same names from their skill root.
+Use this hub for Zig implementation, design, migration, and review. Read only
+the principles and playbooks relevant to the task. The sibling skill names
+remain usable when installed together under a different skill root.
 
-## Start every Zig task
+## Establish the contract
 
-1. Read repository instructions, the pinned Zig version, `git status`, public
-   declarations, `build.zig` / `build.zig.zon`, and nearby tests.
-2. Load [`write-legible-zig`](../write-legible-zig/SKILL.md) before creating,
-   modifying, reviewing, or presenting Zig code or Zig guidance.
-3. Establish the real verification commands. Run the formatter, focused tests,
-   and required build/test target; use direct `zig test` when a build harness
-   could be vacuous.
-4. Load the focused skill in the routing table before making a specialized
-   change. Load more than one when the change crosses boundaries.
+Read repository instructions, the compiler pin, build files, public APIs, and
+nearby tests. Run `zig version` and `zig env`. This collection targets **0.16.0**,
+not an arbitrary 0.16 development snapshot or a later release. Do not upgrade a
+project merely because this skill targets a different version.
 
-## Verified Zig 0.16 checkpoints
+For language rules, consult the [0.16.0 reference](https://ziglang.org/documentation/0.16.0/).
+For library signatures, inspect the `std_dir` reported by that compiler.
+Use the [release notes](https://ziglang.org/download/0.16.0/release-notes.html)
+to distinguish actual changes from older Zig idioms. Compile disputed examples.
 
-These are routing-level reminders, not substitutes for compiling against the
-installed compiler:
+## Principles and their playbooks
 
-- Build files use the current Module API (`b.addModule` / `b.createModule`,
-  `.root_module`) and `addLibrary(..., .linkage = .static)` where applicable.
-- `std.ArrayList(T)` and `std.ArrayListUnmanaged(T)` use `.empty` for an empty
-  value in Zig 0.16. Confirm the current managed/unmanaged API in the project
-  before copying a container pattern.
-- `std.heap.DebugAllocator` replaces the old
-  `std.heap.GeneralPurposeAllocator` name in Zig 0.16.
-- Zig 0.16 reports an error when a `var` is never mutated. Let the compiler
-  identify the exact location and use `const` unless a mutable pointer is part
-  of the API contract.
-- Run the touched file or test directly with `zig test` when
-  `zig build test` might not exercise it.
-- Escape literal JSON braces in comptime format strings as `{{` and `}}`.
-
-For version-sensitive stdlib or build claims, inspect the installed compiler
-and load the corresponding focused skill rather than extending this list from
-memory.
-
-## Cross-cutting ownership checkpoint
-
-Before accepting an allocator, pointer, slice, callback, collection mutation,
-or thread-lifecycle change, identify the owner, allocator pairing, borrow
-validity interval, invalidators, cleanup path, and synchronization protocol.
-Then load [`zig-memory-safety-review`](../zig-memory-safety-review/SKILL.md) for
-the ownership ledger, scanner, failure-path exercise, and source-grounded
-reporting workflow.
-
-## Routing table
-
-| Need | Focused skill |
+| Decision | Read when needed |
 |---|---|
-| Names, file layout, ownership-visible APIs, error paths, or readable Zig guidance | [`write-legible-zig`](../write-legible-zig/SKILL.md) |
-| Ownership, allocator, borrow, invalidation, C ABI, callback, or concurrency audit | [`zig-memory-safety-review`](../zig-memory-safety-review/SKILL.md) |
-| SoA, SIMD, cache behavior, arenas, alignment, or bulk processing | [`zig-data-oriented-programming`](../zig-data-oriented-programming/SKILL.md) |
-| `build.zig`, `build.zig.zon`, modules, tests, dependencies, or cross-compilation | [`zig-build-system`](../zig-build-system/SKILL.md) |
-| Building or installing the Zig compiler | [`zig-build-from-source`](../zig-build-from-source/SKILL.md) |
-| Zig 0.16 HTTP, filesystem, compression, binary parsing, or runtime stdlib APIs | [`zig-0-16-stdlib-patterns`](../zig-0-16-stdlib-patterns/SKILL.md) |
-| mmap-friendly flat-file storage or zero-copy layouts | [`zig-mmap-project-template`](../zig-mmap-project-template/SKILL.md) |
+| Choose storage by lifetime, bound, and allocator ownership | [Allocator principles and playbooks](references/allocators.md) |
+| Keep failure paths transactional and transfer ownership once | [Error handling](references/error_handling.md) |
+| Turn foreign representations into checked Zig contracts | [C interoperability](references/c-interop.md) |
+| Specialize compile-time facts without hiding runtime policy | [Comptime and macro alternatives](references/comptime.md) |
+| Make dependencies, generated files, and releases explicit | [Build system](../zig-build-system/SKILL.md) |
+| Streams, formatting, task concurrency, and parallel work through `std.Io` | [Runtime stdlib](../zig-0-16-stdlib-patterns/SKILL.md) |
+| Prove borrow validity across mutation and shutdown | [Memory-safety review](../zig-memory-safety-review/SKILL.md) |
+| Measure layout and SIMD choices against a scalar baseline | [Data-oriented programming](../zig-data-oriented-programming/SKILL.md) |
+| Validate a byte format before exposing mapped views | [mmap storage](../zig-mmap-project-template/SKILL.md) |
+| Keep names, state, and cleanup readable | [Write legible Zig](../write-legible-zig/SKILL.md) |
+| Build the compiler itself with matched dependencies | [Build from source](../zig-build-from-source/SKILL.md) |
 
-## Hub references
+For code changes, apply the legibility standard alongside the relevant
+playbook. Ordinary allocation does not require a repository-wide safety audit.
+Use the audit when the task concerns lifetimes, shared state, or unsafe boundaries.
 
-- [`references/error_handling.md`](references/error_handling.md) — focused
-  `errdefer` and allocator-pairing patterns.
+## 0.16.0 checkpoints
 
-## Final handoff
+- `std.ArrayList(T)` does not store an allocator. Initialize with `.empty`,
+  and pass the same allocator to allocating methods and `deinit`.
+- Runtime filesystem operations use `std.Io.Dir` and an `std.Io` value.
+  `main(init: std.process.Init)` supplies `init.io` and `init.gpa`.
+- `@Type` is removed. Type construction uses dedicated builtins such as
+  `@Int`, `@Tuple`, and `@Struct`. Prefer ordinary type syntax when sufficient.
+- `@intCast` exists. `@as` is not a replacement for a checked narrowing cast.
+- Build artifacts take `.root_module`. A test compile step does not run tests.
 
-Report the focused skill used, the behavior or guidance changed, the exact
-formatter/build/test commands run, and any unchecked command or documented
-deviation. Keep this hub a router: put new specialized capability in a new
-narrow skill rather than growing this file into a second monolith.
+## Verification and handoff
+
+Run the project's formatter and focused tests. Check that the build's test
+step reaches the changed code. Add allocation-failure or boundary cases when
+those contracts change. Distinguish native execution from cross-compilation.
+Report the outcome, commands, and limitations without claiming performance
+or memory safety from compilation alone.
+
+For maintenance of this collection, run
+`python3 zig/scripts/verify_examples.py` from `zig-programming/`.
+It requires Zig 0.16.0 and checks the [runnable examples](examples/).
+Use the [release-update playbook](references/updating-zig-skills-for-new-releases.md)
+when revising the version baseline.

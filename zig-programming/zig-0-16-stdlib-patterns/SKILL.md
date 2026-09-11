@@ -1,6 +1,6 @@
 ---
 name: zig-0-16-stdlib-patterns
-description: "Zig 0.16 stdlib runtime API patterns: HTTP client, file I/O, gzip decompression, binary parsing, and common stdlib API differences from 0.15. Use when writing or debugging Zig code that uses std.http, std.fs, or std.compress."
+description: "Zig 0.16.0 runtime I/O and container migration. Use for std.Io, streams and formatting, async/concurrent tasks, futures, groups, cancellation, select, queues, locks, backend choice, HTTP, and ArrayList migration."
 license: MIT
 metadata:
   hermes:
@@ -9,176 +9,87 @@ metadata:
     skill_type: reference
 ---
 
-# Zig 0.16 Stdlib Runtime Patterns
+# Zig 0.16.0 runtime APIs
 
-Use when writing or fixing Zig 0.16 source code that uses HTTP, filesystem, or compression APIs.
+Use for runtime I/O, streams and formatting, task concurrency, parallel work,
+and container migration.
+Inspect declarations under `std_dir` from `zig env` before adapting a recipe.
+This skill targets the release, not earlier 0.16 development snapshots.
 
-## HTTP Client — Fetch with body read
+## Principles
 
-```zig
-const http = std.http;
+Pass `std.Io` to runtime operations separately from `std.mem.Allocator`.
+Allocation policy and I/O implementation are independent dependencies.
+At process startup, `main(init: std.process.Init)` supplies both. In reusable
+code, accept only the capabilities the operation needs.
 
-var client = http.Client{ .allocator = allocator };
-defer client.deinit();
+Use bounded reads for external data. A compressed input bound does not bound
+decompressed output. Keep interface pointers tied to the reader or writer
+object and backing buffers that own their state. Flush buffered output before
+reporting success; deferred cleanup cannot propagate a flush error.
 
-var resp = try client.fetch(allocator, .{
-    .location = .{ .url = url },
-    .headers = .{
-        .user_agent = .{ .override = "Mozilla/5.0" },
-    },
-});
-defer resp.deinit();
+## API checkpoints
 
-if (resp.status != .ok) return error.HttpStatus;
-const body = try resp.body().?.readAllAlloc(allocator, max_bytes);
-defer allocator.free(body);
-```
-
-Key differences from 0.15:
-- `client.fetch` takes `(allocator, options)` — not just `(options)`
-- `FetchResult` has no `.body` field directly — call `.body()` which returns `?http.Reader`
-- Headers use `.override` modifier, not raw string assignment
-- `response.deinit()` — response must be deinitialized
-
-## Filesystem — cwd() not top-level
-
-```zig
-const fs = std.fs;
-
-// Write file
-try fs.cwd().writeFile(path, data);
-
-// Read entire file
-const contents = try fs.cwd().readFileAlloc(allocator, path, max_bytes);
-defer allocator.free(contents);
-
-// Check existence
-fs.cwd().access(path, .{}) catch return false;
-
-// Create directory recursively
-fs.cwd().makePath(dir) catch |e| if (e != error.PathAlreadyExists) return e;
-```
-
-Key: `fs.cwd()` not `fs.open()` for cwd-relative paths. NOT `os.mkdirParents`, NOT `os.writeFile`, NOT `os.accessat`.
-
-## Path dirname
-
-`fs.dirname(path)` returns `?[]const u8` (optional). No `os.dirname`:
-
-```zig
-const cache_dir = fs.dirname(cache_path) orelse return error.NoParentDir;
-```
-
-## Gzip Decompression
-
-```zig
-const compress = std.compress;
-
-var in_stream = std.io.FixedBufferStream([]const u8){ .buffer = compressed };
-var zlib_stream = compress.gzip.GunzipStream{
-    .decompressor = compress.gzip.Decompressor.init(allocator, in_stream.reader()),
-};
-defer zlib_stream.deinit();
-const decompressed = try zlib_stream.reader().readAllAlloc(allocator, max_bytes);
-```
-
-NOT the `init: {}` anonymous struct builder pattern.
-
-## Big-Endian Binary Parsing (IDX format, etc.)
-
-```zig
-fn readBE(comptime T: type, bytes: []const u8) T {
-    var result: T = 0;
-    for (bytes[0..@sizeOf(T)]) |b| {
-        result = (result << 8) | @as(T, b);
-    }
-    return result;
-}
-```
-
-Use `@as(T, b)` not `@intCast` or `@IntCast` — the latter don't exist as builtins in 0.16.
-
-## @Vector SIMD Pattern
-
-```zig
-var acc: @Vector(8, f32) = @splat(0);
-while (i + 8 <= dim) : (i += 8) {
-    const va: @Vector(8, f32) = a[i..][0..8].*;
-    const vb: @Vector(8, f32) = b[i..][0..8].*;
-    acc += (va - vb) * (va - vb);
-}
-sum += acc[0] + acc[1] + acc[2] + acc[3] + acc[4] + acc[5] + acc[6] + acc[7];
-```
-
-## Common Errors
-
-| Error | Fix |
+| Task | 0.16.0 form |
 |---|---|
-| `root source file 'os' has no member 'mkdirParents'` | Use `fs.cwd().makePath()` |
-| `root source file 'os' has no member 'accessat'` | Use `fs.cwd().access(path, .{})` |
-| `root source file 'os' has no member 'writeFile'` | Use `fs.cwd().writeFile()` |
-| `root source file 'fs' has no member 'cwd'` | `fs` IS the cwd handle — use `fs.cwd()` |
-| `root source file 'fs' has no member 'dirname'` | `fs.dirname()` exists but is nullable — use `.orelse` |
-| `invalid builtin function: '@IntCast'` | Use `@as(T, value)` for type coercion |
-| `unused local constant` in GunzipStream init | Remove the `var s =` wrapper; use direct struct init |
-| `fetch` has no parameter called 'user_agent'` | Use `.headers = .{ .user_agent = .{ .override = "..." } }` |
-| `fetch` expects 2 arguments | First arg is `allocator`, second is options |
-| `FetchResult` has no member 'body'` | Call `.body()` method on response (returns `?http.Reader`) |
-| `error: missing struct field: items` on `ArrayListUnmanaged` init | `.{ }` init broken in 0.16 — use `.empty` or explicit `.{ .items = &[_]T{}, .capacity = 0 }`. See `references/zig-0.16-arraylist-migration.md` |
-| `std.ArrayListUnmanaged` not found or wrong field count | 0.16 re-exported `ArrayListUnmanaged` as alias for the managed `ArrayList` (with `allocator` field). See `references/zig-0.16-arraylist-migration.md` |
-| `std.heap.GeneralPurposeAllocator` not found | Renamed to `std.heap.DebugAllocator(.{}){}` in 0.16 |
-| `local variable is never mutated` | 0.16 lint is stricter — change `var` to `const` for any variable that is never written after init |
-| `switch must handle all possibilities` on union | 0.16 requires exhaustive switch arms. Add missing union field cases (e.g., new `.vector` variant) |
-| `std.Io` namespace removed | **Misdiagnosis** — `std.Io` still exists in 0.16. Check `std.io` vs `std.Io` case; actual fix is usually `ArrayList` init or allocator rename |
+| Growable list | `var list: std.ArrayList(T) = .empty` |
+| Append and cleanup | `try list.append(gpa, value)` and `list.deinit(gpa)` |
+| Read file | `std.Io.Dir.cwd().readFileAlloc(io, path, gpa, .limited(max_bytes))` |
+| Write file | `std.Io.Dir.cwd().writeFile(io, .{ .sub_path = path, .data = bytes })` |
+| Path manipulation | `std.fs.path.dirname(path)` returns an optional |
+| Unbuffered stdout convenience | `std.Io.File.stdout().writeStreamingAll(io, bytes)` |
+| HTTP client | `std.http.Client{ .allocator = gpa, .io = io }` |
+| Fetch response | `client.fetch(.{ .location = .{ .url = url }, .response_writer = &writer })` |
+| Fixed input or output | `std.Io.Reader.fixed(bytes)` or `std.Io.Writer.fixed(buffer)` |
+| Gzip | `std.compress.flate.Decompress.init(&reader, .gzip, window)` |
+| Big-endian integer | Length check, then `std.mem.readInt(u32, bytes[0..4], .big)` |
 
-### Finding all broken ArrayList initializations
+`FetchResult` contains status; it is not a response-body owner. The caller's
+writer receives the body. A fixed writer bounds output; an allocating writer
+alone does not establish a limit. For streaming status checks or a stricter
+resource policy, inspect the request-level API before implementing it.
 
-A naive grep for `ArrayList.*{}` misses **anonymous `.{}` initializations** of ArrayList-typed struct fields because the type name isn't on the same line:
+## Playbook: migrate runtime I/O
 
-```zig
-// grep 'ArrayList.*{}' will NOT find this line:
-.rows = .{},   // where `rows` is declared as `ArrayList(ArrayList(Value))`
-```
+1. Compile the smallest failing path. Follow the declarations in the pinned
+   library instead of guessing names from an older release.
+2. Thread `io` from the application boundary through filesystem and network
+   calls. Use in-memory readers and writers where no OS operation is needed.
+3. Preserve error handling, limits, and ownership while changing signatures.
+4. Test empty, truncated, oversized, and malformed data. Include output failure
+   and explicit flush handling for buffered writers.
+5. Use local fixtures for routine tests. Label external HTTP checks separately.
 
-**Use the compiler as the ground truth:**
-```bash
-zig build test 2>&1 | grep "missing struct field: items"
-# This catches ALL occurrences, including anonymous `.{}` inits.
-```
+[runtime.zig](../zig/examples/runtime.zig) runs file, bounded-buffer, and gzip
+checks. It also compiles the HTTP path; the verifier does not make a network
+request. [binary.zig](../zig/examples/binary.zig) checks lengths and offsets.
 
-**After the compiler narrows the file**, read the struct field declarations to confirm the ArrayList type, then fix every `.{}` in that struct's init function (not just the lines matching `ArrayList`).
+## Playbook: migrate ArrayList
 
-## Pitfalls
+Read [the ArrayList migration reference](references/zig-0.16-arraylist-migration.md).
+Do not rewrite every anonymous `.{}` initializer: maps and unrelated structs
+have different defaults. `std.ArrayListUnmanaged` is a deprecated alias for
+`std.ArrayList`, which does **not** contain an allocator field.
 
-### ArrayListUnmanaged 0.16 Breaking Change
+## Choose the std.Io playbook
 
-In Zig 0.16, `std.ArrayListUnmanaged` is deprecated and aliased to the **managed** `ArrayList` (which has an `allocator` field alongside `items` and `capacity`). This means:
+| Need | Reference |
+|---|---|
+| Readers, writers, buffers, custom formatting, and streaming records | [Streams and formatting](references/io-streams-formatting.md) |
+| async versus concurrent, futures, groups, cancellation, backend selection | [Task concurrency and parallelism](references/io-concurrency.md) |
+| Select, deadlines, queues, locks, atomics, raw threads, migration | [Coordination](references/io-coordination.md) |
+| Online examples and release-specific corrections | [Source review](references/io-sources.md) |
 
-- `std.ArrayListUnmanaged(T) = std.ArrayList(T)` (identical types)
-- The old unmanaged-only struct without allocator no longer exists as a separate type
-- Any `.{}` (zero-initialization) of `ArrayListUnmanaged` now fails: `error: missing struct field: items` because the managed version requires `.allocator` too
-- The fix is `.empty` (the 0.16 shorthand for zero-initialized managed arrays)
+`io.async` may execute inline. Use `io.concurrent` when progress must overlap,
+and handle `ConcurrencyUnavailable`. Neither promises multicore speedup.
+Immediately arrange await/cancel cleanup for every task, and keep borrowed
+arguments alive until completion. Cancellation requests still require joining.
+For bounded pipelines, start consumers before blocking production and close
+the queue before normal shutdown. Group completion does not aggregate job errors.
 
-**All of these are broken in 0.16:**
+## Sources
 
-```zig
-var list: ArrayListUnmanaged(i32) = .{};              // ERROR
-var list: ArrayListUnmanaged(i32) = .{ .items = ..., }; // ERROR (missing capacity, allocator)
-```
-
-**Correct in 0.16:**
-
-```zig
-var list: ArrayListUnmanaged(i32) = .empty;  // ✓
-var list: ArrayListUnmanaged(i32) = .{ .items = &[_]i32{}, .capacity = 0 }; // ✓ (explicit unmanaged style)
-```
-
-This applies to ALL `ArrayListUnmanaged` field initializations in structs (e.g., `Graph.init`, `HnswIndex.init`) and local variables in functions.
-
-See `references/zig-0.16-arraylist-migration.md` for full reproduction.
-
-## Reference
-
-- Zig 0.16 stdlib: `/lib/zig/std/http/Client.zig`, `/lib/zig/std/fs.zig`, `/lib/zig/std/compress/gzip.zig`
-- ArrayListUnmanaged 0.16 migration: `references/zig-0.16-arraylist-migration.md` (covers `.{ }` → `.empty` fix, type alias chain, complete fix pattern)
-- Test APIs: `zig ast-check <file>` for fast compile error checking
+Use the [0.16.0 release notes](https://ziglang.org/download/0.16.0/release-notes.html)
+for the I/O transition. Exact signatures are in `std/Io/Dir.zig`,
+`std/Io/Reader.zig`, `std/Io/Writer.zig`, `std/http/Client.zig`,
+`std/compress/flate/Decompress.zig`, and `std/std.zig` in the installed SDK.

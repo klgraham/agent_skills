@@ -1,6 +1,6 @@
 ---
 name: zig-build-system
-description: "Zig 0.16 build system essentials: modern build.zig + build.zig.zon patterns, the Module system, executables/libraries/tests, dependencies, and cross-compilation. Use when setting up new Zig projects or modernizing build files."
+description: "Zig 0.16.0 build and release playbooks. Use for build.zig, package manifests, modules, C sources, generated files, dependencies, test graphs, cross-compilation, and release artifacts."
 license: MIT
 metadata:
   hermes:
@@ -9,212 +9,107 @@ metadata:
     skill_type: reference
 ---
 
-# Zig Build System (0.16 Essentials)
+# Builds and releases with Zig 0.16.0
 
-Focused reference for writing and maintaining `build.zig` / `build.zig.zon` in Zig 0.16.
+Use for application and library builds. For the compiler itself, use
+[build from source](../zig-build-from-source/SKILL.md).
 
-## When to Use
+## Principles
 
-- Creating a new Zig executable, library, or package
-- Updating old `build.zig` files to current patterns
-- Adding dependencies or exposing modules
-- Cross-compiling or configuring optimization / targets
-- Understanding why `zig init` produces the structure it does
+Model generated inputs and outputs as dependencies. Use `LazyPath` values
+instead of guessing paths under `.zig-cache`. Respect the caller's install
+prefix. Separate host tools from target artifacts and compilation from execution.
 
-Do **not** use for:
-- Building the Zig compiler itself (see `zig-build-from-source`)
-- Deep stdlib runtime patterns (see `zig-0-16-stdlib-patterns`)
+Keep graph configuration free of incidental writes, downloads, and tool runs.
+Declare those operations as steps so caching and scheduling can account for them.
+Make changes to tracked generated source an explicit update step.
 
-## Canonical Project Layout (from `zig init`)
+## Playbook: create or modernize a project
 
-Run `zig init` in an empty directory to get the current recommended structure:
+1. Run the pinned `zig init` in a new scratch directory. Compare its manifest
+   and module structure with the project; do not overwrite existing files.
+2. Use `b.standardTargetOptions(.{})` and `b.standardOptimizeOption(.{})`.
+   Carry the selected settings into the modules that compile the code.
+3. Use `b.addModule` to expose a module to package consumers and
+   `b.createModule` for an internal module. Give artifacts `.root_module`.
+4. Install executables or libraries explicitly. For static libraries use
+   `b.addLibrary` with `.linkage = .static`.
+5. Pair `b.addTest` with `b.addRunArtifact` for runnable native tests. Wire
+   integration roots explicitly. A named test step with no reachable tests
+   can succeed without testing the feature.
+6. Forward `b.args` to a run step when the program accepts arguments.
 
-```
-myproject/
-├── build.zig
-├── build.zig.zon
-├── src/
-│   ├── main.zig
-│   └── root.zig
-└── .gitignore
-```
-
-This layout uses the modern **Module** system instead of the older `root_source_file` + per-artifact target/optimize approach.
-
-## build.zig.zon (Package Manifest)
-
-```zig
-.{
-    .name = .myproject,                    // identifier, not string
-    .version = "0.1.0",
-    .fingerprint = 0x...,                  // stable identity
-    .minimum_zig_version = "0.16.0",
-    .dependencies = .{
-        // .example = .{ .url = "...", .hash = "..." },
-    },
-    .paths = .{
-        "build.zig",
-        "build.zig.zon",
-        "src",
-        // "LICENSE",
-    },
-}
-```
-
-**Important**:
-- `.name` uses the dot-identifier form (`.myproject`)
-- `.fingerprint` is generated once and should rarely change
-- Always include `build.zig.zon` in `.paths`
-
-## build.zig — Modern Structure
-
-```zig
-const std = @import("std");
-
-pub fn build(b: *std.Build) void {
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
-
-    // 1. Define a module you want to expose to consumers
-    const mod = b.addModule("myproject", .{
-        .root_source_file = b.path("src/root.zig"),
-        .target = target,
-    });
-
-    // 2. Executable that uses the module
-    const exe = b.addExecutable(.{
-        .name = "myproject",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/main.zig"),
-            .target = target,
-            .optimize = optimize,
-            .imports = &.{
-                .{ .name = "myproject", .module = mod },
-            },
-        }),
-    });
-
-    b.installArtifact(exe);
-
-    // Run step
-    const run_cmd = b.addRunArtifact(exe);
-    const run_step = b.step("run", "Run the app");
-    run_step.dependOn(&run_cmd.step);
-
-    // Tests (two executables recommended)
-    const mod_tests = b.addTest(.{ .root_module = mod });
-    const exe_tests = b.addTest(.{ .root_module = exe.root_module });
-
-    const test_step = b.step("test", "Run tests");
-    test_step.dependOn(&b.addRunArtifact(mod_tests).step);
-    test_step.dependOn(&b.addRunArtifact(exe_tests).step);
-}
-```
-
-### Key 0.16 Patterns
-
-- Use `b.addModule()` for modules you want to expose.
-- Use `b.createModule()` for internal-only modules (executables, tests).
-- Prefer `.root_module` over the old `root_source_file` + `target`/`optimize` fields on `addExecutable`/`addTest`.
-- Libraries: `b.addLibrary(.{ .name = "...", .root_module = ..., .linkage = .static })`
-
-### Adding a Static Library
-
-```zig
-const lib = b.addLibrary(.{
-    .name = "mylib",
-    .root_module = b.createModule(.{
-        .root_source_file = b.path("src/lib.zig"),
-        .target = target,
-        .optimize = optimize,
-    }),
-    .linkage = .static,
-});
-
-b.installArtifact(lib);
-```
-
-## Dependencies
-
-```zig
-const dep = b.dependency("some_dep", .{
-    .target = target,
-    .optimize = optimize,
-});
-
-exe.root_module.addImport("some_dep", dep.module("some_dep"));
-```
-
-In `build.zig.zon`:
-```zig
-.dependencies = .{
-    .some_dep = .{
-        .url = "https://.../archive/...tar.gz",
-        .hash = "...",
-    },
-},
-```
-
-## Common Steps & Commands
-
-```bash
-zig build                 # default (install)
-zig build run
-zig build test
-zig build -Doptimize=ReleaseFast
-zig build --help          # shows all steps and options
-```
-
-## Cross Compilation
-
-```zig
-const target = b.resolveTargetQuery(.{
-    .cpu_arch = .aarch64,
-    .os_tag = .linux,
-});
-
-const exe = b.addExecutable(.{
-    .name = "myapp",
-    .root_module = b.createModule(.{
-        .root_source_file = b.path("src/main.zig"),
-        .target = target,
-        .optimize = optimize,
-    }),
-});
-```
-
-## Common Pitfalls (0.16)
-
-- Using old `addStaticLibrary(...)` or `root_source_file` on compile artifacts — these still work in some cases but are no longer the recommended style.
-- Forgetting `build.zig.zon` when publishing a package.
-- Mixing `b.addModule` (public) and `b.createModule` (private) incorrectly.
-- Putting `.name = "foo"` (string) instead of `.name = .foo` (identifier) in `.zon`.
-- Forgetting to wire both `mod_tests` and `exe_tests` when you have a separate root module.
-
-## Verification
-
-After changing a `build.zig`:
+The [example build](../zig/examples/project/build.zig) includes a public module,
+C helper, host generator, run step, native tests, and a compile-only check step.
+Copy its directory to a scratch location and run:
 
 ```bash
 zig build
-zig build test
+zig build test --summary all
+zig build run
+zig build check -Dtarget=x86_64-linux-musl
 zig build --help
 ```
 
-For a new project:
+The cross-target `check` compiles tests without executing foreign binaries.
+Old `addStaticLibrary` and artifact-level `.root_source_file` recipes are not
+valid replacements for the 0.16.0 Module API.
+
+## Playbook: package dependencies
+
+Start `build.zig.zon` from `zig init`. Keep its stable fingerprint, package name,
+version, minimum compiler version, dependencies, and source paths coherent.
+The minimum version is not an exact toolchain pin; pin the compiler separately
+in project tooling and CI. Include every build input in `.paths`, including
+headers and generator sources. Test the packaged tree without undeclared files.
+
+Resolve dependencies with `b.dependency`, passing the relevant target and
+optimization options. Import their published modules or link their artifacts.
+For URL dependencies, retain the package hash produced by Zig tooling.
+A hash identifies content; it does not establish that a dependency is trustworthy.
+Do not invent hashes or package fingerprints for copyable templates.
+
+## Playbook: generate an input
+
+Compile a generator for `b.graph.host`, even during cross-compilation. Supply
+source inputs with `addFileArg` and outputs with `addOutputFileArg` or
+`addOutputDirectoryArg`. Feed the resulting `LazyPath` into the consuming
+module, file copy, or install step. `addWriteFiles` fits small generated files
+that do not require a tool. Add options through `b.addOptions` for typed build
+configuration. Prefer explicit input dependencies to unconditional execution.
+
+The example's generator produces an anonymous import consumed by `@embedFile`.
+Test a changed input as well as a repeated unchanged build. Check generated
+files under a different install prefix to catch hardcoded paths.
+
+## Playbook: prepare a release
+
+1. Define supported target triples, minimum OS or libc versions, CPU baseline,
+   and runtime dependencies. Cross-compilation does not bundle every SDK or
+   system library, and it does not prove the artifact runs on that target.
+2. Choose an optimization mode for the product's contract. Debug and ReleaseSafe
+   retain runtime safety checks by default. ReleaseFast and ReleaseSmall disable
+   them by default; explicit input validation remains necessary in every mode.
+3. Run native tests with safety checks and the intended shipping mode. Build
+   each target separately and execute smoke tests on available target systems.
+4. Install under distinct prefixes, or use `addInstallArtifact` with a
+   target-specific destination. Never let same-named artifacts overwrite one another.
+5. Package the installed files with licenses and required runtime files.
+   Record compiler version, source revision, target, CPU, mode, and checksums.
+6. Inspect and smoke-test the extracted archive. Publish only within the user's
+   requested release scope; building a release does not itself request a tag or upload.
+
+For the bundled example, a compile-only Linux release check is:
 
 ```bash
-mkdir testproj && cd testproj
-zig init
-zig build
-zig build test
+zig build -Dtarget=x86_64-linux-musl -Doptimize=ReleaseSafe --prefix out/linux
 ```
 
-## Related Skills
+## Sources and validation
 
-- `zig` (hub) — overall 0.16 gotchas and memory safety
-- `zig-0-16-stdlib-patterns`
-- `zig-build-from-source`
-- `zig-mmap-project-template`
-
-Use this skill when the pain is in the build graph rather than the language or stdlib itself.
+The [official build guide](https://ziglang.org/learn/build-system/) explains
+step dependencies, generated files, and target-specific installation. It is a
+living page; recheck examples against 0.16.0. Inspect `std/Build.zig`,
+`std/Build/Module.zig`, and `std/Build/Step/Run.zig` for exact contracts.
+The collection's [verifier](../zig/scripts/verify_examples.py) runs the bundled
+project, checks a changed generator input, and cross-compiles its check step.
