@@ -1,4 +1,0 @@
-interface:
-  display_name: "Systems Thinking Reviewer"
-  short_description: "Review software through causal system analysis"
-  default_prompt: "Use $systems-thinking-reviewer for an evidence-grounded system review with a contextual report."

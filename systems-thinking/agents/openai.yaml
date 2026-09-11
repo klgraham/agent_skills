@@ -1,0 +1,4 @@
+interface:
+  display_name: "Systems Thinking"
+  short_description: "Understand, diagnose, design, and review systems"
+  default_prompt: "Use $systems-thinking to select a playbook and build an evidence-grounded model of this system."
