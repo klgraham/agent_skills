@@ -36,6 +36,12 @@
       "source": "./plugins/zig-programming",
       "description": "Develop, review, optimize, and package Zig 0.16 software.",
       "category": "development"
+    },
+    {
+      "name": "epistemic-pass",
+      "source": "./plugins/epistemic-pass",
+      "description": "Rigorous sequential epistemic pass: observe, infer, first principles, then verify.",
+      "category": "development"
     }
   ]
 }
