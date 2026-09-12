@@ -6,7 +6,7 @@ give each behavior one home. Follow the hard rules mechanically. When a public
 ABI, generated file, wire format, performance constraint, or repository rule
 requires a deviation, explain it at the deviation site.
 
-This standard targets Zig 0.16+ as used by this skill collection. Verify
+This standard targets Zig 0.16.0 as used by this skill collection. Verify
 version-sensitive APIs against the repository's compiler and load
 `zig-0-16-stdlib-patterns` when the code touches the standard library.
 
@@ -233,8 +233,8 @@ review, and tests. Make that convention visible.
 - Schedule `defer` immediately after successful acquisition:
 
   ```zig
-  const file = try directory.openFile(path, .{});
-  defer file.close();
+  const file = try directory.openFile(io, path, .{});
+  defer file.close(io);
   ```
 
 - Use `errdefer` for resources acquired during a fallible initializer until the
@@ -286,6 +286,9 @@ review, and tests. Make that convention visible.
 
 ## 10. Generics and comptime
 
+For 0.16.0 type constructors and macro alternatives, read the hub's
+[comptime playbook](../../zig/references/comptime.md). `@Type` is removed.
+
 - Prefer a concrete implementation until a second real use demonstrates the
   abstraction. Generality is not legibility when it hides the data shape.
 - Put generic constraints near the generic declaration. A caller should be
@@ -297,8 +300,8 @@ review, and tests. Make that convention visible.
 - Give generated types and tables stable names. Add `comptime` assertions for
   size, alignment, field count, or protocol constants when the representation
   matters.
-- Keep `@Type`, `@field`, `@hasDecl`, `@call`, and reflection-heavy code behind
-  a named adapter or generator. Explain the invariant that the metaprogram
+- Keep `@Struct`, `@Union`, `@field`, `@hasDecl`, `@call`, and reflection-heavy
+  code behind a named adapter or generator. Explain the invariant that the metaprogram
   enforces.
 - Do not use `anytype` or reflection to avoid choosing an ownership or error
   contract. Generic syntax cannot replace documentation.

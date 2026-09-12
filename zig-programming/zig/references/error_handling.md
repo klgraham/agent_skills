@@ -1,48 +1,45 @@
-# Zig Error Handling Patterns
+# Error and ownership playbooks
 
-## errdefer after sequential allocations
+Use `?T` for normal absence, an error union for failure, and a tagged union when
+outcomes carry different data. Preserve the original error until an adapter
+has a reason to translate it. Do not relabel every error as `OutOfMemory`.
 
-`errdefer` runs only on the error return path, and only for resources that already exist. Place it immediately after each successful allocation. Allocations between a `try` and its matching `errdefer` can leak.
+## Acquire, roll back, transfer
 
-```zig
-const key = try allocator.dupe(u8, source_key);
-errdefer allocator.free(key);
+Acquire one resource, immediately register its `errdefer`, then acquire the
+next. Return the final owner only after all acquisitions succeed. A `defer`
+runs on success too; an `errdefer` runs when its scope exits with an error.
 
-var value = try Value.init(allocator, source_value);
-errdefer value.deinit(allocator);
+The [ownership example](../examples/ownership.zig) tests every allocation
+failure in a two-buffer constructor and a replacement operation.
 
-try out.put(allocator, key, value);
-```
+For insertion into an owning container, use a helper scope whose successful
+exit completes the transfer. Do not leave an `errdefer` in an outer scope that
+can later fail and free the same value a second time. Deinitializing an
+ArrayList frees its backing allocation, not resources owned by each element.
 
-If the second allocation can fail after the first succeeded, free the first resource in that `catch` before propagating. Once both exist, one `errdefer` block can free both until ownership transfers into `out`.
+For map insertion, define duplicate-key behavior before allocating a replacement.
+A map does not automatically free overwritten keys or values. Test both vacant
+and occupied entries, plus allocation failure.
 
-```zig
-const key = try allocator.dupe(u8, source_key);
-var value = Value.init(allocator, source_value) catch {
-    allocator.free(key);
-    return error.OutOfMemory;
-};
-errdefer {
-    value.deinit(allocator);
-    allocator.free(key);
-}
-try out.put(allocator, key, value);
-```
+## Update transactionally
 
-Use `var` when `deinit` takes `*T`. A `const` binding cannot form that mutable pointer.
+Allocate and validate the replacement before changing live state. Swap it in,
+then free the old value. For a multi-container mutation, either reserve all
+fallible capacity before commit or maintain explicit rollback. State which
+invariants survive failure; partial success must be a deliberate API contract.
 
-## Manual cleanup before transfer
+Use `try` to propagate. Use `catch` for recovery or translation. Use
+`catch unreachable` only for a locally proved impossibility, never for OOM,
+untrusted input, or I/O. Log at the boundary that decides what the failure
+means to the user.
 
-When a later fallible insert can fail after a resource is fully constructed, clean it up in the `catch` before returning. After a successful insert, the container owns the resource.
+## Verify
 
-```zig
-var item = try Item.init(allocator, source);
-out.append(allocator, item) catch {
-    item.deinit(allocator);
-    return error.OutOfMemory;
-};
-```
+Use `std.testing.allocator` and `std.testing.checkAllAllocationFailures` for
+allocating paths. Recreate the same input on each injection run. Check both
+cleanup and preservation of old state after a failed update. Test nested-owner
+cleanup separately from backing-container cleanup.
 
-## Allocator pairing
-
-Free with the same allocator that allocated. Capture it on the owner or thread it through `init`/`deinit`. Do not mix `page_allocator`, `c_allocator`, and a caller-supplied allocator unless the boundary requires it and says so.
+Source: [errors and errdefer](https://ziglang.org/documentation/0.16.0/#Errors),
+plus `std/testing.zig` in the pinned compiler.

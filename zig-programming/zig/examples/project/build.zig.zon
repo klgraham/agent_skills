@@ -1,0 +1,8 @@
+.{
+    .name = .zig_skill_example,
+    .fingerprint = 0xa880156838495e35,
+    .version = "0.1.0",
+    .minimum_zig_version = "0.16.0",
+    .dependencies = .{},
+    .paths = .{ "build.zig", "build.zig.zon", "src", "include", "generate.zig", "message.txt" },
+}
