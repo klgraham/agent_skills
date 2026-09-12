@@ -20,6 +20,7 @@ claude plugin install systems-thinking@klogram-agent-skills
 claude plugin install code-review@klogram-agent-skills
 claude plugin install skill-development@klogram-agent-skills
 claude plugin install zig-programming@klogram-agent-skills
+claude plugin install epistemic-pass@klogram-agent-skills
 ```
 
 Installations use user scope by default. Add `--scope project` or `--scope local` when a plugin should be limited to a project.
@@ -35,6 +36,7 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | `code-review` | `concurrency-code-review` |
 | `skill-development` | `transcript-skill-miner` |
 | `zig-programming` | `zig`, `write-legible-zig`, `zig-0-16-stdlib-patterns`, `zig-build-from-source`, `zig-build-system`, `zig-data-oriented-programming`, `zig-memory-safety-review`, `zig-mmap-project-template` |
+| `epistemic-pass` | `epistemic-pass` |
 
 Claude namespaces installed skills by plugin. For example, invoke `/code-review:concurrency-code-review` to audit concurrent code.
 
