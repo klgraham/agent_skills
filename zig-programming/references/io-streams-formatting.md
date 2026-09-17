@@ -57,9 +57,9 @@ When a stream hands records to concurrent workers, copy into owned messages
 or retain stable immutable backing storage. Reader buffer views cannot outlive
 the next read merely because a queue is thread-safe.
 
-[streams.zig](../../zig/examples/streams.zig) exercises buffered file formatting,
+[streams.zig](../examples/streams.zig) exercises buffered file formatting,
 a custom formatter, line EOF behavior, and bounded output failure. The existing
-[runtime example](../../zig/examples/runtime.zig) adds gzip and file-size limits.
+[runtime example](../examples/runtime.zig) adds gzip and file-size limits.
 
 Primary authority: `std/Io/Reader.zig`, `std/Io/Writer.zig`, and
 `std/Io/File.zig`. See [source review](io-sources.md) for the supplied tutorials

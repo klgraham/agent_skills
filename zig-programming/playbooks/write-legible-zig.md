@@ -1,16 +1,3 @@
----
-name: write-legible-zig
-description: >
-  Apply a strict, machine-readable Zig standard when creating, modifying,
-  refactoring, debugging, fixing, reviewing, or presenting Zig code. Use for
-  .zig files, build.zig and build.zig.zon, Zig APIs, tests, snippets, and
-  repository-facing Zig guidance. Triggers: /write-legible-zig, write legible
-  Zig, legible Zig, machine-legible Zig, Zig style, Zig conventions, readable
-  Zig, or a request to make Zig code easier for agents and humans to change.
-  Do not use for general prose questions or non-Zig code unless the request is
-  explicitly about a Zig boundary.
----
-
 # Write Legible Zig
 
 Apply the machine-legibility standard to every Zig region created, changed,
@@ -20,13 +7,13 @@ operation fail, and what code must change when the next case is added?
 
 ## Load the standard
 
-Read [references/zig-standard.md](references/zig-standard.md) completely before
+Read [the Zig standard](../references/zig-standard.md) completely before
 reasoning about a Zig change. Treat it as the normative implementation and
 review checklist.
 
 Use the standard together with repository-local instructions. A repository's
 `AGENTS.md`, build contract, public ABI, generated-code boundary, wire format,
-and test conventions outrank this skill. When they conflict, preserve the
+and test conventions outrank this playbook. When they conflict, preserve the
 higher-priority constraint and document the deviation at the code site when it
 would otherwise be surprising.
 
@@ -65,12 +52,12 @@ exhaustive `switch` are part of the legibility surface.
   stale slices, and declarations that live before their first valid value.
   Make the smallest behavior-preserving decomposition that gives the next edit
   a single home.
-- **Ownership, allocator, pointer, or concurrency work:** also load
-  `zig-memory-safety-review` and prove the lifetime in the source and tests.
-- **Build-file work:** also load `zig-build-system`; keep build configuration
-  legible without duplicating its canonical templates here.
-- **Version-sensitive stdlib work:** also load `zig-0-16-stdlib-patterns` and
-  verify the installed compiler rather than relying on remembered APIs.
+- **Ownership, allocator, pointer, or concurrency work:** also read
+  [memory-safety review](review-memory-safety.md) and prove the lifetime in the source and tests.
+- **Build-file work:** also read [the build playbook](build-project.md); keep
+  build configuration legible without duplicating its canonical templates here.
+- **Version-sensitive stdlib work:** also read [the stdlib playbook](use-stdlib.md)
+  and verify the installed compiler rather than relying on remembered APIs.
 
 ## Apply the final gate
 

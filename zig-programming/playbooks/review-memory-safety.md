@@ -1,29 +1,14 @@
----
-name: zig-memory-safety-review
-description: >
-  Audit Zig ownership, allocator, borrowing, invalidation, cleanup, C ABI,
-  callback, and concurrency contracts. Use when reviewing owner types,
-  init/deinit paths, allocation failure, collection mutation, stale pointers,
-  or lifetime-sensitive changes and pull requests.
-license: MIT
-metadata:
-  hermes:
-    tags: [zig, memory-safety, ownership, lifetimes, concurrency, static-analysis, code-review]
-    category: software-development
-    related_skills: [zig, write-legible-zig, zig-data-oriented-programming, zig-mmap-project-template]
----
-
 # Zig Memory-Safety Review
 
 ## Overview
 
 Zig does not statically enforce affine ownership, borrow lifetimes, temporal safety, or data-race freedom. Audit these properties by combining explicit project conventions, a mechanical risk inventory, symbol and call-path tracing, and runtime verification.
 
-This skill is an analyzer workflow, not a theorem prover. The bundled scanner identifies locations requiring review; every reported issue must be verified against the actual ownership contract and control flow before being presented as a defect.
+This playbook is an analyzer workflow, not a theorem prover. The bundled scanner identifies locations requiring review; every reported issue must be verified against the actual ownership contract and control flow before being presented as a defect.
 
 ## When to Use
 
-Use this skill when:
+Use this playbook when:
 
 - reviewing a Zig owner type with `init` / `deinit` methods;
 - investigating a leak, double free, use-after-free, stale slice, or invalidated pointer;
@@ -191,17 +176,17 @@ Atomics do not by themselves solve memory reclamation. Lock-free pointers requir
 
 ### Phase 1: Mechanical Risk Inventory
 
-Set `ZMS_SKILL_DIR` to this skill's installed directory, then run the bundled scanner with prioritized output first. This keeps the workflow independent of any particular agent or skill installation path:
+Set `ZIG_PROGRAMMING_SKILL_DIR` to the `zig-programming` skill's installed directory, then run the bundled scanner with prioritized output first. This keeps the workflow independent of any particular agent or skill installation path:
 
 ```bash
-export ZMS_SKILL_DIR=/path/to/zig-memory-safety-review
-python3 "$ZMS_SKILL_DIR/scripts/zig_memory_safety_scan.py" . --min-severity medium
+export ZIG_PROGRAMMING_SKILL_DIR=/path/to/zig-programming
+python3 "$ZIG_PROGRAMMING_SKILL_DIR/scripts/zig_memory_safety_scan.py" . --min-severity medium
 ```
 
 For the full machine-readable inventory:
 
 ```bash
-python3 "$ZMS_SKILL_DIR/scripts/zig_memory_safety_scan.py" . --format json
+python3 "$ZIG_PROGRAMMING_SKILL_DIR/scripts/zig_memory_safety_scan.py" . --format json
 ```
 
 Lower `--min-severity` to `low` or `inventory` when building the ownership ledger. The summary always counts all candidates even when detailed output is filtered.
@@ -209,7 +194,7 @@ Lower `--min-severity` to `low` or `inventory` when building the ownership ledge
 When changing the scanner, run its standard-library-only regression test:
 
 ```bash
-python3 "$ZMS_SKILL_DIR/scripts/test_zig_memory_safety_scan.py"
+python3 "$ZIG_PROGRAMMING_SKILL_DIR/scripts/test_zig_memory_safety_scan.py"
 ```
 
 The scanner inventories:
@@ -364,6 +349,6 @@ Therefore use the scanner to reduce search cost, then use agent reasoning to tra
 
 ## Related 0.16.0 playbooks
 
-Use [allocator selection](../zig/references/allocators.md) before choosing a lifetime policy, [error handling](../zig/references/error_handling.md) for rollback, and [C interoperability](../zig/references/c-interop.md) for ABI adapters. Debug and ReleaseSafe checks are diagnostics, not a static ownership proof.
+Use [allocator selection](../principles/allocators.md) before choosing a lifetime policy, [error handling](../principles/error-handling.md) for rollback, and [C interoperability](../principles/c-interop.md) for ABI adapters. Debug and ReleaseSafe checks are diagnostics, not a static ownership proof.
 
-For `std.Io` task lifetimes, also read [task concurrency](../zig-0-16-stdlib-patterns/references/io-concurrency.md) and [coordination](../zig-0-16-stdlib-patterns/references/io-coordination.md). Check inline execution, immediate cancellation cleanup, owning future results, Select result capacity, and partial queue transfers. Finishing a group does not automatically release resources stored in its result slots.
+For `std.Io` task lifetimes, also read [task concurrency](../references/io-concurrency.md) and [coordination](../references/io-coordination.md). Check inline execution, immediate cancellation cleanup, owning future results, Select result capacity, and partial queue transfers. Finishing a group does not automatically release resources stored in its result slots.

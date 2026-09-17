@@ -51,7 +51,7 @@ For a future returning owned memory, cancellation may return a successful
 allocation if the task already finished. Free that result if abandoning it.
 After consuming an awaited owned result, disarm any cleanup that would fetch
 and free the same stored result again. Idempotent waiting does not make double
-free safe. [concurrency.zig](../../zig/examples/concurrency.zig) tests abandoned
+free safe. [concurrency.zig](../examples/concurrency.zig) tests abandoned
 owned results as well as void-task cleanup.
 
 ## Playbook: bound a batch with Group
@@ -69,7 +69,7 @@ and feed a bounded queue. Declare the queue and result storage before the group,
 and defer `group.cancel(io)` before the first fallible launch. Close the queue
 on producer completion, await the group, then inspect outcomes.
 
-The [batch runner](../../zig/examples/batch-runner.zig) uses three workers,
+The [batch runner](../examples/batch-runner.zig) uses three workers,
 a two-item queue, per-job errors, and ordered results. It tests empty input,
 a failed job, and launch refusal with concurrency disabled. A group alone does
 not bound active work; do not spawn one task per unbounded input item.

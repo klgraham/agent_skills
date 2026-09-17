@@ -22,7 +22,7 @@ joining and discards values, so it is inappropriate for owning return values.
 
 Never call await after cancellation. Receiving the first completion is not
 necessarily receiving the first success; continue past errors if the operation
-requires a first-success policy. The [concurrency example](../../zig/examples/concurrency.zig)
+requires a first-success policy. The [concurrency example](../examples/concurrency.zig)
 checks both a completion race and cleanup of owned results.
 
 ## Playbook: bounded producer and consumer
@@ -47,7 +47,7 @@ partial progress around cancellation or closure. On a failed `putAll`, the count
 already enqueued is unspecified. Avoid `putAll` as an all-or-nothing transfer of
 owning elements; use individual transfers or a protocol that tracks ownership.
 
-The [batch runner](../../zig/examples/batch-runner.zig) demonstrates bounded
+The [batch runner](../examples/batch-runner.zig) demonstrates bounded
 backpressure, close/drain behavior, and disjoint output slots.
 
 ## Playbook: protect a shared invariant

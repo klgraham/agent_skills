@@ -1,20 +1,9 @@
----
-name: zig-0-16-stdlib-patterns
-description: "Zig 0.16.0 runtime I/O and container migration. Use for std.Io, streams and formatting, async/concurrent tasks, futures, groups, cancellation, select, queues, locks, backend choice, HTTP, and ArrayList migration."
-license: MIT
-metadata:
-  hermes:
-    tags: [zig, stdlib, http, filesystem, zig-0.16]
-    category: software-development
-    skill_type: reference
----
-
 # Zig 0.16.0 runtime APIs
 
 Use for runtime I/O, streams and formatting, task concurrency, parallel work,
 and container migration.
 Inspect declarations under `std_dir` from `zig env` before adapting a recipe.
-This skill targets the release, not earlier 0.16 development snapshots.
+This playbook targets the release, not earlier 0.16 development snapshots.
 
 ## Principles
 
@@ -60,13 +49,13 @@ resource policy, inspect the request-level API before implementing it.
    and explicit flush handling for buffered writers.
 5. Use local fixtures for routine tests. Label external HTTP checks separately.
 
-[runtime.zig](../zig/examples/runtime.zig) runs file, bounded-buffer, and gzip
+[runtime.zig](../examples/runtime.zig) runs file, bounded-buffer, and gzip
 checks. It also compiles the HTTP path; the verifier does not make a network
-request. [binary.zig](../zig/examples/binary.zig) checks lengths and offsets.
+request. [binary.zig](../examples/binary.zig) checks lengths and offsets.
 
 ## Playbook: migrate ArrayList
 
-Read [the ArrayList migration reference](references/zig-0.16-arraylist-migration.md).
+Read [the ArrayList migration reference](../references/zig-0.16-arraylist-migration.md).
 Do not rewrite every anonymous `.{}` initializer: maps and unrelated structs
 have different defaults. `std.ArrayListUnmanaged` is a deprecated alias for
 `std.ArrayList`, which does **not** contain an allocator field.
@@ -75,10 +64,10 @@ have different defaults. `std.ArrayListUnmanaged` is a deprecated alias for
 
 | Need | Reference |
 |---|---|
-| Readers, writers, buffers, custom formatting, and streaming records | [Streams and formatting](references/io-streams-formatting.md) |
-| async versus concurrent, futures, groups, cancellation, backend selection | [Task concurrency and parallelism](references/io-concurrency.md) |
-| Select, deadlines, queues, locks, atomics, raw threads, migration | [Coordination](references/io-coordination.md) |
-| Online examples and release-specific corrections | [Source review](references/io-sources.md) |
+| Readers, writers, buffers, custom formatting, and streaming records | [Streams and formatting](../references/io-streams-formatting.md) |
+| async versus concurrent, futures, groups, cancellation, backend selection | [Task concurrency and parallelism](../references/io-concurrency.md) |
+| Select, deadlines, queues, locks, atomics, raw threads, migration | [Coordination](../references/io-coordination.md) |
+| Online examples and release-specific corrections | [Source review](../references/io-sources.md) |
 
 `io.async` may execute inline. Use `io.concurrent` when progress must overlap,
 and handle `ConcurrencyUnavailable`. Neither promises multicore speedup.

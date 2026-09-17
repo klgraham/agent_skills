@@ -2,7 +2,7 @@
 
 Reviewed on 2026-09-11. The examples in this collection are checked with the
 installed compiler reporting `0.16.0`. Tutorials supply use cases; the pinned
-library declarations and executed examples decide which APIs this skill teaches.
+library declarations and executed examples decide which APIs this collection teaches.
 
 ## Primary contracts
 
@@ -23,7 +23,7 @@ Locate installed sources using `zig env`; do not depend on a maintainer's path.
 
 ## Supplied examples reviewed
 
-| Reading | How to use it for this skill |
+| Reading | How to use it for this collection |
 |---|---|
 | [Streams and formatting](https://jkingston.github.io/zig_guide/06-io-streams.html) | Formatting and buffer use cases; replace mixed old filesystem recipes with 0.16.0 Io.File/Dir signatures |
 | [Async, concurrency, and performance](https://jkingston.github.io/zig_guide/08-async-concurrency.html) | Topic map; verify queue methods, backend names, and concurrency guarantees |

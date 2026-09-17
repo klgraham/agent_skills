@@ -33,6 +33,6 @@ Do not bulk-convert map initialization or change `var` based only on text
 matching. Do not serialize the container object: slices contain process-local
 pointers. Serialize element data using an explicit format.
 
-Run [ownership.zig](../../zig/examples/ownership.zig) for nested cleanup and
+Run [ownership.zig](../examples/ownership.zig) for nested cleanup and
 allocation failure coverage. Inspect `std/std.zig` and `std/array_list.zig`
 from `zig env` for the alias and method definitions.

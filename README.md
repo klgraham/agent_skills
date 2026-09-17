@@ -35,7 +35,7 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | `systems-thinking` | `systems-thinking` |
 | `code-review` | `concurrency-code-review` |
 | `skill-development` | `transcript-skill-miner` |
-| `zig-programming` | `zig`, `write-legible-zig`, `zig-0-16-stdlib-patterns`, `zig-build-from-source`, `zig-build-system`, `zig-data-oriented-programming`, `zig-memory-safety-review`, `zig-mmap-project-template` |
+| `zig-programming` | `zig-programming` |
 | `epistemic-pass` | `epistemic-pass` |
 
 Claude namespaces installed skills by plugin. For example, invoke `/code-review:concurrency-code-review` to audit concurrent code.
@@ -78,7 +78,7 @@ Restart Codex if the skill does not appear immediately. To update a linked insta
 git pull --ff-only
 ```
 
-Every skill in the Claude plugins is also a Codex-compatible skill directory with a `SKILL.md`. Zig skills live under `zig-programming/`.
+Every skill in the Claude plugins is also a Codex-compatible skill directory with a `SKILL.md`. The Zig router skill lives at `zig-programming/SKILL.md`.
 
 ## Codex-only skills
 
@@ -94,7 +94,7 @@ Image-description skills are excluded from `.claude-plugin/marketplace.json` and
 .claude-plugin/marketplace.json   Claude marketplace catalog
 plugins/                         Claude plugin manifests and skill links
 <skill>/SKILL.md                 Canonical portable skills
-zig-programming/                 Canonical Zig skill family
+zig-programming/                 Canonical Zig router skill
 ```
 
 The `code-review` plugin includes a standalone concurrency audit with Python-specific `asyncio`, thread, executor, process, and queue checks.
@@ -108,3 +108,9 @@ The [systems-thinking skill](systems-thinking/SKILL.md) combines system analysis
 Use `$systems-thinking` in Codex or `/systems-thinking:systems-thinking` in Claude Code. Review requests retain the evidence gate, read-only boundary, and optional matching HTML and Obsidian reports. Understanding a system does not require recommending changes.
 
 The former `systems-thinking-reviewer` skill is retired. Replace old local links or copies with the unified `systems-thinking` directory using the installation instructions above. Existing report JSON remains compatible with `systems-thinking/scripts/build_report.py`; the renderer and HTML asset move together.
+
+## Zig programming
+
+The [zig-programming skill](zig-programming/SKILL.md) is one entrypoint for Zig implementation, builds, stdlib migration, memory-safety review, performance work, mmap formats, compiler bootstrapping, and release updates. It routes by intent to focused playbooks and loads principles and references only when needed.
+
+Use `$zig-programming` in Codex or `/zig-programming:zig-programming` in Claude Code. The former eight Zig skill names are retired; replace local links or copies with the unified `zig-programming` directory.

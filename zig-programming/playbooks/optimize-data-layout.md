@@ -1,15 +1,3 @@
----
-name: zig-data-oriented-programming
-description: "Zig 0.16.0 performance principles and playbooks for data layout, SIMD, scalar baselines, arenas, and false sharing. Use for measured hot loops and bulk-processing design."
-license: MIT
-metadata:
-  hermes:
-    tags: [zig, data-oriented-design, simd, cache, arena, performance, zig-0.16]
-    category: software-development
-    related_skills: [zig, write-legible-zig, zig-memory-safety-review, zig-mmap-project-template, zig-0-16-stdlib-patterns]
-    wiki: [[data-oriented-programming/index]]
----
-
 # Data layout and SIMD in Zig 0.16.0
 
 Use when profiling identifies a compute, allocation, or memory-access bottleneck.
@@ -55,7 +43,7 @@ complete vectors, then process a scalar tail. Bound the vector loop with
 `len - i >= width` after establishing `i <= len`; a narrow `i + width` can
 overflow before the comparison.
 
-[simd.zig](../zig/examples/simd.zig) tests a dot product at zero length, both
+[simd.zig](../examples/simd.zig) tests a dot product at zero length, both
 sides of a vector boundary, multiple widths, and mismatched lengths.
 
 | Operation | Form |
@@ -88,7 +76,7 @@ promise that positions remain stable under compaction.
 Use arenas for a phase that actually ends. Close files and foreign handles
 before bulk memory cleanup. For repeated batches, a child arena over a growing
 parent may retain memory; use a reclaiming backing allocator when required.
-Read [allocator choices](../zig/references/allocators.md) for the decision table.
+Read [allocator choices](../principles/allocators.md) for the decision table.
 
 For independent per-thread counters, measure false sharing and choose padding
 from the target cache characteristics. `extern struct` defines ABI layout; it
@@ -105,4 +93,4 @@ compilation alone.
 Sources: [vectors](https://ziglang.org/documentation/0.16.0/#Vectors),
 `std/simd.zig`, `std/multi_array_list.zig`, and the pinned backend's output.
 
-For CPU work split across tasks, read [task concurrency and parallelism](../zig-0-16-stdlib-patterns/references/io-concurrency.md). Choose bounded workers and a backend that can execute them on multiple threads, then measure. `io.concurrent` establishes progress requirements; it does not prove SIMD or multicore speedup.
+For CPU work split across tasks, read [task concurrency and parallelism](../references/io-concurrency.md). Choose bounded workers and a backend that can execute them on multiple threads, then measure. `io.concurrent` establishes progress requirements; it does not prove SIMD or multicore speedup.
