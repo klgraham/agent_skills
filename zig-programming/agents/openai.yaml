@@ -1,0 +1,4 @@
+interface:
+  display_name: "Zig Programming"
+  short_description: "Route version-grounded Zig engineering work"
+  default_prompt: "Use $zig-programming to route this Zig task to the relevant playbook and verify it against the pinned compiler."

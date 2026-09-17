@@ -7,8 +7,8 @@ ABI, generated file, wire format, performance constraint, or repository rule
 requires a deviation, explain it at the deviation site.
 
 This standard targets Zig 0.16.0 as used by this skill collection. Verify
-version-sensitive APIs against the repository's compiler and load
-`zig-0-16-stdlib-patterns` when the code touches the standard library.
+version-sensitive APIs against the repository's compiler and read
+[the stdlib playbook](../playbooks/use-stdlib.md) when code touches the standard library.
 
 ## Contents
 
@@ -286,8 +286,8 @@ review, and tests. Make that convention visible.
 
 ## 10. Generics and comptime
 
-For 0.16.0 type constructors and macro alternatives, read the hub's
-[comptime playbook](../../zig/references/comptime.md). `@Type` is removed.
+For 0.16.0 type constructors and macro alternatives, read the
+[comptime principle](../principles/comptime.md). `@Type` is removed.
 
 - Prefer a concrete implementation until a second real use demonstrates the
   abstraction. Generality is not legibility when it hides the data shape.
@@ -327,8 +327,8 @@ Treat every view into a collection as borrowed until proven otherwise.
   tests, snapshots, logs, or wire formats require deterministic order.
 - Use the collection initializer and deinitializer required by the pinned Zig
   version. For this repository's Zig 0.16 guidance, confirm the `.empty`,
-  allocator, and `deinit` forms in `zig-0-16-stdlib-patterns` rather than
-  copying an older version's pattern.
+  allocator, and `deinit` forms in [the stdlib playbook](../playbooks/use-stdlib.md)
+  rather than copying an older version's pattern.
 
 ## 12. Concurrency
 

@@ -7,15 +7,15 @@
    pinned compiler and its source rather than copying either page blindly.
 3. Run `zig init` in a newly created temporary directory. Inspect the generated
    manifest, modules, runtime entry point, and test steps.
-4. Review every sibling skill and linked reference. Search for affected APIs,
+4. Review every playbook, principle, and linked reference. Search for affected APIs,
    including runtime I/O, containers, type constructors, build options, and
    platform mapping calls. Preserve useful principles; replace unsupported recipes.
 5. Update runnable examples and their verifier alongside the guidance. Keep
    intentional compile-failure cases separate from valid examples.
-6. Run the skill-creator frontmatter validator for each skill. Check relative
-   links and provider-package symlinks. Copy the provider package with symlinks
+6. Validate the root `SKILL.md` frontmatter. Check relative links and the
+   provider-package symlink. Copy the provider package with symlinks
    dereferenced and validate its contents too.
-7. Run `python3 zig/scripts/verify_examples.py` from the collection directory.
+7. Run `python3 scripts/verify_examples.py` from the collection directory.
    Update its exact-version gate only when changing the collection's target.
 8. Run the existing memory-safety scanner tests if its packaging or behavior
    changed. Inspect the final diff and report checks that were not performed.

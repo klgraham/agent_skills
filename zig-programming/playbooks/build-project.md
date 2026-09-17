@@ -1,18 +1,7 @@
----
-name: zig-build-system
-description: "Zig 0.16.0 build and release playbooks. Use for build.zig, package manifests, modules, C sources, generated files, dependencies, test graphs, cross-compilation, and release artifacts."
-license: MIT
-metadata:
-  hermes:
-    tags: [zig, build-system, build.zig, zig-0.16]
-    category: software-development
-    skill_type: reference
----
-
 # Builds and releases with Zig 0.16.0
 
 Use for application and library builds. For the compiler itself, use
-[build from source](../zig-build-from-source/SKILL.md).
+[build from source](build-compiler.md).
 
 ## Principles
 
@@ -39,7 +28,7 @@ Make changes to tracked generated source an explicit update step.
    can succeed without testing the feature.
 6. Forward `b.args` to a run step when the program accepts arguments.
 
-The [example build](../zig/examples/project/build.zig) includes a public module,
+The [example build](../examples/project/build.zig) includes a public module,
 C helper, host generator, run step, native tests, and a compile-only check step.
 Copy its directory to a scratch location and run:
 
@@ -111,5 +100,5 @@ The [official build guide](https://ziglang.org/learn/build-system/) explains
 step dependencies, generated files, and target-specific installation. It is a
 living page; recheck examples against 0.16.0. Inspect `std/Build.zig`,
 `std/Build/Module.zig`, and `std/Build/Step/Run.zig` for exact contracts.
-The collection's [verifier](../zig/scripts/verify_examples.py) runs the bundled
+The collection's [verifier](../scripts/verify_examples.py) runs the bundled
 project, checks a changed generator input, and cross-compiles its check step.

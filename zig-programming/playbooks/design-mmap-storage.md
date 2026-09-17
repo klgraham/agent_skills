@@ -1,13 +1,3 @@
----
-name: zig-mmap-project-template
-description: Create a new Zig 0.16 library with mmap-friendly flat-file storage. Template and patterns for zero-copy memory-mapped data structures.
-license: MIT
-metadata:
-  hermes:
-    tags: [zig, mmap, data-structures, template]
-    category: software-development
----
-
 # mmap storage in Zig 0.16.0
 
 Use for flat-file storage and mapped snapshots. Separate mutable construction
@@ -37,8 +27,8 @@ snapshot immutable or define a synchronization and reclamation protocol.
    `@alignCast` checks an assumption; it does not repair an unaligned address.
 6. Expose borrowed views only after validation and tie their validity to the owner.
 
-[binary.zig](../zig/examples/binary.zig) gives runnable length and range checks.
-For layered graph data, load [graph layouts](references/graph-layout.md), which
+[binary.zig](../examples/binary.zig) gives runnable length and range checks.
+For layered graph data, load [graph layouts](../references/graph-layout.md), which
 covers public IDs, dense indices, layer identity, and compacted-state checks.
 
 ## Playbook: implement mapping and persistence
@@ -57,9 +47,9 @@ finish. Do not mutate or truncate a mapped snapshot behind those readers.
 
 ## Project setup and verification
 
-Use the [build playbook](../zig-build-system/SKILL.md) for modules, manifests,
+Use the [build playbook](build-project.md) for modules, manifests,
 and test roots. Creating a local library does not imply creating a remote repo.
-For runtime reads and writes use the [std.Io playbook](../zig-0-16-stdlib-patterns/SKILL.md).
+For runtime reads and writes use the [std.Io playbook](use-stdlib.md).
 
 Test round trips, truncation at every header boundary, oversized counts,
 overflowing ranges, invalid versions, misalignment, and stale snapshot state.
@@ -68,6 +58,6 @@ readers under the intended synchronization contract. Fuzz the byte parser
 independently of mapping. Do not dereference an invalid borrow to test that a
 safe API rejects it.
 
-Use [memory-safety review](../zig-memory-safety-review/SKILL.md) for mapping
+Use [memory-safety review](review-memory-safety.md) for mapping
 lifetimes, callbacks, and concurrent reclamation. Source rules for pointers and
 alignment are in the [0.16.0 reference](https://ziglang.org/documentation/0.16.0/).

@@ -1,18 +1,7 @@
----
-name: zig-build-from-source
-description: "Build and install the Zig compiler from a git clone. Covers the self-hosted `zig build` path and the CMake/LLVM fallback when the bootstrap compiler is too old. Targets macOS (Apple Silicon) with Homebrew LLVM, but patterns generalize."
-license: MIT
-metadata:
-  hermes:
-    tags: [zig, build-from-source, compiler, toolchain, bootstrap, macos, llvm, cmake]
-    category: software-development
-    skill_type: workflow
----
-
 # Build the Zig compiler from source
 
 Use for compiler development or a toolchain that must be built locally. For
-normal project builds, use [zig-build-system](../zig-build-system/SKILL.md).
+normal project builds, use [the project build playbook](build-project.md).
 
 ## Principles
 
