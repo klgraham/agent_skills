@@ -42,6 +42,12 @@
       "source": "./plugins/epistemic-pass",
       "description": "Rigorous sequential epistemic pass: observe, infer, first principles, then verify.",
       "category": "development"
+    },
+    {
+      "name": "openai-decisions",
+      "source": "./plugins/openai-decisions",
+      "description": "Build application features with the OpenAI Decisions API.",
+      "category": "development"
     }
   ]
 }
