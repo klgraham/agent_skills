@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenAI Decisions"
+  short_description: "Build typed judgments with the Decisions API"
+  default_prompt: "Use $openai-decisions to design and build a feature with the OpenAI Decisions API."

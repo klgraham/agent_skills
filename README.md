@@ -40,6 +40,7 @@ claude plugin install code-review@klogram-agent-skills
 claude plugin install skill-development@klogram-agent-skills
 claude plugin install zig-programming@klogram-agent-skills
 claude plugin install epistemic-pass@klogram-agent-skills
+claude plugin install openai-decisions@klogram-agent-skills
 ```
 
 Installations use user scope by default. Add `--scope project` or `--scope local` when a plugin should be limited to a project.
@@ -56,6 +57,7 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | `skill-development` | `transcript-skill-miner` |
 | `zig-programming` | `zig-programming` |
 | `epistemic-pass` | `epistemic-pass` |
+| `openai-decisions` | `openai-decisions` |
 
 Claude namespaces installed skills by plugin. For example, invoke `/code-review:concurrency-code-review` to audit concurrent code.
 
@@ -132,6 +134,12 @@ The [systems-thinking skill](skills/systems-thinking/SKILL.md) combines system a
 Use `$systems-thinking` in Codex or `/systems-thinking:systems-thinking` in Claude Code. Review requests retain the evidence gate, read-only boundary, and optional matching HTML and Obsidian reports. Understanding a system does not require recommending changes.
 
 The former `systems-thinking-reviewer` skill is retired. Replace old local links or copies with `skills/systems-thinking`. Existing report JSON remains compatible with `skills/systems-thinking/scripts/build_report.py`; the renderer and HTML asset move together.
+
+## OpenAI Decisions
+
+The [openai-decisions skill](skills/openai-decisions/SKILL.md) supports building features that check conditions, select fixed options, and score text or images. It covers question design, composition, uncertainty, and application behavior, with official OpenAI docs as the authority.
+
+Use `$openai-decisions` in Codex or `/openai-decisions:openai-decisions` in Claude Code. The package includes contract notes, composition patterns, and a Python ticket-routing example with offline tests. The example prints a request by default; live calls require `--live` and `OPENAI_API_KEY`.
 
 ## Zig programming
 
