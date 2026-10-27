@@ -10,7 +10,7 @@
     {
       "name": "obsidian-toolkit",
       "source": "./plugins/obsidian-toolkit",
-      "description": "Create and maintain Obsidian vault content, Bases, plugins, and themes.",
+      "description": "Build and maintain Obsidian plugins and themes.",
       "category": "productivity"
     },
     {
@@ -41,12 +41,6 @@
       "name": "epistemic-pass",
       "source": "./plugins/epistemic-pass",
       "description": "Rigorous sequential epistemic pass: observe, infer, first principles, then verify.",
-      "category": "development"
-    },
-    {
-      "name": "openai-decisions",
-      "source": "./plugins/openai-decisions",
-      "description": "Build application features with the OpenAI Decisions API.",
       "category": "development"
     }
   ]
