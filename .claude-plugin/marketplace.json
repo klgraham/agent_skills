@@ -42,6 +42,12 @@
       "source": "./plugins/epistemic-pass",
       "description": "Rigorous sequential epistemic pass: observe, infer, first principles, then verify.",
       "category": "development"
+    },
+    {
+      "name": "kline",
+      "source": "./plugins/kline",
+      "description": "Programming principles as agent skills: justify, test, simplify, bound, and verify attributions.",
+      "category": "development"
     }
   ]
 }
