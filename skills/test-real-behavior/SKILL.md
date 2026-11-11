@@ -19,7 +19,7 @@ Keep verification procedures executable, current, and committed. A fix should im
 
 ## Heuristics
 
-- For every test, be able to answer Ken's question: what real-world scenario is it checking? If the answer is "that this function calls that function," rewrite or delete it.
+- For every test, be able to answer the question: what real-world scenario is it checking? If the answer is "that this function calls that function," rewrite or delete it.
 - Assert what a caller, user, or operator can observe: outputs, persisted state, exit codes, messages. Avoid asserting private call order.
 - Run the examples and the integration path, not just the unit under change. A passing unit suite with a broken example is a failing change.
 - For performance claims, measure a representative workload, compare under the same conditions (machine, data size, warm or cold), and report both numbers.

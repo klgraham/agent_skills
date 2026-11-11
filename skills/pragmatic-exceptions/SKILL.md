@@ -9,9 +9,9 @@ description: >-
 
 # Pragmatic exceptions
 
-Ken pragmatically accepts breaking changes for fresh installations, justified unsafe code for performance, and exceptions to normal branch and CI workflows. Understand and justify tradeoffs rather than enforce rules regardless of context.
+Be pragmatic. It is sometimes okay to accept breaking changes for fresh installations, justified unsafe code for performance, and exceptions to normal branch and CI workflows. Understand and justify tradeoffs rather than enforce rules regardless of context.
 
-These are contextual preferences. The current task, repository, users, and data determine which tradeoff is appropriate.
+These exceptions depend on context. The current task, repository, users, and data determine which tradeoff is appropriate.
 
 ## Heuristics
 
