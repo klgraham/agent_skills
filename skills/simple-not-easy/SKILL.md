@@ -12,9 +12,9 @@ description: >-
 
 Simple means one role, one concept, not intertwined with anything else. Easy means familiar or close at hand. Optimize for simple, even when easy is right there.
 
-Design is taking things apart so they can be put back together. The value of a design is the decisions it makes. Leaving every option open is not design; it hands the design work to the user.
+Design is taking things apart so they can be put back together. Start by taking apart the requirements and the candidate solutions, not by drawing the big plan. The value of a design is the decisions it makes. Leaving every option open is not design; it hands the design work to the user.
 
-Source: Ken's principles #13 "Decomplect," #16 "Take apart the problem," and #17 "Design is deciding." #16 and #17 are from Rich Hickey, "Design, Composition, and Performance" (QCon San Francisco, 2013); #13 draws on the Hickey talks in the list's references.
+Source: Ken's principles #13 "Decomplect," #16 "Take apart the problem," and #17 "Design is deciding." #16 and #17 are from Rich Hickey, "Design, Composition, and Performance" (QCon San Francisco, 2013). #13 has no per-principle talk citation in the principles list.
 
 ## Decomplect (#13)
 
@@ -32,7 +32,7 @@ Source: Ken's principles #13 "Decomplect," #16 "Take apart the problem," and #17
 - Write down the unstated requirements: don't crash, don't eat memory, don't cost too much to run, don't need manual babysitting, don't make users hate it.
 - Take apart order and participants: where can queues, idempotence, or commutative operations remove an ordering dependency?
 - List each candidate solution's tradeoffs and costs, and reject one that is bigger than the problem.
-- Decompose until each piece is about one thing.
+- Decompose until each piece is about one thing; extension, reuse, and testability fall out of the seams.
 
 ## Design is deciding (#17)
 
@@ -42,6 +42,7 @@ Source: Ken's principles #13 "Decomplect," #16 "Take apart the problem," and #17
 - Push back on "take my good idea." Every addition may be good; all of them together are unplayable.
 - Stay at the layer you're working on. Rewriting the driver for 10% while building the feature is scope creep.
 - Quit fidgeting with tooling and build setup; spend the time on the actual problem.
+- Build a repertoire (patterns, techniques, what works and what doesn't) so that coding draws on preparation instead of making it up.
 
 ## Anti-patterns
 

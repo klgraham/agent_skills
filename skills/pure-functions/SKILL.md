@@ -16,17 +16,15 @@ A pure function returns the same output for the same input and does nothing else
 
 ## Heuristics
 
-- Split each operation into a pure core that decides and a thin shell that does I/O. The shell reads inputs, calls the core, and writes results.
 - Pass in what the function depends on: the current time, a random seed, configuration, the data read from disk. Don't reach out for them.
-- Return a description of the effect (the rows to write, the message to send) and let the caller perform it.
 - Return new values instead of mutating arguments.
-- Test the core with plain values and many cases. Test the shell with a few integration paths.
+- Test pure functions with plain values and many cases.
 - When a test needs heavy mocking, treat that as a sign the logic and the effects are tangled. Extract the logic.
 - "When useful" matters. Don't contort simple glue code or performance-critical loops into purity when it adds complexity and no testability.
 
 ## Anti-patterns
 
-- Business rules inside an HTTP handler, a database callback, or a CLI `main`.
+- Logic that could be pure but can only be tested by standing up a server, database, or CLI.
 - Functions that call `now()`, `random()`, or read environment variables deep inside their logic.
 - Tests that mock the filesystem, the clock, and the network to check an arithmetic rule.
 - Helpers that look pure but mutate a shared cache or an argument.

@@ -31,6 +31,8 @@ The only thing that mutates is a reference, and only in a controlled way: it swa
 - Choose the reference's semantics on purpose: shared or isolated, synchronous or asynchronous, coordinated or autonomous.
 - Coordinate several references only where an invariant spans them, and do it in one transaction.
 - Keep side effects out of anything that may be retried. Do I/O after the swap.
+- Let readers dereference a consistent snapshot without locks; readers never block writers, and writers never block readers.
+- Use persistent data structures with structural sharing so "copying" on every change stays cheap; avoid copy-on-write of whole collections.
 - Treat locks in application code as a design smell.
 
 ## State as an argument (#20)
@@ -38,9 +40,12 @@ The only thing that mutates is a reference, and only in a controlled way: it swa
 Compute with values, passed in explicitly, not with a live connection.
 
 - Get a value of the state once (a snapshot or version), then pass it to functions. Don't thread connections or rely on ambient connection pools.
-- Record the basis (transaction id, version, timestamp) with every result, so the same query on the same basis gives the same answer.
+- Record the basis (transaction id, version, timestamp) with every result, so the same query on the same basis gives the same answer and can be shared as a permalink.
 - Write domain logic as `(state, input) -> result` or `(state, change) -> new-state`, with no I/O inside.
+- Answer what-if questions by applying a change to a value speculatively (Datomic `with`) and dropping it to backtrack, instead of writing and rolling back.
+- Keep history in the value so you can query as-of, since, or across time without a separate audit system.
 - Test with fabricated or generated state values, not mocked connections or a shared test database.
+- Use one value with many access paths (queries, index scans, navigation) instead of a different service per question.
 
 ## Anti-patterns
 

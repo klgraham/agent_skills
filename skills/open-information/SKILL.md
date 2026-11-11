@@ -13,7 +13,7 @@ Information is sparse, open, accumulative, and carried by names. Classes and fix
 
 Optionality isn't a property of data; it depends on context. Define what attributes mean (shape) separately from which ones a given function, endpoint, or message requires or provides (selection).
 
-Source: Ken's principles #25 "Open information" and #27 "Schema apart from selection," from Rich Hickey, "Effective Programs: 10 Years of Clojure" (Clojure/Conj, 2017) and "Maybe Not" (Clojure/Conj, 2018).
+Source: Ken's principles #25 "Open information," from Rich Hickey, "Effective Programs: 10 Years of Clojure" (Clojure/Conj, 2017) and "Maybe Not" (Clojure/Conj, 2018); and #27 "Schema apart from selection," from Rich Hickey, "Maybe Not" (Clojure/Conj, 2018).
 
 ## Open information (#25)
 
@@ -24,6 +24,7 @@ Source: Ken's principles #25 "Open information" and #27 "Schema apart from selec
 - Keep systems open: accept attributes you don't know about, pass them along, and take only what you need.
 - When something is absent, leave the key out. Don't fill slots with null or "Maybe" placeholders.
 - Use the same plain data model inside the program as on the wire and in storage.
+- Reach for a generic library of data functions before writing per-type accessors.
 
 ## Schema apart from selection (#27)
 
@@ -33,7 +34,8 @@ Source: Ken's principles #25 "Open information" and #27 "Schema apart from selec
 - Make selections deep, so nested requirements don't need a new type per context.
 - Avoid context-driven type proliferation (`UserForCreate`, `UserForUpdate`). One schema, many selections.
 - Support pipelines that accept partially filled data and return it more filled in.
-- Evolve compatibly: requiring less or providing more must not break callers. If it does, blame the encoding.
+- Evolve compatibly: requiring less or providing more must not break existing callers. If making an argument optional (wrapping it in Maybe/Option) breaks callers, blame the encoding, not the change.
+- Prefer real unions (nullable, `A | B`) over Maybe/Either wrappers when you must model alternatives.
 
 ## Anti-patterns
 

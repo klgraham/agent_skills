@@ -21,9 +21,14 @@ Source: Ken's principles #21 "Flow values between services," from Rich Hickey, "
 - Put queues or channels between producers and consumers so neither depends on the other's identity or availability.
 - Send values over the wire. When a value is too big or must be remembered, pass a stable name for an immutable value, not a mutable location.
 - Give every remote call a timeout, and make every operation that may be retried idempotent.
+- Treat membership, capacity, and capability as dynamic; don't hard-wire who talks to whom.
+- Spot the machine-like parts inside your programs too, and give them the same flow-oriented treatment.
 - Choose buffering on purpose: unbuffered for rendezvous, fixed-size for asynchrony with backpressure. Never unbounded.
 - Use promises or futures only for one-off handoffs; they can't model an enduring relationship.
+- Let channels be many-to-many, and pass them around so the wiring is explicit, visible, and changeable at runtime.
 - Keep wiring code separate from logic code, so you can see where data goes.
+- Model timeouts and choice as channel operations: wait on any one of several reads, writes, or a timeout (Clojure: `alts!`, `timeout`).
+- Use lightweight processes (go blocks, green threads) instead of a real thread per connection when there are many.
 
 ## Anti-patterns
 

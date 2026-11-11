@@ -20,10 +20,9 @@ Source: Ken's principles #7, "Make the normal workflow a first-class operation,"
 
 ## Make the normal workflow first-class
 
-- Write down the three to five things users do most often. Each should be one obvious command or call.
+- Make each routine task one obvious command or call.
 - If a routine task needs a pipe into `jq`, `grep`, or `awk`, or a hand-built ID, the tool is missing a command. Add it.
 - Let users refer to things by names they already know. Generate IDs for them.
-- Make the common path the default. Flags are for the uncommon path.
 - Test the workflow end to end the way a user would type it, not only the functions underneath.
 
 ## Reuse and remove

@@ -20,7 +20,7 @@ Source: the "Pragmatic exceptions" section of Ken's principles.
 - Before applying or enforcing a principle, ask what it protects in this context. If that thing isn't at stake, the rule may not apply.
 - Weigh the concrete cost of following the rule against the concrete risk of breaking it. Name both.
 - Breaking changes are acceptable when there are no existing installs or data to break. Check who is actually affected.
-- Unsafe or low-level code is acceptable when it's justified by a measured performance need, contained, and documented.
+- Unsafe code is acceptable when it's justified for performance. Useful review questions: is the need measured, is the unsafe code contained, and is the reason written down?
 - Branch and CI exceptions are acceptable when the repo's owner has set up that workflow or approved the exception for this task.
 - An exception is a decision, not a loophole. Write down the tradeoff where reviewers will see it.
 - Exceptions don't widen your authority. An approved exception covers this task only, and merge permission remains task-specific (principles #4 and #10).
@@ -30,7 +30,7 @@ Source: the "Pragmatic exceptions" section of Ken's principles.
 - Blocking a change on a rule whose purpose doesn't apply here.
 - Taking an exception silently, with no stated tradeoff.
 - Treating one approved exception as standing permission.
-- Using "pragmatism" to skip verification or review.
+- Using "pragmatism" to skip verification or review with no stated tradeoff. A justified, recorded branch or CI exception is still allowed.
 
 ## Required closing note
 

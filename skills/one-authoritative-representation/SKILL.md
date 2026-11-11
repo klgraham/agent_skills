@@ -19,7 +19,7 @@ When a concept has two definitions, they drift, and a reader can't tell which on
 
 - Before adding a definition, search for an existing one: the same field names, the same enum values, the same regex, the same table.
 - Pick one canonical source and derive the rest from it: generate types from the schema, or the schema from the types, but don't hand-maintain both.
-- Have one canonical store per kind of data. Caches, indexes, and views must be rebuildable from it and must say so.
+- Have one canonical store per kind of data; avoid competing canonical stores.
 - Parse and validate at the boundary once, then pass the parsed, typed value inward. Inner code shouldn't re-parse strings or re-check what the boundary guaranteed.
 - Name domain concepts with meaningful types (`ZigVersion`, `SkillName`) rather than passing raw strings everywhere, when the type removes real ambiguity.
 - Keep abstractions small. An abstraction earns its place by making the domain clearer, not by hiding the duplication behind another layer.

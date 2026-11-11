@@ -11,13 +11,13 @@ description: >-
 
 Before you credit a claim, limit, or requirement to a library, system, or person, verify where it actually comes from.
 
-Source: Ken's direct instruction, which he marked as very important. It is not one of the numbered principles in his list.
+Source: Ken's direct request (2026-11-11), which he called very important. It is not a numbered principle in his principles list.
 
 A wrong attribution looks like a fact, and it spreads. It also leads to wrong decisions, like rejecting a tool for a requirement it doesn't have.
 
 ## Worked example
 
-A post shows how to use a library, and its example calls AWS Bedrock. A quick summary says "the library requires AWS." That's wrong. Bedrock was only the model provider the example's author chose. The library itself ran locally and supported other providers.
+This is an illustrative example. A post shows how to use a library, and its example calls AWS Bedrock. A quick summary says "the library requires AWS." That's wrong. Bedrock was only the model provider the example's author chose. The library itself ran locally and supported other providers.
 
 What went wrong: one choice made in the example was credited to the library. What would have caught it:
 

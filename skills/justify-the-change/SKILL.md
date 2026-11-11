@@ -18,14 +18,13 @@ A diff shows what changed. Only the author can say why. A change that can't be j
 ## Before writing code
 
 - State the problem in one or two sentences, in terms of a user, a failure, or a cost. "Refactor X" is an action, not a problem.
-- Name who benefits: the end user, the next maintainer, the operator, or CI.
-- If you can't name a concrete improvement, stop and ask whether the change should exist at all. Discovering that work doesn't need doing is a valid result.
+- Say how it improves the repo or the user experience.
+- If you can't name a concrete improvement, stop and ask whether the change should exist at all.
 
 ## While designing
 
 - For each significant choice (library, data shape, boundary, algorithm), write down the alternative you rejected and why.
 - Prefer reasons tied to this repo's constraints over generic best practice. "Matches how `plugins/` already links skills" beats "symlinks are cleaner."
-- Separate what you verified from what you assumed. Say which one each reason is.
 
 ## When describing the change
 
@@ -44,4 +43,4 @@ A diff shows what changed. Only the author can say why. A change that can't be j
 
 ## Required closing note
 
-When this skill shaped your work, name the principle you applied ("Justify the change, #1") and the decision it changed. For example: "dropped the config option because no user problem required it," or "rewrote the PR body to lead with the failing scenario."
+When this skill shaped your work, name the principle you applied ("Justify the change, #1") and the decision it changed. For example: "stated the user problem before choosing between two designs," or "rewrote the PR body to lead with the failing scenario."

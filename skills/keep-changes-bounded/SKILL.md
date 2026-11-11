@@ -24,7 +24,6 @@ A reviewer can only judge what they can hold in their head. Bound the change so 
 - Before committing, read `git status` and `git diff --stat`. Every path should be one you meant to change.
 - Keep build outputs, caches, lockfile churn you didn't intend, editor files, local paths, and machine-specific config out of history. Use `.gitignore` when appropriate.
 - When you notice an unrelated improvement, write it down as a follow-up issue or note and leave it out of this change.
-- Prefer several small PRs that each stand alone over one large one, and say how they stack.
 
 ## Anti-patterns
 
