@@ -1,0 +1,36 @@
+---
+name: flow-and-conveyance
+description: >-
+  Use when connecting services, workers, or components; when replacing
+  direct calls or callback webs; or when choosing queues, channels,
+  buffering, timeouts, or retries. Flow values between parts, and make
+  conveyance a first-class, explicit part of the design.
+---
+
+# Flow and conveyance
+
+A system is a machine, and its parts should be about flow, not places: transform values, move them, route them, remember them. Keep those jobs separate.
+
+There comes a time in every good program when components must stop communicating directly with one another. Organize the program around independent processes connected by queues or channels.
+
+Source: Ken's principles #21 "Flow values between services," from Rich Hickey, "The Language of the System" (Clojure/Conj, 2012), and #23 "Conveyance is first-class," from Hickey, "Clojure core.async: Communicating Sequential Processes using Channels" (Strange Loop, 2013).
+
+## Heuristics
+
+- Give each component one job: transform, move or route, or record.
+- Put queues or channels between producers and consumers so neither depends on the other's identity or availability.
+- Send values over the wire. When a value is too big or must be remembered, pass a stable name for an immutable value, not a mutable location.
+- Give every remote call a timeout, and make every operation that may be retried idempotent.
+- Choose buffering on purpose: unbuffered for rendezvous, fixed-size for asynchrony with backpressure. Never unbounded.
+- Use promises or futures only for one-off handoffs; they can't model an enduring relationship.
+- Keep wiring code separate from logic code, so you can see where data goes.
+
+## Anti-patterns
+
+- A graph of stateful services triggering effects on each other, which Hickey calls "the revenge of objects."
+- Unbounded in-memory queues.
+- Retries on non-idempotent operations.
+
+## Required closing note
+
+When this skill shaped your work, name the principle you applied ("Flow values between services, #21" or "Conveyance is first-class, #23") and the decision it changed. For example: "replaced the callback chain with a bounded queue between ingest and indexing."

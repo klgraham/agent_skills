@@ -42,6 +42,12 @@
       "source": "./plugins/epistemic-pass",
       "description": "Rigorous sequential epistemic pass: observe, infer, first principles, then verify.",
       "category": "development"
+    },
+    {
+      "name": "k-society",
+      "source": "./plugins/k-society",
+      "description": "Ken's programming principles as agent skills: justify, test, simplify, bound, and verify attributions.",
+      "category": "development"
     }
   ]
 }
