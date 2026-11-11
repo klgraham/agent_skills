@@ -10,8 +10,6 @@ description: >-
 
 Prefer pure functions when useful, as they make testing straightforward.
 
-Source: Ken's principle #12, "Pure functions are easy to test."
-
 A pure function returns the same output for the same input and does nothing else. You can test it with a table of inputs and expected outputs, with no setup, mocks, or cleanup.
 
 ## Heuristics
@@ -34,6 +32,4 @@ A pure function returns the same output for the same input and does nothing else
 
 `values-not-places` covers state as an explicit argument (`(state, input) -> result`), which is the same move at the data layer.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Pure functions are easy to test, #12") and the decision it changed. For example: "moved the pricing rule out of the handler into a pure function with a table-driven test," or "passed the clock in instead of calling `Date.now()`."
+When this skill shaped your work, name the principle you applied ("pure-functions") and the decision it changed. For example: "passed the clock in so the expiry rule became a pure function with a table-driven test".

@@ -14,9 +14,9 @@ Simple means one role, one concept, not intertwined with anything else. Easy mea
 
 Design is taking things apart so they can be put back together. Start by taking apart the requirements and the candidate solutions, not by drawing the big plan. The value of a design is the decisions it makes. Leaving every option open is not design; it hands the design work to the user.
 
-Source: Ken's principles #13 "Decomplect," #16 "Take apart the problem," and #17 "Design is deciding." #16 and #17 are from Rich Hickey, "Design, Composition, and Performance" (QCon San Francisco, 2013). #13 has no per-principle talk citation in the principles list.
+Source: Rich Hickey, "Design, Composition, and Performance" (QCon San Francisco, 2013), for taking apart the problem and design as deciding.
 
-## Decomplect (#13)
+## Decomplect
 
 - Ask of every construct what it's braiding together: state and time, identity and value, what and how, policy and mechanism.
 - Prefer plain data over objects that bundle data with behavior; functions over methods; composition over inheritance; queues over direct calls between components.
@@ -24,7 +24,7 @@ Source: Ken's principles #13 "Decomplect," #16 "Take apart the problem," and #17
 - Judge a tool by what it tangles over the life of the system, not by how fast you can start with it.
 - When a fix touches many unrelated places, untangle before patching.
 
-## Take apart the problem (#16)
+## Take apart the problem
 
 - Break the feature list into the actual problems the user has. Solve problems, not features.
 - Split known from unknown, and domain requirements from solution requirements ("must run on AWS, must use X").
@@ -34,7 +34,7 @@ Source: Ken's principles #13 "Decomplect," #16 "Take apart the problem," and #17
 - List each candidate solution's tradeoffs and costs, and reject one that is bigger than the problem.
 - Decompose until each piece is about one thing; extension, reuse, and testability fall out of the seams.
 
-## Design is deciding (#17)
+## Design is deciding
 
 - Seek out constraints early. If the problem doesn't supply enough, choose some.
 - Think up ten, ship one.
@@ -51,6 +51,4 @@ Source: Ken's principles #13 "Decomplect," #16 "Take apart the problem," and #17
 - Patching a symptom in five places instead of finding the shared cause.
 - Shipping a settings page instead of a decision.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Decomplect, #13," "Take apart the problem, #16," or "Design is deciding, #17") and the decision it changed. For example: "split the scheduler from the job data," or "removed the config flag and chose the default."
+When this skill shaped your work, name the principle you applied ("simple-not-easy") and the decision it changed. For example: "split job scheduling out of the job data before adding retries".

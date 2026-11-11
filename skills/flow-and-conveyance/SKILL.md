@@ -13,7 +13,7 @@ A system is a machine, and its parts should be about flow, not places: transform
 
 There comes a time in every good program when components must stop communicating directly with one another. Organize the program around independent processes connected by queues or channels.
 
-Source: Ken's principles #21 "Flow values between services," from Rich Hickey, "The Language of the System" (Clojure/Conj, 2012), and #23 "Conveyance is first-class," from Hickey, "Clojure core.async: Communicating Sequential Processes using Channels" (Strange Loop, 2013).
+Source: Rich Hickey, "The Language of the System" (Clojure/Conj, 2012), for flowing values between services; "Clojure core.async: Communicating Sequential Processes using Channels" (Strange Loop, 2013), for conveyance.
 
 ## Heuristics
 
@@ -36,6 +36,4 @@ Source: Ken's principles #21 "Flow values between services," from Rich Hickey, "
 - Unbounded in-memory queues.
 - Retries on non-idempotent operations.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Flow values between services, #21" or "Conveyance is first-class, #23") and the decision it changed. For example: "replaced the callback chain with a bounded queue between ingest and indexing."
+When this skill shaped your work, name the principle you applied ("flow-and-conveyance") and the decision it changed. For example: "replaced the callback chain with a bounded queue between ingest and indexing".

@@ -12,9 +12,9 @@ description: >-
 
 A place is a slot you overwrite, and a value never changes. Build on values, and reach for places only when you can justify it.
 
-Source: Ken's principles #14 "Values not places," #18 "Managed references," and #20 "State as an argument." #18 is from Rich Hickey, "Persistent Data Structures and Managed References" (QCon London, 2009). #20 is from Hickey, "The Functional Database" (QCon New York, 2013), "The Database as a Value" (GOTO Night Chicago, 2012), and "Deconstructing the Database" (QCon San Francisco, 2012).
+Source: Rich Hickey, "Persistent Data Structures and Managed References" (QCon London, 2009), for managed references; "The Functional Database" (QCon New York, 2013), "The Database as a Value" (GOTO Night Chicago, 2012), and "Deconstructing the Database" (QCon San Francisco, 2012), for state as an argument.
 
-## Values (#14)
+## Values
 
 - Default to immutable data, and keep mutation explicit and contained.
 - Pass values across threads and services, never references to mutable state.
@@ -22,7 +22,7 @@ Source: Ken's principles #14 "Values not places," #18 "Managed references," and 
 - Separate identity (the thing over time) from state (its value at one moment).
 - If something can't be compared, cached, logged, and replayed without coordination, ask why.
 
-## Managed references (#18)
+## Managed references
 
 The only thing that mutates is a reference, and only in a controlled way: it swaps from one immutable value to the next. The new value is a pure function of the old one.
 
@@ -35,7 +35,7 @@ The only thing that mutates is a reference, and only in a controlled way: it swa
 - Use persistent data structures with structural sharing so "copying" on every change stays cheap; avoid copy-on-write of whole collections.
 - Treat locks in application code as a design smell.
 
-## State as an argument (#20)
+## State as an argument
 
 Compute with values, passed in explicitly, not with a live connection.
 
@@ -54,6 +54,4 @@ Compute with values, passed in explicitly, not with a live connection.
 - `UPDATE` in place that throws away the history you'll later need.
 - Domain functions that open their own database connections.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Values not places, #14," "Managed references, #18," or "State as an argument, #20") and the decision it changed. For example: "replaced the locked cache object with an atom of an immutable map," or "passed a snapshot into the report function instead of a connection."
+When this skill shaped your work, name the principle you applied ("values-not-places") and the decision it changed. For example: "passed a database snapshot into the report function instead of a live connection".

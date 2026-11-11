@@ -13,9 +13,9 @@ Information is sparse, open, accumulative, and carried by names. Classes and fix
 
 Optionality isn't a property of data; it depends on context. Define what attributes mean (shape) separately from which ones a given function, endpoint, or message requires or provides (selection).
 
-Source: Ken's principles #25 "Open information," from Rich Hickey, "Effective Programs: 10 Years of Clojure" (Clojure/Conj, 2017) and "Maybe Not" (Clojure/Conj, 2018); and #27 "Schema apart from selection," from Rich Hickey, "Maybe Not" (Clojure/Conj, 2018).
+Source: Rich Hickey, "Effective Programs: 10 Years of Clojure" (Clojure/Conj, 2017) and "Maybe Not" (Clojure/Conj, 2018) for open information; "Maybe Not" for schema apart from selection.
 
-## Open information (#25)
+## Open information
 
 - Represent information as associative data (maps of attributes), not bespoke classes per shape.
 - Give attributes globally unique, namespace-qualified names (`org.myorg/email`), and attach meaning to the attribute, not the record that holds it.
@@ -26,7 +26,7 @@ Source: Ken's principles #25 "Open information," from Rich Hickey, "Effective Pr
 - Use the same plain data model inside the program as on the wire and in storage.
 - Reach for a generic library of data functions before writing per-type accessors.
 
-## Schema apart from selection (#27)
+## Schema apart from selection
 
 - Define each attribute's shape once and reuse it everywhere.
 - Don't bake optional or required into the aggregate type. The record has no usage context.
@@ -43,6 +43,4 @@ Source: Ken's principles #25 "Open information," from Rich Hickey, "Effective Pr
 - `Optional<String>` fields that mean "required here, absent there."
 - Dropping unknown fields at every hop, so adding a field means redeploying everything.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Open information, #25" or "Schema apart from selection, #27") and the decision it changed. For example: "kept one `user` schema and declared per-endpoint required keys instead of three DTOs."
+When this skill shaped your work, name the principle you applied ("open-information") and the decision it changed. For example: "kept one `user` schema and declared per-endpoint required keys instead of three DTOs".

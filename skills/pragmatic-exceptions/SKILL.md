@@ -13,8 +13,6 @@ Ken pragmatically accepts breaking changes for fresh installations, justified un
 
 These are contextual preferences. The current task, repository, users, and data determine which tradeoff is appropriate.
 
-Source: the "Pragmatic exceptions" section of Ken's principles.
-
 ## Heuristics
 
 - Before applying or enforcing a principle, ask what it protects in this context. If that thing isn't at stake, the rule may not apply.
@@ -23,7 +21,7 @@ Source: the "Pragmatic exceptions" section of Ken's principles.
 - Unsafe code is acceptable when it's justified for performance. Useful review questions: is the need measured, is the unsafe code contained, and is the reason written down?
 - Branch and CI exceptions are acceptable when the repo's owner has set up that workflow or approved the exception for this task.
 - An exception is a decision, not a loophole. Write down the tradeoff where reviewers will see it.
-- Exceptions don't widen your authority. An approved exception covers this task only, and merge permission remains task-specific (principles #4 and #10).
+- Exceptions don't widen your authority. An approved exception covers this task only, and merge permission remains task-specific.
 
 ## Anti-patterns
 
@@ -32,6 +30,4 @@ Source: the "Pragmatic exceptions" section of Ken's principles.
 - Treating one approved exception as standing permission.
 - Using "pragmatism" to skip verification or review with no stated tradeoff. A justified, recorded branch or CI exception is still allowed.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Pragmatic exceptions") and the decision it changed, including the tradeoff. For example: "accepted a breaking config rename because there are no existing installs; noted it in the PR."
+When this skill shaped your work, name the principle you applied ("pragmatic-exceptions") and the decision it changed. For example: "accepted a breaking config rename because there are no existing installs, and recorded the tradeoff in the PR".

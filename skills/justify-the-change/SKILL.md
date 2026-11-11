@@ -11,8 +11,6 @@ description: >-
 
 Explain why the change deserves to exist. What problem does it solve? How does it improve the repo or the user experience? Explain the design choices.
 
-Source: Ken's principle #1, "Justify the change."
-
 A diff shows what changed. Only the author can say why. A change that can't be justified is probably not worth the reviewer's time, or the codebase's.
 
 ## Before writing code
@@ -41,6 +39,4 @@ A diff shows what changed. Only the author can say why. A change that can't be j
 - Retrofitting a reason after the code is written, then hiding the alternatives you never weighed.
 - Bundling an unjustified extra into a justified change.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Justify the change, #1") and the decision it changed. For example: "stated the user problem before choosing between two designs," or "rewrote the PR body to lead with the failing scenario."
+When this skill shaped your work, name the principle you applied ("justify-the-change") and the decision it changed. For example: "rewrote the PR body to lead with the user problem the change solves".

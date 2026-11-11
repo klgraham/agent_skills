@@ -11,8 +11,6 @@ description: >-
 
 Use coherent issues, acceptance criteria, sensible commits, and appropriate branches. Keep generated output and machine-specific clutter out of history. Defer unrelated extensions to follow-up issues.
 
-Source: Ken's principle #9, "Keep changes bounded and reviewable."
-
 A reviewer can only judge what they can hold in their head. Bound the change so the review is real.
 
 ## Heuristics
@@ -33,6 +31,4 @@ A reviewer can only judge what they can hold in their head. Bound the change so 
 - A single commit titled "wip" or "updates" covering several unrelated changes.
 - Expanding a scoped ticket because the extension seemed easy.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Keep changes bounded and reviewable, #9") and the decision it changed. For example: "moved the logging refactor to a follow-up issue," or "dropped generated files from the commit and added them to `.gitignore`."
+When this skill shaped your work, name the principle you applied ("keep-changes-bounded") and the decision it changed. For example: "moved the logging refactor out of the bug fix into a follow-up issue".

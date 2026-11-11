@@ -11,8 +11,6 @@ description: >-
 
 Before you credit a claim, limit, or requirement to a library, system, or person, verify where it actually comes from.
 
-Source: Ken's direct request (2026-11-11), which he called very important. It is not a numbered principle in his principles list.
-
 A wrong attribution looks like a fact, and it spreads. It also leads to wrong decisions, like rejecting a tool for a requirement it doesn't have.
 
 ## Worked example
@@ -44,6 +42,4 @@ What went wrong: one choice made in the example was credited to the library. Wha
 - Repeating another agent's claim as verified fact.
 - Treating a limitation in your own environment as a limitation of the tool.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Check attribution") and the decision it changed. For example: "corrected 'requires AWS' to 'the example uses Bedrock; the library supports local and other providers'," or "marked the claim unverified because the primary docs don't say."
+When this skill shaped your work, name the principle you applied ("check-attribution") and the decision it changed. For example: "corrected 'the library requires AWS' to 'the example uses Bedrock; the library also runs locally with other providers'".

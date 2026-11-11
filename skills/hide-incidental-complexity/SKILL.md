@@ -16,8 +16,6 @@ Users shouldn't need to manufacture UUIDs or reconstruct missing commands with s
 
 Prefer established libraries and standard-library facilities. Avoid speculative features, unnecessary rewrites, and edits to someone else's vendored code. Discovering work needn't be done is valuable.
 
-Source: Ken's principles #7, "Make the normal workflow a first-class operation," and #8, "Reuse what exists; remove what doesn't earn its complexity."
-
 ## Make the normal workflow first-class
 
 - Make each routine task one obvious command or call.
@@ -42,6 +40,4 @@ Source: Ken's principles #7, "Make the normal workflow a first-class operation,"
 - Speculative configuration, plugin systems, or abstraction layers.
 - Patching `node_modules/`, `vendor/`, or a copied upstream file.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Make the normal workflow first-class, #7" or "Reuse what exists; remove what doesn't earn its complexity, #8") and the decision it changed. For example: "added a `show --by-name` command instead of documenting a `jq` query," or "used the standard library's parser and deleted the custom one."
+When this skill shaped your work, name the principle you applied ("hide-incidental-complexity") and the decision it changed. For example: "added a `show --by-name` command instead of documenting a `jq` query".

@@ -17,8 +17,6 @@ Keep verification procedures executable, current, and committed. A fix should im
 
 > Never leave an updated verify skill uncommitted
 
-Source: Ken's principles #2, "Test real and meaningful behavior," and #3, "Make verification reusable."
-
 ## Heuristics
 
 - For every test, be able to answer Ken's question: what real-world scenario is it checking? If the answer is "that this function calls that function," rewrite or delete it.
@@ -39,6 +37,4 @@ Source: Ken's principles #2, "Test real and meaningful behavior," and #3, "Make 
 - Fixing a bug without leaving anything behind that would catch it again.
 - Updating a verify skill, script, or checklist and leaving it uncommitted.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("Test real and meaningful behavior, #2" or "Make verification reusable, #3") and the decision it changed. For example: "replaced a mock-only test with an integration test of the CLI path," or "committed the repro script alongside the fix."
+When this skill shaped your work, name the principle you applied ("test-real-behavior") and the decision it changed. For example: "replaced a mock-only test with an integration test of the CLI path and committed it with the fix".

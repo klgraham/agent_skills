@@ -11,8 +11,6 @@ description: >-
 
 Avoid duplicate schema definitions, competing canonical stores, and repeated parsing or validation. Use meaningful types and small abstractions that clarify the domain and improve maintainability.
 
-Source: Ken's principle #5, "Give each concept one authoritative representation."
-
 When a concept has two definitions, they drift, and a reader can't tell which one wins.
 
 ## Heuristics
@@ -33,6 +31,4 @@ When a concept has two definitions, they drift, and a reader can't tell which on
 - Copy-pasting a type into a second package "to avoid a dependency".
 - Wrapper types that add a name but no meaning.
 
-## Required closing note
-
-When this skill shaped your work, name the principle you applied ("One authoritative representation, #5") and the decision it changed. For example: "imported the version constant from the schema instead of redefining it in the store," or "removed the second validator; the boundary parse is canonical."
+When this skill shaped your work, name the principle you applied ("one-authoritative-representation") and the decision it changed. For example: "imported the version constant from the schema instead of redefining it in the store".
