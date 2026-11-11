@@ -40,7 +40,7 @@ claude plugin install code-review@klogram-agent-skills
 claude plugin install skill-development@klogram-agent-skills
 claude plugin install zig-programming@klogram-agent-skills
 claude plugin install epistemic-pass@klogram-agent-skills
-claude plugin install k-society@klogram-agent-skills
+claude plugin install kline@klogram-agent-skills
 ```
 
 Installations use user scope by default. Add `--scope project` or `--scope local` when a plugin should be limited to a project.
@@ -57,7 +57,7 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | `skill-development` | `transcript-skill-miner` |
 | `zig-programming` | `zig-programming` |
 | `epistemic-pass` | `epistemic-pass` |
-| `k-society` | `check-attribution`, `flow-and-conveyance`, `hide-incidental-complexity`, `justify-the-change`, `keep-changes-bounded`, `one-authoritative-representation`, `open-information`, `pragmatic-exceptions`, `pure-functions`, `simple-not-easy`, `test-real-behavior`, `values-not-places` |
+| `kline` | `check-attribution`, `flow-and-conveyance`, `hide-incidental-complexity`, `justify-the-change`, `keep-changes-bounded`, `one-authoritative-representation`, `open-information`, `pragmatic-exceptions`, `pure-functions`, `simple-not-easy`, `test-real-behavior`, `values-not-places` |
 
 Claude namespaces installed skills by plugin. For example, invoke `/code-review:concurrency-code-review` to audit concurrent code.
 

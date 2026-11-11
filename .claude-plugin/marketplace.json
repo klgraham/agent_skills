@@ -44,8 +44,8 @@
       "category": "development"
     },
     {
-      "name": "k-society",
-      "source": "./plugins/k-society",
+      "name": "kline",
+      "source": "./plugins/kline",
       "description": "Ken's programming principles as agent skills: justify, test, simplify, bound, and verify attributions.",
       "category": "development"
     }
