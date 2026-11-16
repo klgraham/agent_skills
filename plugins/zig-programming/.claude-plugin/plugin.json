@@ -1,6 +1,6 @@
 {
   "name": "zig-programming",
-  "description": "Develop, review, optimize, and package Zig 0.16 software.",
+  "description": "Develop, review, optimize, and package Zig software. Targets Zig 0.17.1 by default.",
   "author": {
     "name": "Ken Graham"
   },

@@ -347,8 +347,8 @@ Therefore use the scanner to reduce search cost, then use agent reasoning to tra
 - [ ] `git diff --check` is clean for a code change.
 - [ ] Final report distinguishes proof, evidence, risk, and unknowns.
 
-## Related 0.16.0 playbooks
+## Related playbooks
 
-Use [allocator selection](../principles/allocators.md) before choosing a lifetime policy, [error handling](../principles/error-handling.md) for rollback, and [C interoperability](../principles/c-interop.md) for ABI adapters. Debug and ReleaseSafe checks are diagnostics, not a static ownership proof.
+Use [allocator selection](../principles/allocators.md) before choosing a lifetime policy, [error handling](../principles/error-handling.md) for rollback, and [C interoperability](../principles/c-interop.md) for ABI adapters. Checks in `debug` and `safe` help diagnose bugs but cannot prove ownership is correct.
 
 For `std.Io` task lifetimes, also read [task concurrency](../references/io-concurrency.md) and [coordination](../references/io-coordination.md). Check inline execution, immediate cancellation cleanup, owning future results, Select result capacity, and partial queue transfers. Finishing a group does not automatically release resources stored in its result slots.

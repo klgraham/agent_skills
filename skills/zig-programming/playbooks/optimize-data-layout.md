@@ -1,4 +1,4 @@
-# Data layout and SIMD in Zig 0.16.0
+# Data layout and SIMD
 
 Use when profiling identifies a compute, allocation, or memory-access bottleneck.
 Keep the scalar implementation as a correctness oracle and benchmark baseline.
@@ -14,10 +14,10 @@ SoA generator. Preserve rollback, allocator alignment, and initialization proofs
 when allocating multiple arrays. Reacquire views after growth or compaction.
 
 `@Vector` describes vector operations, not a guaranteed machine instruction.
-Choose widths using measurements and the deployment CPU baseline. In 0.16.0,
-LLVM loop vectorization is disabled due to a compiler regression. This makes
-inspection of generated code especially useful; it does not make every explicit
-vector faster. See the [release notes](https://ziglang.org/download/0.16.0/release-notes.html).
+Choose widths using measurements and the deployment CPU baseline. The 0.17
+toolchain still disables LLVM loop vectorization to work around a compiler
+regression. Inspect generated code and measure explicit vectors against the scalar
+baseline. See the [0.17.0 release notes](https://ziglang.org/download/0.17.0/release-notes.html#Loop-Vectorization-Disabled-to-Work-Around-Regression).
 
 ## Playbook: optimize a kernel
 
@@ -33,7 +33,7 @@ vector faster. See the [release notes](https://ziglang.org/download/0.16.0/relea
 
 On Linux, `perf stat` or Cachegrind can help. On macOS use Instruments or
 `xctrace`. A benchmark must consume results and vary runtime input enough to
-avoid constant folding or dead-code elimination. For 0.16 timing, inspect
+avoid constant folding or dead-code elimination. For timing, inspect
 `std.Io.Clock` and `std.Io.Timestamp`; do not copy old `std.time.Timer` recipes.
 
 ## Playbook: add SIMD safely
@@ -85,12 +85,12 @@ alignment, plus synchronization and shutdown ordering.
 
 ## Verify
 
-Run scalar-equivalence and boundary tests in Debug, ReleaseSafe, and the shipping
+Run scalar-equivalence and boundary tests in `debug`, `safe`, and the shipping
 mode. Check the baseline target and any specialized CPU targets. Report timings,
 variance, workloads, and memory cost. Do not claim speedup from vector syntax or
 compilation alone.
 
-Sources: [vectors](https://ziglang.org/documentation/0.16.0/#Vectors),
+Sources: [vectors](https://ziglang.org/documentation/0.17.1/#Vectors),
 `std/simd.zig`, `std/multi_array_list.zig`, and the pinned backend's output.
 
 For CPU work split across tasks, read [task concurrency and parallelism](../references/io-concurrency.md). Choose bounded workers and a backend that can execute them on multiple threads, then measure. `io.concurrent` establishes progress requirements; it does not prove SIMD or multicore speedup.

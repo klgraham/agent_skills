@@ -2,7 +2,7 @@
 
 Choose an ownership protocol before choosing a synchronization primitive.
 Prefer disjoint task outputs or queue ownership transfer to shared mutation.
-The APIs below are checked against the installed Zig 0.16.0 `std/Io.zig`.
+Check the pinned SDK's `std/Io.zig` and `std/Io/Semaphore.zig` for exact contracts.
 
 ## Playbook: receive completions with Select
 
@@ -16,7 +16,7 @@ are outstanding; awaiting after the last result is not an end-of-stream check.
 For scalar or void results, defer `select.cancelDiscard()` so early return joins
 remaining tasks. For owning results, reserve enough slots for every outstanding
 task to finish, then drain `select.cancel()` until it returns null and free each
-returned owner. In 0.16.0, `cancel()` waits for tasks before draining; insufficient
+returned owner. `cancel()` waits for tasks before draining; insufficient
 result capacity can deadlock. `cancelDiscard()` closes the result queue before
 joining and discards values, so it is inappropriate for owning return values.
 
@@ -70,7 +70,8 @@ patterns justify reader/writer coordination.
 For a permit budget, use `Io.Semaphore{ .permits = n }`, acquire with
 `try sem.wait(io)`, then defer `sem.post(io)`. Cancellation before acquisition
 must not return a permit; cancellation after acquisition must release it.
-The 0.16.0 semaphore has no `waitTimeout`; do not copy that newer guide API.
+Use `sem.waitTimeout(io, timeout)` when permit acquisition has a deadline.
+`error.Timeout` and `error.Canceled` both leave the permit unconsumed.
 An `Io.Event` fits a persistent readiness signal. Reset it only when the protocol
 proves no waiter still depends on the previous signal.
 

@@ -14,7 +14,8 @@
    intentional compile-failure cases separate from valid examples.
 6. Validate the root `SKILL.md` frontmatter. Check relative links and the
    provider-package symlink. Copy the provider package with symlinks
-   dereferenced and validate its contents too.
+   dereferenced and validate its contents too. Update the Claude plugin and
+   marketplace descriptions and the bundled project's minimum Zig version.
 7. Run `python3 scripts/verify_examples.py` from the collection directory.
    Update its exact-version gate only when changing the collection's target.
 8. Run the existing memory-safety scanner tests if its packaging or behavior
@@ -26,7 +27,8 @@ not a replacement for semantic compilation and execution. A cross-compiled
 artifact is not a tested target runtime.
 
 Primary sources for the current baseline:
-- [Language reference](https://ziglang.org/documentation/0.16.0/)
+- [0.17.1 language reference](https://ziglang.org/documentation/0.17.1/)
 - [Build guide](https://ziglang.org/learn/build-system/)
-- [Release notes](https://ziglang.org/download/0.16.0/release-notes.html)
+- [0.17.0 release notes](https://ziglang.org/download/0.17.0/release-notes.html) for the migration from 0.16
+- [0.17.1 release announcement](https://ziglang.org/news/0.17.1-released/) for patch fixes
 - Installed SDK source located using `zig env`

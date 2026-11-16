@@ -1,9 +1,8 @@
-# Zig 0.16.0 runtime APIs
+# Zig 0.17.1 runtime APIs
 
 Use for runtime I/O, streams and formatting, task concurrency, parallel work,
 and container migration.
 Inspect declarations under `std_dir` from `zig env` before adapting a recipe.
-This playbook targets the release, not earlier 0.16 development snapshots.
 
 ## Principles
 
@@ -19,7 +18,7 @@ reporting success; deferred cleanup cannot propagate a flush error.
 
 ## API checkpoints
 
-| Task | 0.16.0 form |
+| Task | 0.17.1 form |
 |---|---|
 | Growable list | `var list: std.ArrayList(T) = .empty` |
 | Append and cleanup | `try list.append(gpa, value)` and `list.deinit(gpa)` |
@@ -55,10 +54,9 @@ request. [binary.zig](../examples/binary.zig) checks lengths and offsets.
 
 ## Playbook: migrate ArrayList
 
-Read [the ArrayList migration reference](../references/zig-0.16-arraylist-migration.md).
+Read [the ArrayList migration reference](../references/arraylist-migration.md).
 Do not rewrite every anonymous `.{}` initializer: maps and unrelated structs
-have different defaults. `std.ArrayListUnmanaged` is a deprecated alias for
-`std.ArrayList`, which does **not** contain an allocator field.
+have different defaults.
 
 ## Choose the std.Io playbook
 
@@ -78,7 +76,7 @@ the queue before normal shutdown. Group completion does not aggregate job errors
 
 ## Sources
 
-Use the [0.16.0 release notes](https://ziglang.org/download/0.16.0/release-notes.html)
-for the I/O transition. Exact signatures are in `std/Io/Dir.zig`,
-`std/Io/Reader.zig`, `std/Io/Writer.zig`, `std/http/Client.zig`,
-`std/compress/flate/Decompress.zig`, and `std/std.zig` in the installed SDK.
+The [0.16.0 release notes](https://ziglang.org/download/0.16.0/release-notes.html#IO-as-an-Interface)
+explain when `std.Io` was introduced. Inspect the installed SDK for current
+signatures: `std/Io/Dir.zig`, `std/Io/Reader.zig`, `std/Io/Writer.zig`,
+`std/http/Client.zig`, `std/compress/flate/Decompress.zig`, and `std/std.zig`.

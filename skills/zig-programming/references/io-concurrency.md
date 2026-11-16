@@ -100,26 +100,25 @@ accepts an `Io`; it should not silently create its own scheduler. If the
 application needs limits, construct `Io.Threaded.init(gpa, options)`, retain
 its address, await/cancel tasks, then `deinit` it before destroying its allocator.
 
-| Implementation | 0.16.0 decision |
+| Implementation | When to use it |
 |---|---|
 | `Io.Threaded` | Thread-backed implementation; inspect `async_limit` and `concurrent_limit` |
 | `Io.Threaded.init_single_threaded` | Exercise inline async and unavailable concurrency; no task-level cancellation |
 | `Io.Evented` | Experimental, platform-dependent alias; verify supported operations and target before opting in |
 | `Io.failing` | Failure-path stub, not a working scheduler |
 
-The release notes describe `Threaded` as the startup default. Evented backends
-include Uring, Kqueue, and Dispatch; their existence does not establish feature
-parity or production readiness. Do not copy an example using `Io.Blocking`
-without checking the installed declarations. Benchmark the actual backend,
+The 0.17.1 startup code supplies `Io.Threaded` to `main(std.process.Init)`.
+The installed library exports Uring, Kqueue, and Dispatch. Verify operation
+coverage on the target before choosing one. Benchmark the actual backend,
 CPU count, worker limit, task size, and memory usage before claiming parallel gain.
 
 ## Verification
 
-Run the example tests in Debug and ReleaseSafe. Include inline execution,
+Run the example tests in `debug` and `safe`. Include inline execution,
 launch failure, task failure, cancellation, resource cleanup, and queue shutdown.
 Use a subprocess timeout to catch deadlocks. Tests validate lifecycle contracts,
 not fairness or multicore throughput. See [coordination](io-coordination.md)
 and [source review](io-sources.md) for related contracts and source status.
 
-Primary authority: `std/Io.zig`, `std/Io/Threaded.zig`, and `std/testing.zig`
-from `zig env`; [0.16.0 release notes](https://ziglang.org/download/0.16.0/release-notes.html).
+Primary authority: `std/Io.zig`, `std/Io/Threaded.zig`, `std/start.zig`, and
+`std/testing.zig` in the SDK located with `zig env`.

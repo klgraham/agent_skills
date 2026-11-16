@@ -16,10 +16,11 @@ container types, reflection, and build-time generators cover different needs.
 | Reject an unsupported compile-time parameter | A local `@compileError` with a useful diagnostic | A distant failure inside an unrelated method |
 | Large schema, external tool, or inspectable generated source | A generator in the build graph | Doing filesystem I/O during graph configuration |
 
-`@hasDecl` proves that a declaration exists, not that it has the signature or
-semantics your generic needs. Instantiate actual calls in tests. Returning a
-struct allows methods and ordinary lexical names; use that before constructing
-field metadata for `@Struct`.
+`@hasDecl` sees only public declarations in 0.17. It does not check signatures.
+Instantiate actual calls in tests. For structs and unions, `@typeInfo` exposes
+parallel `field_names` and `field_types` arrays. Iterate both with `inline for`
+instead of using the old `.fields` array. Prefer returning an ordinary struct
+when you do not need to construct field metadata with `@Struct`.
 
 ## Playbook: add a generic
 
@@ -32,8 +33,8 @@ field metadata for `@Struct`.
 5. Measure compile time and binary size if specialization creates many copies.
    Reduce generated work before increasing `@setEvalBranchQuota`.
 
-[comptime.zig](../examples/comptime.zig) demonstrates a bounded generic and the
-0.16.0 type constructors. [invalid-comptime.zig](../examples/invalid-comptime.zig)
+[comptime.zig](../examples/comptime.zig) demonstrates a bounded generic, type
+constructors, and field reflection. [invalid-comptime.zig](../examples/invalid-comptime.zig)
 is an intentional compile failure checked by the validation script.
 
 ## Playbook: replace a macro
@@ -50,8 +51,7 @@ it behind a small C wrapper. See [C interoperability](c-interop.md).
 
 ## Sources
 
-Read [comptime](https://ziglang.org/documentation/0.16.0/#comptime) and the
-[builtin reference](https://ziglang.org/documentation/0.16.0/#Builtin-Functions)
-for semantics and exact signatures. The
-[0.16.0 release notes](https://ziglang.org/download/0.16.0/release-notes.html)
-explain the replacement of `@Type`.
+Read [comptime](https://ziglang.org/documentation/0.17.1/#comptime) and the
+[builtin reference](https://ziglang.org/documentation/0.17.1/#Builtin-Functions)
+for semantics and signatures. The [0.17.0 release notes](https://ziglang.org/download/0.17.0/release-notes.html)
+explain the changes to `@hasDecl` and `std.lang.Type`.

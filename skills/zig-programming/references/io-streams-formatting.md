@@ -1,4 +1,4 @@
-# Streams and formatting in Zig 0.16.0
+# Streams and formatting in Zig 0.17.1
 
 Separate the scheduling capability from byte interfaces. `std.Io` supplies OS
 operations and concurrency; `std.Io.Reader` and `std.Io.Writer` expose byte
@@ -17,7 +17,7 @@ readers and writers capture the file and `io` when constructed.
 | Sequential file or pipe input | `file.readerStreaming(io, buffer)` and its `.interface` |
 | Reusable transformation | Accept `*Io.Reader` and `*Io.Writer` |
 
-Ordinary files and standard streams both use the 0.16.0 `Io.File` APIs. Do not
+Ordinary files and standard streams both use `Io.File` APIs. Do not
 combine new stdout examples with old `std.fs.cwd` file recipes.
 
 ## Playbook: write and format
@@ -34,6 +34,11 @@ combine new stdout examples with old `std.fs.cwd` file recipes.
    buffered file output. Closing the file does not flush your user-space writer.
 5. Release allocating writers after copying or transferring any needed output.
    Their buffered view is borrowed and may be invalidated by later writes.
+
+Use `std.mem.print(buffer, format, args)` for a one-shot format into caller
+storage or `gpa.print(format, args)` for owned output. Free the owned result
+with the same allocator. These replace older `std.fmt.bufPrint` and
+`std.fmt.allocPrint` recipes.
 
 Formatting is not serialization escaping. `{s}` does not quote JSON strings,
 escape HTML, or validate UTF-8. Use the format-specific encoder at that boundary.

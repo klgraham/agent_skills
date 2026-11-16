@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compile and exercise the shipped Zig 0.16.0 examples in an isolated directory."""
+"""Compile and exercise the shipped Zig examples in an isolated directory."""
 
 import argparse
 import os
@@ -8,10 +8,12 @@ import shutil
 import subprocess
 import tempfile
 
+ZIG_VERSION = "0.17.1"
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--zig", default="zig", help="Zig 0.16.0 executable")
+    parser.add_argument("--zig", default="zig", help=f"Zig {ZIG_VERSION} executable")
     parser.add_argument("--io-only", action="store_true", help="Run streams and concurrency examples only")
     args = parser.parse_args()
     zig = shutil.which(args.zig)
@@ -19,8 +21,8 @@ def main():
         parser.error(f"Zig executable not found: {args.zig}")
     zig = str(Path(zig).resolve())
     version = subprocess.check_output([zig, "version"], text=True).strip()
-    if version != "0.16.0":
-        parser.error(f"Expected Zig 0.16.0, got {version}")
+    if version != ZIG_VERSION:
+        parser.error(f"Expected Zig {ZIG_VERSION}, got {version}")
     source = Path(__file__).resolve().parents[1] / "examples"
 
     with tempfile.TemporaryDirectory(prefix="zig-skill-examples-") as temporary:
@@ -48,7 +50,7 @@ def main():
         run([zig, "fmt", "--check", "."])
         # Compile separately so a timeout kills the test binary and all its threads,
         # rather than killing a compiler driver with a test subprocess still alive.
-        for mode in ("Debug", "ReleaseSafe", "ReleaseFast"):
+        for mode in ("debug", "safe", "fast"):
             for name in ("concurrency.zig", "batch-runner.zig", "streams.zig"):
                 suffix = ".exe" if os.name == "nt" else ""
                 binary = work / (Path(name).stem + "-" + mode + suffix)
@@ -57,7 +59,7 @@ def main():
         if args.io_only:
             print("All streams and concurrency checks passed. Threaded and inline backends tested; no throughput claim.")
             return
-        for mode in ("Debug", "ReleaseSafe", "ReleaseFast"):
+        for mode in ("debug", "safe", "fast"):
             for name in ("ownership.zig", "comptime.zig", "simd.zig", "binary.zig"):
                 run([zig, "test", name, f"-O{mode}"])
         run([zig, "test", "invalid-comptime.zig"], reject="Buffer capacity must be positive")
@@ -69,11 +71,13 @@ def main():
         binary = work / "install" / "bin" / ("sample.exe" if os.name == "nt" else "sample")
         run([str(binary)], cwd=project, expected="generated fixture")
         run([zig, "build", "run"], cwd=project, expected="generated fixture")
+        run([zig, "build", "run", "--", "forwarded argument"], cwd=project,
+            expected="generated fixture\nforwarded argument\n")
         # A changed declared input must update what the executable embeds.
         (project / "message.txt").write_text("updated fixture\n")
         run([zig, "build", "run"], cwd=project, expected="updated fixture")
         run([zig, "build", "run"], cwd=project, expected="updated fixture")
-        run([zig, "build", "check", "-Dtarget=x86_64-linux-musl", "-Doptimize=ReleaseSafe"], cwd=project)
+        run([zig, "build", "check", "-Dtarget=x86_64-linux-musl", "-Doptimize=safe"], cwd=project)
         print("All example checks passed. HTTP compiled only; Linux cross-compiled only.")
 
 

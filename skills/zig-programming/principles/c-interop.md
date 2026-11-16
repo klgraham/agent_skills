@@ -6,8 +6,11 @@ A successful cast or header import does not prove the foreign object is valid.
 
 ## Principles
 
-- Import headers with `@cImport` when declarations suffice. Use `zig translate-c`
-  when inspecting or maintaining translated source is part of the workflow.
+- Zig 0.17 removed `@cImport`, `@cInclude`, and related builtins. To generate
+  bindings in `build.zig`, use the [official `translate-c` package migration](https://ziglang.org/download/0.17.0/release-notes.html#C-Translation-Moving-to-External-Package)
+  and import the translator's module with `@import("c")` (or the module name
+  declared in the build). `b.addTranslateC` is deprecated. Use `zig translate-c`
+  for one-off inspection.
 - Match translation and compilation target, include paths, defines, ABI, and
   compiler flags. Host headers are not automatically valid for another target.
 - Use C-compatible integers and `extern struct` for ABI records. `packed struct`
@@ -23,9 +26,10 @@ A successful cast or header import does not prove the foreign object is valid.
 
 ## Playbook: call a C library
 
-1. Import its actual header in one module. Configure includes, C sources, and
-   libraries on that module in `build.zig`. Set `.link_libc = true` when
-   the module needs libc; importing a header does not link its implementation.
+1. Translate its actual header in one module. For a small ABI you control, a
+   matching `extern fn` declaration may suffice. Configure include paths, C
+   sources, and libraries in `build.zig`. Set `.link_libc = true` when the module
+   needs libc; a declaration does not link its implementation.
 2. Identify which results borrow, transfer ownership, or require a release call.
 3. Translate failure at the adapter. Check conversion ranges and any required
    alignment before a pointer cast.
@@ -34,9 +38,9 @@ A successful cast or header import does not prove the foreign object is valid.
 5. For each supported target, compile with that target's dependencies. Execute
    ABI tests on supported native systems or a declared emulator.
 
-The [example project](../examples/project/build.zig) imports a local header,
-compiles a C helper, and calls it from a Zig executable and test. Run
-`zig build test` and `zig build run` inside a copy of that directory.
+The [example project](../examples/project/build.zig) compiles a C helper against
+its local header and calls it through one `extern fn`. In a copy of that
+directory, run `zig build test` and `zig build run` to exercise the call.
 
 ## Playbook: expose Zig to C
 
@@ -53,6 +57,6 @@ project-specific binding already defines a tested C++ ABI contract.
 
 ## Sources
 
-[C interoperability](https://ziglang.org/documentation/0.16.0/#C) covers
+[C interoperability](https://ziglang.org/documentation/0.17.1/#C) covers
 translation and ABI rules. Inspect `std/Build/Module.zig` for
 `addCSourceFile`, `addIncludePath`, and `linkSystemLibrary` in the pinned SDK.

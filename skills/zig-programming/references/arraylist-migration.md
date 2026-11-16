@@ -1,9 +1,9 @@
-# ArrayList in Zig 0.16.0
+# ArrayList in Zig 0.17.1
 
-`std.ArrayList(T)` is `std.array_list.Aligned(T, null)`. It holds `items` and
-`capacity`, not an allocator. `std.ArrayListUnmanaged` is a deprecated alias
-for that same type. A separate managed form remains in `std.array_list`;
-do not mistake its allocator field for the primary ArrayList API.
+`std.ArrayList(T)` is `std.array_list.Aligned(T, null)`. Pass an allocator to
+allocating operations and cleanup. `std.ArrayListUnmanaged` is a deprecated alias
+for the same type; the separate legacy managed forms in `std.array_list` store
+the allocator.
 
 ```zig
 const std = @import("std");
@@ -32,6 +32,11 @@ test "list lifetime" {
 Do not bulk-convert map initialization or change `var` based only on text
 matching. Do not serialize the container object: slices contain process-local
 pointers. Serialize element data using an explicit format.
+
+Use `last()` for an optional last value and `lastPtr()` for an optional borrowed
+pointer. In safety-enabled builds, `lockPointers()` paired with `unlockPointers()`
+can catch list operations that would invalidate a live item pointer. It does not
+synchronize threads, track a copied list, or replace a lifetime argument.
 
 Run [ownership.zig](../examples/ownership.zig) for nested cleanup and
 allocation failure coverage. Inspect `std/std.zig` and `std/array_list.zig`

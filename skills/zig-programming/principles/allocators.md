@@ -50,7 +50,7 @@ including an unusually large one, instead of checking only final deinit.
 
 ## Sources
 
-The [allocator guidance](https://ziglang.org/documentation/0.16.0/#Choosing-an-Allocator)
+The [allocator guidance](https://ziglang.org/documentation/0.17.1/#Choosing-an-Allocator)
 provides the language reference's starting choices. Inspect `std/heap.zig`,
 `std/heap/arena_allocator.zig`, `std/heap/debug_allocator.zig`, and
 `std/testing.zig` in the pinned installation for contracts and diagnostics.
