@@ -351,4 +351,9 @@ Therefore use the scanner to reduce search cost, then use agent reasoning to tra
 
 Use [allocator selection](../principles/allocators.md) before choosing a lifetime policy, [error handling](../principles/error-handling.md) for rollback, and [C interoperability](../principles/c-interop.md) for ABI adapters. Checks in `debug` and `safe` help diagnose bugs but cannot prove ownership is correct.
 
-For `std.Io` task lifetimes, also read [task concurrency](../references/io-concurrency.md) and [coordination](../references/io-coordination.md). Check inline execution, immediate cancellation cleanup, owning future results, Select result capacity, and partial queue transfers. Finishing a group does not automatically release resources stored in its result slots.
+For `std.Io` task lifetimes, read the [I/O principle](../principles/io.md) and
+check the relevant [task](../references/io-concurrency.md) or
+[coordination](../references/io-coordination.md) contract. Check inline
+execution, immediate cancellation cleanup, owning results, Select capacity,
+and partial queue transfers. Identify who releases resources in group result
+slots after the group finishes.

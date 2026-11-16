@@ -15,7 +15,11 @@ Choose one primary playbook by the user's intent. Read that playbook, its requir
 |---|---|
 | General Zig source work not dominated by a focused intent below | [Write legible Zig](playbooks/write-legible-zig.md) |
 | Configure modules, dependencies, generated files, tests, cross-compilation, or releases | [Build a Zig project](playbooks/build-project.md) |
-| Use or migrate runtime I/O, streams, formatting, containers, HTTP, or concurrency | [Use the Zig standard library](playbooks/use-stdlib.md) |
+| Use or migrate filesystem APIs, containers, compression, or HTTP | [Use the Zig standard library](playbooks/use-stdlib.md) |
+| Choose an I/O backend, process streams, or design concurrent tasks, worker pools, channels, or actors | [Use std.Io](playbooks/use-io.md) |
+| Implement an allocating API, transactional update, or arena reset | [Manage allocation](playbooks/manage-allocation.md) |
+| Add a generic or replace a macro | [Use comptime](playbooks/use-comptime.md) |
+| Call C from Zig or expose a Zig API to C | [Integrate Zig and C](playbooks/integrate-c.md) |
 | Audit ownership, borrowing, invalidation, cleanup, callbacks, or shared state | [Review memory safety](playbooks/review-memory-safety.md) |
 | Optimize measured hot paths, layout, allocation, SIMD, or parallel work | [Optimize data layout](playbooks/optimize-data-layout.md) |
 | Design a binary format, mapped snapshot, or mmap-backed data structure | [Design mmap storage](playbooks/design-mmap-storage.md) |
@@ -40,6 +44,7 @@ The selected playbook names its required resources. Add a principle when the mec
 | Error sets, rollback, ownership transfer, or transactional mutation | [Error handling](principles/error-handling.md) |
 | Headers, ABI layout, foreign allocation, callbacks, or exported APIs | [C interoperability](principles/c-interop.md) |
 | Generics, reflection, type construction, compile-time validation, or macro replacement | [Comptime](principles/comptime.md) |
+| I/O injection, task progress, cancellation, or message ownership | [I/O capabilities and task lifetimes](principles/io.md) |
 
 ## Use bundled resources only when needed
 

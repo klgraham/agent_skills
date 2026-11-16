@@ -1,20 +1,11 @@
 # Zig 0.17.1 runtime APIs
 
-Use for runtime I/O, streams and formatting, task concurrency, parallel work,
-and container migration.
+Use for filesystem, HTTP, compression, and container APIs. For backend choice,
+stream interfaces, or task design, see [Use std.Io](use-io.md).
 Inspect declarations under `std_dir` from `zig env` before adapting a recipe.
 
-## Principles
-
-Pass `std.Io` to runtime operations separately from `std.mem.Allocator`.
-Allocation policy and I/O implementation are independent dependencies.
-At process startup, `main(init: std.process.Init)` supplies both. In reusable
-code, accept only the capabilities the operation needs.
-
-Use bounded reads for external data. A compressed input bound does not bound
-decompressed output. Keep interface pointers tied to the reader or writer
-object and backing buffers that own their state. Flush buffered output before
-reporting success; deferred cleanup cannot propagate a flush error.
+Read the [I/O principle](../principles/io.md) for dependency injection.
+Bound both the input and the output when decompressing external data.
 
 ## API checkpoints
 
@@ -57,22 +48,6 @@ request. [binary.zig](../examples/binary.zig) checks lengths and offsets.
 Read [the ArrayList migration reference](../references/arraylist-migration.md).
 Do not rewrite every anonymous `.{}` initializer: maps and unrelated structs
 have different defaults.
-
-## Choose the std.Io playbook
-
-| Need | Reference |
-|---|---|
-| Readers, writers, buffers, custom formatting, and streaming records | [Streams and formatting](../references/io-streams-formatting.md) |
-| async versus concurrent, futures, groups, cancellation, backend selection | [Task concurrency and parallelism](../references/io-concurrency.md) |
-| Select, deadlines, queues, locks, atomics, raw threads, migration | [Coordination](../references/io-coordination.md) |
-| Online examples and release-specific corrections | [Source review](../references/io-sources.md) |
-
-`io.async` may execute inline. Use `io.concurrent` when progress must overlap,
-and handle `ConcurrencyUnavailable`. Neither promises multicore speedup.
-Immediately arrange await/cancel cleanup for every task, and keep borrowed
-arguments alive until completion. Cancellation requests still require joining.
-For bounded pipelines, start consumers before blocking production and close
-the queue before normal shutdown. Group completion does not aggregate job errors.
 
 ## Sources
 

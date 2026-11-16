@@ -1,13 +1,13 @@
-# Task concurrency and parallelism through std.Io
+# Task and backend contracts in Zig 0.17.1
 
-`std.Io` abstracts task scheduling, waiting, cancellation, and synchronization
-as well as filesystem and network operations. This is an API design contract,
-not an effect system: globals, foreign calls, or raw threads can still perform
-work without an `Io` parameter. Ordinary functions can participate;
-there is no required language-level async function annotation. Pass the same
-`io` through the task's operations and use it to await or cancel its resources.
+`std.Io` provides scheduling, cancellation, and OS operations through a
+runtime interface. The capability is passed explicitly. Globals, foreign
+calls, and raw threads can still perform work without an `Io` argument.
 
-## Choose the execution contract
+For implementation steps, see [Coordinate tasks](../playbooks/coordinate-io-tasks.md)
+or [Choose an Io implementation](../playbooks/use-io.md#choose-an-io-implementation).
+
+## Execution contracts
 
 | Mechanism | Contract | Use |
 |---|---|---|
@@ -19,106 +19,47 @@ there is no required language-level async function annotation. Pass the same
 | `Io.Batch` | Coordinates supported low-level `Io.Operation` values | Measured operation-level overhead; not arbitrary functions |
 | `std.Thread.spawn` | Creates an OS thread with explicit join/detach ownership | Thread affinity, foreign runtimes, dedicated CPU workers |
 
-Concurrency means tasks can make progress independently. Parallelism means
-execution overlaps on hardware. `concurrent` does not promise a dedicated OS
-thread, simultaneous execution on separate cores, or a speedup. A backend and
-its configuration determine the execution mechanism.
+## Futures and groups
 
-Never substitute `async` after `ConcurrencyUnavailable` when inline execution
-could deadlock. A rendezvous producer waiting for a consumer that the caller
-has not started yet is such a case. Sequential fallback is appropriate only
-when the algorithm can actually finish sequentially.
+`io.async` can complete before returning. `io.concurrent` either reserves
+concurrent progress or returns `error.ConcurrencyUnavailable`. It makes no
+guarantee about which hardware threads execute the tasks.
 
-## Playbook: fan out and collect futures
+`Future.await` and `Future.cancel` return the same stored result on repeated
+calls to the same future. A successful owning result has one owner, including
+when it is returned by `cancel`. These methods are unsafe to call
+simultaneously on the same future. The same restriction applies to
+`Group.await` and `Group.cancel` on the same group.
 
-1. Identify whether tasks are independent or wait on each other.
-2. Keep argument storage, allocator state, and `Io` implementation alive until
-   all tasks finish. An argument tuple copies pointers, not their pointees.
-3. Register cancellation cleanup immediately after each launch, before another
-   launch or `try` can fail.
-4. Await the required results. Decide whether one failure cancels siblings or
-   whether all outcomes must be collected before propagating an error.
-5. Release returned resources exactly once. Await/cancel are idempotent on the
-   same future, but copying a future is not an ownership transfer. Await/cancel
-on a Future or Group are not safe to call simultaneously from multiple owners.
+A group worker's result must coerce to `Io.Cancelable!void`. A member's
+`error.Canceled` stops at the group boundary. `Group.await` propagates
+cancellation of the waiter to members and returns that cancellation after they
+finish. Application results and domain errors need their own storage. Group
+membership alone imposes no limit on how many workers can be launched.
 
-For a task returning `Cancelable!void`, `defer task.cancel(io) catch {};` is a
-cleanup boundary. It ensures the task finishes on early return. Report the
-normal result through `try task.await(io)`. Do not discard errors inside the
-worker's operation loop.
+## Cancellation
 
-For a future returning owned memory, cancellation may return a successful
-allocation if the task already finished. Free that result if abandoning it.
-After consuming an awaited owned result, disarm any cleanup that would fetch
-and free the same stored result again. Idempotent waiting does not make double
-free safe. [concurrency.zig](../examples/concurrency.zig) tests abandoned
-owned results as well as void-task cleanup.
+A cancellation request is observed at a cancellation point. `io.checkCancel()`
+is an explicit point. An observed request is consumed. `io.recancel()` re-arms
+a request after observing `error.Canceled`. `io.swapCancelProtection(.blocked)`
+suppresses cancellation points until protection is restored.
 
-## Playbook: bound a batch with Group
+A task that already finished can return its normal result from
+`Future.cancel`. A task that never reaches a cancellation point can keep its
+owner waiting until it finishes.
 
-`Group` does not collect arbitrary return values or application errors. A group
-worker returns a value coercible to `Io.Cancelable!void`. Store success and domain
-errors explicitly in disjoint result slots, or send owned outcomes through a queue.
-`Group.await` reports cancellation of the waiting task and propagates it to
-members. A member returning `error.Canceled` stops at the group boundary; it
-does not itself make await fail. Await is not an aggregate domain-error result.
+## Backends
 
-For a finite independent batch, preallocate result slots and assign one writer
-per slot. For a stream, start a bounded number of workers with `Group.concurrent`
-and feed a bounded queue. Declare the queue and result storage before the group,
-and defer `group.cancel(io)` before the first fallible launch. Close the queue
-on producer completion, await the group, then inspect outcomes.
-
-The [batch runner](../examples/batch-runner.zig) uses three workers,
-a two-item queue, per-job errors, and ordered results. It tests empty input,
-a failed job, and launch refusal with concurrency disabled. A group alone does
-not bound active work; do not spawn one task per unbounded input item.
-
-## Playbook: cancellation and deadlines
-
-Cancellation is cooperative. `Future.cancel` requests cancellation and waits
-for completion; it does not kill a thread. A task can finish successfully before
-observing the request. A long CPU loop needs periodic `try io.checkCancel()` if
-shutdown must interrupt it. I/O calls with `error.Canceled` are cancellation
-points, subject to cancel protection.
-
-An observed cancellation request is not automatically raised at every later
-point. Propagate `error.Canceled`. If a narrow recovery boundary must defer it,
-use `io.recancel()` or restore a scoped `swapCancelProtection` state according
-to `Io.zig`. Keep uncancelable cleanup short and bounded. It can block shutdown.
-
-For a task-level deadline, race the work against `io.sleep` using `Select`.
-Start both with `concurrent` when a sequential implementation would invalidate
-the deadline. Handle `ConcurrencyUnavailable`. A timeout result still requires
-canceling and joining the loser; an uncooperative task can delay return beyond
-the deadline. Test winner cleanup using handshakes, not fragile timing assertions.
-
-## Choose an Io implementation
-
-Start with `init.io` in applications and `std.testing.io` in tests. A library
-accepts an `Io`; it should not silently create its own scheduler. If the
-application needs limits, construct `Io.Threaded.init(gpa, options)`, retain
-its address, await/cancel tasks, then `deinit` it before destroying its allocator.
-
-| Implementation | When to use it |
+| Implementation | Contract |
 |---|---|
-| `Io.Threaded` | Thread-backed implementation; inspect `async_limit` and `concurrent_limit` |
-| `Io.Threaded.init_single_threaded` | Exercise inline async and unavailable concurrency; no task-level cancellation |
-| `Io.Evented` | Experimental, platform-dependent alias; verify supported operations and target before opting in |
-| `Io.failing` | Failure-path stub, not a working scheduler |
+| `Io.Threaded` | Thread-backed implementation with separate limits for optional and required concurrency |
+| `Io.Threaded.init_single_threaded` | Inline async, unavailable concurrent launch, and no task-level cancellation |
+| `Io.Evented` | Experimental alias selected by target and fiber support |
+| `Io.failing` | Failure-path stub |
 
 The 0.17.1 startup code supplies `Io.Threaded` to `main(std.process.Init)`.
-The installed library exports Uring, Kqueue, and Dispatch. Verify operation
-coverage on the target before choosing one. Benchmark the actual backend,
-CPU count, worker limit, task size, and memory usage before claiming parallel gain.
-
-## Verification
-
-Run the example tests in `debug` and `safe`. Include inline execution,
-launch failure, task failure, cancellation, resource cleanup, and queue shutdown.
-Use a subprocess timeout to catch deadlocks. Tests validate lifecycle contracts,
-not fairness or multicore throughput. See [coordination](io-coordination.md)
-and [source review](io-sources.md) for related contracts and source status.
+The SDK contains Uring, Kqueue, and Dispatch implementations. Backend
+availability and operation coverage depend on the target.
 
 Primary authority: `std/Io.zig`, `std/Io/Threaded.zig`, `std/start.zig`, and
 `std/testing.zig` in the SDK located with `zig env`.

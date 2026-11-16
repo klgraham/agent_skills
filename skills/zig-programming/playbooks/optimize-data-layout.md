@@ -93,4 +93,4 @@ compilation alone.
 Sources: [vectors](https://ziglang.org/documentation/0.17.1/#Vectors),
 `std/simd.zig`, `std/multi_array_list.zig`, and the pinned backend's output.
 
-For CPU work split across tasks, read [task concurrency and parallelism](../references/io-concurrency.md). Choose bounded workers and a backend that can execute them on multiple threads, then measure. `io.concurrent` establishes progress requirements; it does not prove SIMD or multicore speedup.
+For CPU work split across tasks, use [Parallelize independent work](parallelize-work.md).
