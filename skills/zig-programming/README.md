@@ -2,15 +2,16 @@
 
 A single router skill containing principles, focused playbooks, references, scripts, and runnable examples for **Zig 0.17.1**.
 
-Start with [SKILL.md](SKILL.md). It selects only the resources needed for the task instead of installing eight independent skills.
+Start with [SKILL.md](SKILL.md) and follow the route for your task. For I/O and
+concurrency design, [Use std.Io](playbooks/use-io.md) maps common needs to procedures.
 
 ## Layout
 
 ```text
 SKILL.md        Router and version contract
-playbooks/      Intent-specific procedures
-principles/     Allocator, error, C ABI, and comptime guidance
-references/     Conditional deep dives and the legibility standard
+playbooks/      Procedures for specific tasks
+principles/     Design rules for allocation, errors, C ABI, comptime, and I/O
+references/     API contracts and the legibility standard
 examples/       Runnable Zig contracts
 scripts/        Example verifier and memory-safety scanner
 ```
@@ -25,7 +26,13 @@ python3 scripts/verify_examples.py --io-only
 python3 scripts/test_zig_memory_safety_scan.py
 ```
 
-Use `--zig /absolute/path/to/zig` to select a 0.17.1 installation. The verifier uses a temporary workspace and cache. It runs ownership, allocation failure, binary parsing, SIMD, comptime, streams, and concurrency tests; checks an intentional compile failure; exercises file and gzip behavior; and checks C linkage, generated inputs, and argument forwarding in the sample project. It compiles for Linux without running the Linux artifact. It compiles HTTP code without sending requests and does not exercise evented I/O backends.
+Use `--zig /absolute/path/to/zig` to select a 0.17.1 installation. The verifier
+uses a temporary workspace and cache. It exercises ownership, allocation failure,
+binary parsing, SIMD, comptime, files, gzip, and streams. Its concurrency tests
+cover tasks, worker pools, chunked reduction, channel pipelines, and an actor
+on threaded and inline configurations. It also checks an intentional compile
+failure, C linkage, generated inputs, and argument forwarding. Linux and HTTP
+are compile checks. Concurrency runtime coverage is for `Io.Threaded`.
 
 ## Sources and maintenance
 

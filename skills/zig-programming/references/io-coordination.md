@@ -1,114 +1,54 @@
 # Select, queues, locks, atomics, and threads
 
-Choose an ownership protocol before choosing a synchronization primitive.
-Prefer disjoint task outputs or queue ownership transfer to shared mutation.
-Check the pinned SDK's `std/Io.zig` and `std/Io/Semaphore.zig` for exact contracts.
+For procedures, see [Coordinate tasks](../playbooks/coordinate-io-tasks.md) and
+[Build a channel pipeline](../playbooks/build-channel-pipeline.md).
 
-## Playbook: receive completions with Select
+## Select
 
-Define a tagged union whose fields match each task's return type. Allocate
-result buffer storage that outlives the select, initialize `Io.Select(U)`, and
-launch with `select.async(.tag, function, args)` or the fallible `concurrent` form.
-`try select.await()` returns the next completed tagged result, including a task
-error when that union field contains an error union. Track how many results
-are outstanding; awaiting after the last result is not an end-of-stream check.
+`Io.Select(U)` owns the tasks it starts. Each task publishes its return value
+in the associated field of the tagged union. `await()` receives one tagged
+result, including any task error carried by that field. `await()` has no
+end-of-stream result. `awaitMany` can receive multiple results.
 
-For scalar or void results, defer `select.cancelDiscard()` so early return joins
-remaining tasks. For owning results, reserve enough slots for every outstanding
-task to finish, then drain `select.cancel()` until it returns null and free each
-returned owner. `cancel()` waits for tasks before draining; insufficient
-result capacity can deadlock. `cancelDiscard()` closes the result queue before
-joining and discards values, so it is inappropriate for owning return values.
+`cancel()` waits for tasks before draining. The result buffer needs room for
+every result that has yet to be received or cleanup can deadlock.
+`cancelDiscard()` closes the result queue before joining and discards results.
+Discarded owning results get no automatic resource cleanup. Calling
+`await()` or `awaitMany()` after cancellation is illegal.
 
-Never call await after cancellation. Receiving the first completion is not
-necessarily receiving the first success; continue past errors if the operation
-requires a first-success policy. The [concurrency example](../examples/concurrency.zig)
-checks both a completion race and cleanup of owned results.
+## Queues
 
-## Playbook: bounded producer and consumer
+`Io.Queue(T)` is a thread-safe queue with caller-provided storage. A backing
+slice of length zero creates a rendezvous. Closing rejects new puts.
+Buffered items remain readable before consumers receive `error.Closed`.
 
-1. Initialize `Io.Queue(T)` with backing storage. An empty buffer is a rendezvous
-   queue; a full bounded buffer blocks producers until consumers make space.
-2. Establish concurrent progress for mutually dependent participants before
-   entering blocking puts or gets. Handle failure to start a worker.
-3. Use `putOne(io, item)` and `getOne(io)` for a simple ownership handoff.
-   Define who frees an item when a put fails.
-4. Close the queue when no further production is possible. Existing buffered
-   items remain readable; consumers then receive `error.Closed`.
-5. Cancel or finish workers before the queue or backing storage leaves scope.
-   On abandonment, drain and release any queued owners after producers stop.
+The batch methods `put` and `get` report progress counts. They can return
+fewer elements than requested around closure or cancellation. If a batch
+call reports an error directly, it transferred zero items. A failed
+`putAll` can leave an unspecified prefix enqueued. The single-item methods
+`putOne` and `getOne` transfer exactly one item on success.
 
-Queue thread safety does not extend to mutable objects referenced by an element.
-A copied slice still borrows its bytes. Prefer an owned message or immutable
-storage that outlives consumption.
+## Locks and signals
 
-Batch APIs require more care: `put` and `get` return progress counts and can make
-partial progress around cancellation or closure. On a failed `putAll`, the count
-already enqueued is unspecified. Avoid `putAll` as an all-or-nothing transfer of
-owning elements; use individual transfers or a protocol that tracks ownership.
+`Io.Mutex.lock` can return `error.Canceled` before acquisition.
+`Io.Condition.wait` releases and reacquires its mutex, including on
+cancellation. A condition signal carries no stored application state.
 
-The [batch runner](../examples/batch-runner.zig) demonstrates bounded
-backpressure, close/drain behavior, and disjoint output slots.
+`Io.Semaphore.waitTimeout` leaves its permit unconsumed on `error.Timeout`
+or `error.Canceled`. An `Io.Event` retains its set state until reset.
+Reset requires a protocol in which no waiter still needs the old signal.
 
-## Playbook: protect a shared invariant
+## Atomics and threads
 
-Use `Io.Mutex` and `Io.Condition` in backend-neutral task code. Acquire with
-`try mutex.lock(io)`, then immediately defer `mutex.unlock(io)`. The lock call
-may be a cancellation point. Do not install unlock cleanup before lock succeeds.
+`std.atomic.Value(T)` provides memory synchronization. A `.monotonic`
+counter can allocate disjoint work indices without publishing other data.
+Publication using release and acquire needs a happens-before argument.
+Object reclamation and task completion require their own protocols.
+Busy-spinning can occupy a backend's only execution thread.
 
-Wait for a condition in a loop over the protected predicate. Update the predicate
-under the same mutex before signaling or broadcasting. A signal is not stored
-application state. `Condition.wait` releases and reacquires the mutex, including
-when it returns cancellation. Keep the lock and predicate alive through shutdown.
+`std.Thread.join` waits for the thread and returns no worker result. A
+detached thread can outlive the launching scope. Raw threads have their own
+lifecycle, outside the structured cancellation of `Io.Future` and `Io.Group`.
 
-Avoid holding a lock while spawning an async child that may run inline and
-reacquire it. Also avoid a locked wait for a task that needs that lock to finish.
-Uncancelable lock/wait variants are for a proved cleanup requirement, not for
-silencing cancellation errors. Use `RwLock` only when measurement and access
-patterns justify reader/writer coordination.
-
-For a permit budget, use `Io.Semaphore{ .permits = n }`, acquire with
-`try sem.wait(io)`, then defer `sem.post(io)`. Cancellation before acquisition
-must not return a permit; cancellation after acquisition must release it.
-Use `sem.waitTimeout(io, timeout)` when permit acquisition has a deadline.
-`error.Timeout` and `error.Canceled` both leave the permit unconsumed.
-An `Io.Event` fits a persistent readiness signal. Reset it only when the protocol
-proves no waiter still depends on the previous signal.
-
-## Atomics and CPU parallelism
-
-`std.atomic.Value(T)` coordinates memory, not task lifecycle. Use `.monotonic`
-for an independent counter when no other data is published through it. Use a
-release/acquire protocol for publication only with a clear happens-before
-argument. An atomic index can assign disjoint work, but shared result visibility
-still needs completion synchronization before the parent reads it.
-
-Do not busy-spin on an atomic in backend-neutral task code: it can occupy the
-only execution thread and prevent the producer from running. Prefer an `Io`
-queue, condition, event, or futex wait. Atomics do not reclaim objects or prevent
-use-after-free. `volatile` is not a synchronization replacement.
-
-For compute-heavy work, partition data into bounded chunks and measure on a
-backend that can use multiple OS threads. Include periodic cancellation checks
-where appropriate. Keep per-worker scratch storage separate, and use an allocator
-whose threading contract matches all allocation and free sites.
-
-## Playbook: migrate from std.Thread
-
-| Existing design | Migration decision |
-|---|---|
-| A thread per independent operation | Future, with immediate cancellation cleanup |
-| Thread pool plus wait group | Bounded workers in `Io.Group`, outcomes stored explicitly |
-| Channel or blocking work queue | `Io.Queue(T)` with closure and cancellation semantics |
-| Thread mutex/condition in reusable task code | `Io.Mutex` and `Io.Condition` using the supplied `io` |
-| Dedicated foreign thread, affinity, or thread-local runtime | Keep `std.Thread` at the adapter boundary |
-| Atomic shared counter | Keep only with a documented ordering and lifetime contract |
-
-`Thread.join` waits; it does not return the worker function's result. Store the
-result in owned storage that outlives the thread, then read it after join.
-Do not detach a thread borrowing stack data. Raw threads do not automatically
-acquire the structured cancellation contract of an `Io` future. Explicitly
-bridge stop requests and completion at that boundary.
-
-Primary authority: `std/Io.zig`, `std/atomic.zig`, and `std/Thread.zig`.
-For additional examples and compatibility notes, see [source review](io-sources.md).
+Primary authority: `std/Io.zig`, `std/Io/Semaphore.zig`, `std/Io/RwLock.zig`,
+`std/atomic.zig`, and `std/Thread.zig` in the pinned SDK.

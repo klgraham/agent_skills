@@ -51,7 +51,8 @@ def main():
         # Compile separately so a timeout kills the test binary and all its threads,
         # rather than killing a compiler driver with a test subprocess still alive.
         for mode in ("debug", "safe", "fast"):
-            for name in ("concurrency.zig", "batch-runner.zig", "streams.zig"):
+            for name in ("concurrency.zig", "batch-runner.zig", "parallel-reduction.zig",
+                         "channel-pipeline.zig", "actor.zig", "streams.zig"):
                 suffix = ".exe" if os.name == "nt" else ""
                 binary = work / (Path(name).stem + "-" + mode + suffix)
                 run([zig, "test", name, f"-O{mode}", "--test-no-exec", f"-femit-bin={binary}"])

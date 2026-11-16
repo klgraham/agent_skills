@@ -23,30 +23,8 @@ Do not select an arena merely to silence leak reports. A long-lived process
 arena can retain every abandoned allocation. A child arena over another arena
 may retain its backing pages until the parent resets.
 
-## Playbook: implement an allocating API
-
-1. Decide whether the result borrows input or owns a copy. Put that in the API.
-2. Choose caller-provided output, a fixed-size value, or heap allocation based
-   on the result's bound and lifetime.
-3. Put `errdefer` immediately after each successful acquisition. Keep rollback
-   active only until ownership transfers.
-4. Use one allocator instance consistently. Preserve length and alignment
-   information required by its free operation.
-5. For collections, reserve before taking interior views, or reacquire views
-   after growth. `const` on a slice does not stabilize its backing allocation.
-6. Exercise all allocation failure points with `std.testing.checkAllAllocationFailures`.
-   Check that a failed mutation leaves the documented old state usable.
-
-Run [ownership.zig](../examples/ownership.zig) for a two-allocation owner,
-replacement rollback, nested lists, and an exhausted fixed buffer.
-
-## Playbook: choose an arena reset boundary
-
-List every view retained by the next phase, worker, and callback. Transfer the
-needed data to longer-lived storage or finish those consumers before reset.
-Use a backing allocator that can reclaim pages if per-batch release matters.
-Choose retention limits from measured peak memory. Test repeated batches,
-including an unusually large one, instead of checking only final deinit.
+See [Manage allocation](../playbooks/manage-allocation.md) for allocating APIs,
+transactional updates, and arena reset boundaries.
 
 ## Sources
 
