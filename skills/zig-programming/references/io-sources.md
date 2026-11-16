@@ -1,13 +1,12 @@
-# std.Io source review for Zig 0.16.0
+# std.Io sources for Zig 0.17.1
 
-Reviewed on 2026-09-11. The examples in this collection are checked with the
-installed compiler reporting `0.16.0`. Tutorials supply use cases; the pinned
-library declarations and executed examples decide which APIs this collection teaches.
+Tutorials supply use cases. Check their recipes against the project's pinned
+SDK. This collection's examples target the installed compiler reporting `0.17.1`.
 
 ## Primary contracts
 
 - [Zig 0.16.0 release notes](https://ziglang.org/download/0.16.0/release-notes.html):
-  I/O interface, futures, groups, cancellation, synchronization, and backend status.
+  introduction of the I/O interface, futures, groups, and cancellation.
 - [Andrew Kelley's introduction](https://andrewkelley.me/post/zig-new-async-io-text-version.html):
   task lifetime and cancellation motivation. This is an earlier design preview;
   constructor signatures must be checked against the release.
@@ -25,7 +24,7 @@ Locate installed sources using `zig env`; do not depend on a maintainer's path.
 
 | Reading | How to use it for this collection |
 |---|---|
-| [Streams and formatting](https://jkingston.github.io/zig_guide/06-io-streams.html) | Formatting and buffer use cases; replace mixed old filesystem recipes with 0.16.0 Io.File/Dir signatures |
+| [Streams and formatting](https://jkingston.github.io/zig_guide/06-io-streams.html) | Formatting and buffer use cases; take `Io.File` and `Io.Dir` signatures from the pinned SDK |
 | [Async, concurrency, and performance](https://jkingston.github.io/zig_guide/08-async-concurrency.html) | Topic map; verify queue methods, backend names, and concurrency guarantees |
 | [The Io interface](https://www.ziglang.in/learn/standard-library/io-interface/) | Capability injection; absence of an Io parameter is not an enforced ban on side effects |
 | [Concurrency overview](https://www.ziglang.in/learn/concurrency/) | Separate task lifecycle from parallel execution |
@@ -42,10 +41,9 @@ Locate installed sources using `zig env`; do not depend on a maintainer's path.
 | [daily.dev overview](https://daily.dev/blog/zig-async-io-io-uring-zig-0-16-rethinks-concurrent-programming/) | Context only; do not infer backend readiness or speed from its examples |
 | [LearningZig async I/O](https://learningzig.org/lessons/11-async-io) | Future/group introduction; supply cleanup for every early-return path |
 
-The recovered ziglang.in concurrency pages identify their verification compiler
-as `0.17.0-dev.2085+5e36170b5`. Their examples are not automatically 0.16.0 recipes.
-The [mickeyzzc article](https://blog.mickeyzzc.tech/en/posts/programming/zig-stdlib-io-concurrency/)
-returned HTTP 403 and was not reviewed. No API claim here relies on it.
+The earlier review of the ziglang.in concurrency pages used content written
+against `0.17.0-dev.2085+5e36170b5`. Treat snapshot code as a starting point and
+compile it with the project's release toolchain.
 
 ## Corrections retained in the playbooks
 
@@ -54,13 +52,12 @@ returned HTTP 403 and was not reviewed. No API claim here relies on it.
 - Use `Queue.putOne/getOne/close` with `io`, not unverified push/pop recipes.
 - Use `Io.Threaded.init_single_threaded` for inline tests. `Io.Blocking` is not
   an exported backend in the pinned installation.
-- `Semaphore.waitTimeout` from the newer guide is absent in this 0.16.0 SDK.
 - `Select.cancel` must have room for outstanding results before joining.
   `cancelDiscard` instead closes the result queue before joining; only use it
   when discarded result values do not own resources.
 - Await/cancel are explicit obligations. Lexical scope alone does not finish
   tasks, and an early `try` can abandon siblings without registered cleanup.
 - Readers and writers over memory do not need `Io`. Both regular file streams
-  and standard streams use `Io` when creating their 0.16.0 file adapters.
-- Evented implementations remain experimental in this release. Their names
-  and operation coverage must be checked on the intended target.
+  and standard streams use `Io` when creating file adapters.
+- Check evented backend operation coverage on the intended target. The example
+  verifier exercises only threaded and inline execution for concurrency.

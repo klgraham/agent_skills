@@ -32,10 +32,9 @@ compatibility first. If CMake cannot find libraries, check dependency versions
 and prefixes before changing compiler sources. Reduce parallelism when memory
 pressure, rather than a compiler diagnostic, terminates the build.
 
-The [0.16.0 release notes](https://ziglang.org/download/0.16.0/release-notes.html)
-identify LLVM 21.1.0 for that release. A newer source checkout can require a
-different version. The [Zig source](https://codeberg.org/ziglang/zig) README and
-build configuration at the selected revision are the build authority.
+The [0.17.0 release notes](https://ziglang.org/download/0.17.0/release-notes.html#LLVM-22)
+identify LLVM 22.1.8 for the 0.17 series toolchain. Use the [Zig source](https://codeberg.org/ziglang/zig)
+README and build configuration at the selected revision for exact build prerequisites.
 
 This playbook does not claim that a full compiler bootstrap was executed by the
 skill example verifier; that verifier tests use of the installed compiler.

@@ -1,7 +1,8 @@
 const std = @import("std");
-const c = @cImport({
-    @cInclude("helper.h");
-});
+const c = struct {
+    // Mirrors the single declaration in include/helper.h.
+    extern fn answer() c_int;
+};
 
 pub fn answer() c_int {
     return c.answer();

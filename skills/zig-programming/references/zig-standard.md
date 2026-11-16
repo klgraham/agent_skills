@@ -6,7 +6,7 @@ give each behavior one home. Follow the hard rules mechanically. When a public
 ABI, generated file, wire format, performance constraint, or repository rule
 requires a deviation, explain it at the deviation site.
 
-This standard targets Zig 0.16.0 as used by this skill collection. Verify
+This standard uses the Zig baseline in [SKILL.md](../SKILL.md). Verify
 version-sensitive APIs against the repository's compiler and read
 [the stdlib playbook](../playbooks/use-stdlib.md) when code touches the standard library.
 
@@ -286,7 +286,7 @@ review, and tests. Make that convention visible.
 
 ## 10. Generics and comptime
 
-For 0.16.0 type constructors and macro alternatives, read the
+For type constructors and macro alternatives, read the
 [comptime principle](../principles/comptime.md). `@Type` is removed.
 
 - Prefer a concrete implementation until a second real use demonstrates the
@@ -326,7 +326,7 @@ Treat every view into a collection as borrowed until proven otherwise.
 - Do not assume map iteration order. Sort or otherwise stabilize output when
   tests, snapshots, logs, or wire formats require deterministic order.
 - Use the collection initializer and deinitializer required by the pinned Zig
-  version. For this repository's Zig 0.16 guidance, confirm the `.empty`,
+  version. For this collection's baseline, confirm the `.empty`,
   allocator, and `deinit` forms in [the stdlib playbook](../playbooks/use-stdlib.md)
   rather than copying an older version's pattern.
 

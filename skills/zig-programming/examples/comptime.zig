@@ -24,14 +24,15 @@ test "generic capacity and element types" {
     try std.testing.expect(flags.items[0]);
 }
 
-test "0.16 type constructors and field reflection" {
+test "type constructors and field reflection" {
     const Small = @Int(.unsigned, 10);
     const Pair = @Tuple(&.{ Small, bool });
     const pair: Pair = .{ 1023, true };
     try std.testing.expectEqual(@as(Small, 1023), pair[0]);
     const Record = @Struct(.auto, null, &.{"value"}, &.{u32}, &.{.{}});
     const record: Record = .{ .value = 7 };
-    inline for (@typeInfo(Record).@"struct".fields) |field| {
-        try std.testing.expectEqual(@as(u32, 7), @field(record, field.name));
+    const fields = @typeInfo(Record).@"struct";
+    inline for (fields.field_names, fields.field_types) |name, T| {
+        try std.testing.expectEqual(@as(T, 7), @field(record, name));
     }
 }

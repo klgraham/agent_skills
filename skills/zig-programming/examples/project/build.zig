@@ -11,8 +11,8 @@ pub fn build(b: *std.Build) void {
         }),
     });
     const generate = b.addRunArtifact(generator);
-    generate.addFileArg(b.path("message.txt"));
-    const message = generate.addOutputFileArg("message.txt");
+    generate.addFileArg2(b.path("message.txt"), .{});
+    const message = generate.addOutputFileArg2("message.txt", .{});
 
     const core = b.addModule("sample", .{
         .root_source_file = b.path("src/root.zig"),
@@ -33,7 +33,7 @@ pub fn build(b: *std.Build) void {
     exe.root_module.addAnonymousImport("message", .{ .root_source_file = message });
     b.installArtifact(exe);
     const run = b.addRunArtifact(exe);
-    if (b.args) |args| run.addArgs(args);
+    run.addPassthruArgs();
     b.step("run", "Run the sample").dependOn(&run.step);
     const tests = b.addTest(.{ .root_module = core });
     b.step("test", "Run native tests").dependOn(&b.addRunArtifact(tests).step);

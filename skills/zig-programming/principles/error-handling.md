@@ -9,6 +9,9 @@ has a reason to translate it. Do not relabel every error as `OutOfMemory`.
 Acquire one resource, immediately register its `errdefer`, then acquire the
 next. Return the final owner only after all acquisitions succeed. A `defer`
 runs on success too; an `errdefer` runs when its scope exits with an error.
+Zig 0.17 removed the `errdefer |err|` capture. Keep cleanup in `errdefer`.
+If you need the error value for logging or recovery, catch the result at the
+caller or wrap the fallible work in a helper and catch its result.
 
 The [ownership example](../examples/ownership.zig) tests every allocation
 failure in a two-buffer constructor and a replacement operation.
@@ -41,5 +44,5 @@ allocating paths. Recreate the same input on each injection run. Check both
 cleanup and preservation of old state after a failed update. Test nested-owner
 cleanup separately from backing-container cleanup.
 
-Source: [errors and errdefer](https://ziglang.org/documentation/0.16.0/#Errors),
+Source: [errors and errdefer](https://ziglang.org/documentation/0.17.1/#Errors),
 plus `std/testing.zig` in the pinned compiler.

@@ -1,4 +1,4 @@
-# mmap storage in Zig 0.16.0
+# Memory-mapped storage
 
 Use for flat-file storage and mapped snapshots. Separate mutable construction
 from the validated read-only format. Mapping a file is an I/O implementation
@@ -25,6 +25,9 @@ snapshot immutable or define a synchronization and reclamation protocol.
    Validate IDs, counts, cross-section relationships, and required alignment.
 5. Use byte decoding when alignment or representation is not guaranteed.
    `@alignCast` checks an assumption; it does not repair an unaligned address.
+   In Zig 0.17, [`@bitCast`](https://ziglang.org/documentation/0.17.1/#bitCast)
+   uses logical bit order for arrays and vectors and rejects `extern` structs
+   and unions. Use `std.mem.readInt` with the format's byte order for file data.
 6. Expose borrowed views only after validation and tie their validity to the owner.
 
 [binary.zig](../examples/binary.zig) gives runnable length and range checks.
@@ -33,11 +36,12 @@ covers public IDs, dense indices, layer identity, and compacted-state checks.
 
 ## Playbook: implement mapping and persistence
 
-Isolate platform mapping and unmapping in one owner. Inspect the pinned SDK's
-platform API rather than copying an old `std.os.mmap` call. Define behavior for
-empty files and failures after mapping. Register unmapping cleanup before
-parsing can fail. Closing the file descriptor and unmapping are distinct events;
-follow the platform contract.
+Isolate mapping and unmapping in one owner. Zig 0.17.1 exposes
+`file.createMemoryMap(io, options)` and `mapping.destroy(io)`. Inspect
+`std/Io/File/MemoryMap.zig`: an implementation may use file operations instead of
+OS mapping, so check its synchronization contract before relying on coherence.
+Define behavior for empty files and failures after mapping. Register destruction
+before parsing can fail, and keep the file open until the mapping is destroyed.
 
 Encode a snapshot into a temporary file, check writes and flush or sync errors,
 and publish it using the platform's replacement contract. If crash durability
@@ -60,4 +64,4 @@ safe API rejects it.
 
 Use [memory-safety review](review-memory-safety.md) for mapping
 lifetimes, callbacks, and concurrent reclamation. Source rules for pointers and
-alignment are in the [0.16.0 reference](https://ziglang.org/documentation/0.16.0/).
+alignment are in the [0.17.1 reference](https://ziglang.org/documentation/0.17.1/#Pointers).

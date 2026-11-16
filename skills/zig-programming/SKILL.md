@@ -1,6 +1,6 @@
 ---
 name: zig-programming
-description: Develop, review, optimize, migrate, and package Zig software with version-grounded guidance. Use for Zig source, build.zig, stdlib and std.Io APIs, ownership and memory safety, C interoperability, comptime, data layout and SIMD, mmap formats, compiler builds, and Zig release migrations. This collection targets Zig 0.16.0 unless the project pins another version.
+description: Develop, review, optimize, migrate, and package Zig software with version-grounded guidance. Use for Zig source, build.zig, stdlib and std.Io APIs, ownership and memory safety, C interoperability, comptime, data layout and SIMD, mmap formats, compiler builds, and Zig release migrations. This collection targets Zig 0.17.1 unless the project pins another version.
 ---
 
 # Zig programming
@@ -15,7 +15,7 @@ Choose one primary playbook by the user's intent. Read that playbook, its requir
 |---|---|
 | General Zig source work not dominated by a focused intent below | [Write legible Zig](playbooks/write-legible-zig.md) |
 | Configure modules, dependencies, generated files, tests, cross-compilation, or releases | [Build a Zig project](playbooks/build-project.md) |
-| Use or migrate runtime I/O, streams, formatting, containers, HTTP, or concurrency | [Use Zig 0.16 stdlib](playbooks/use-stdlib.md) |
+| Use or migrate runtime I/O, streams, formatting, containers, HTTP, or concurrency | [Use the Zig standard library](playbooks/use-stdlib.md) |
 | Audit ownership, borrowing, invalidation, cleanup, callbacks, or shared state | [Review memory safety](playbooks/review-memory-safety.md) |
 | Optimize measured hot paths, layout, allocation, SIMD, or parallel work | [Optimize data layout](playbooks/optimize-data-layout.md) |
 | Design a binary format, mapped snapshot, or mmap-backed data structure | [Design mmap storage](playbooks/design-mmap-storage.md) |
@@ -26,9 +26,9 @@ For a compound request, start with the playbook that establishes the missing con
 
 ## Establish the contract
 
-Read repository instructions, the compiler pin, `build.zig`, `build.zig.zon`, public APIs, and nearby tests. Run `zig version` and `zig env` when a compiler is available. This collection targets **Zig 0.16.0**, not an arbitrary development snapshot or a later release. Do not upgrade a project merely because this skill targets a different version.
+Read repository instructions, the compiler pin, `build.zig`, `build.zig.zon`, public APIs, and nearby tests. Run `zig version` and `zig env` when a compiler is available. Use this collection's **Zig 0.17.1** baseline when the project has no pin. Keep an existing project's pin unless the task calls for a migration.
 
-For language rules, consult the [0.16.0 language reference](https://ziglang.org/documentation/0.16.0/). For library signatures, inspect the `std_dir` reported by that compiler. Use the [0.16.0 release notes](https://ziglang.org/download/0.16.0/release-notes.html) to distinguish actual changes from older idioms. Compile disputed examples.
+For language rules, consult the reference for the project's Zig version. The default is the [0.17.1 language reference](https://ziglang.org/documentation/0.17.1/). For library signatures, inspect the `std_dir` reported by that compiler. Use the [0.17.0 release notes](https://ziglang.org/download/0.17.0/release-notes.html) for changes from 0.16 and the [0.17.1 release announcement](https://ziglang.org/news/0.17.1-released/) for patch context. Compile disputed examples.
 
 ## Select principles by mechanism
 
@@ -48,7 +48,7 @@ The selected playbook names its required resources. Add a principle when the mec
 - Futures, groups, cancellation, and backend choice: [task concurrency](references/io-concurrency.md).
 - Select, queues, locks, atomics, and raw threads: [coordination](references/io-coordination.md).
 - Release-specific online examples and corrections: [I/O sources](references/io-sources.md).
-- `ArrayList` migration: [ArrayList migration](references/zig-0.16-arraylist-migration.md).
+- `ArrayList` migration: [ArrayList migration](references/arraylist-migration.md).
 - Layered graph formats: [graph layout](references/graph-layout.md).
 - Executable contracts: [examples](examples/) and `scripts/verify_examples.py`.
 - Heuristic ownership inventory: `scripts/zig_memory_safety_scan.py`; verify every candidate in source.
@@ -61,4 +61,4 @@ Run the repository formatter and focused tests, then the build step that actuall
 
 Report the behavior changed, commands executed, results observed, and coverage limits. Do not claim a speedup without measurements or safety from compilation alone.
 
-For maintenance of this collection, run `python3 scripts/verify_examples.py` from this directory with Zig 0.16.0, plus `python3 scripts/test_zig_memory_safety_scan.py` when the scanner or its packaging changes.
+For maintenance of this collection, run `python3 scripts/verify_examples.py` from this directory with the collection's pinned compiler, plus `python3 scripts/test_zig_memory_safety_scan.py` when the scanner or its packaging changes.

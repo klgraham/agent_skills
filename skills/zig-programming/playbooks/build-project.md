@@ -1,4 +1,4 @@
-# Builds and releases with Zig 0.16.0
+# Builds and releases with Zig 0.17.1
 
 Use for application and library builds. For the compiler itself, use
 [build from source](build-compiler.md).
@@ -26,7 +26,8 @@ Make changes to tracked generated source an explicit update step.
 5. Pair `b.addTest` with `b.addRunArtifact` for runnable native tests. Wire
    integration roots explicitly. A named test step with no reachable tests
    can succeed without testing the feature.
-6. Forward `b.args` to a run step when the program accepts arguments.
+6. Forward user arguments with `run.addPassthruArgs()`. Invoke the run step as
+   `zig build run -- arg`. The build configuration no longer reads `b.args`.
 
 The [example build](../examples/project/build.zig) includes a public module,
 C helper, host generator, run step, native tests, and a compile-only check step.
@@ -36,13 +37,14 @@ Copy its directory to a scratch location and run:
 zig build
 zig build test --summary all
 zig build run
+zig build run -- "forwarded argument"
 zig build check -Dtarget=x86_64-linux-musl
 zig build --help
 ```
 
 The cross-target `check` compiles tests without executing foreign binaries.
 Old `addStaticLibrary` and artifact-level `.root_source_file` recipes are not
-valid replacements for the 0.16.0 Module API.
+valid replacements for the Module API.
 
 ## Playbook: package dependencies
 
@@ -61,9 +63,10 @@ Do not invent hashes or package fingerprints for copyable templates.
 ## Playbook: generate an input
 
 Compile a generator for `b.graph.host`, even during cross-compilation. Supply
-source inputs with `addFileArg` and outputs with `addOutputFileArg` or
-`addOutputDirectoryArg`. Feed the resulting `LazyPath` into the consuming
-module, file copy, or install step. `addWriteFiles` fits small generated files
+source inputs with `addFileArg2(path, .{})` and outputs with
+`addOutputFileArg2(name, .{})` or `addOutputDirectoryArg2(name, .{})`. Feed the
+resulting `LazyPath` into the consuming module, file copy, or install step.
+`addWriteFiles` fits small generated files
 that do not require a tool. Add options through `b.addOptions` for typed build
 configuration. Prefer explicit input dependencies to unconditional execution.
 
@@ -76,9 +79,9 @@ files under a different install prefix to catch hardcoded paths.
 1. Define supported target triples, minimum OS or libc versions, CPU baseline,
    and runtime dependencies. Cross-compilation does not bundle every SDK or
    system library, and it does not prove the artifact runs on that target.
-2. Choose an optimization mode for the product's contract. Debug and ReleaseSafe
-   retain runtime safety checks by default. ReleaseFast and ReleaseSmall disable
-   them by default; explicit input validation remains necessary in every mode.
+2. Choose an optimization mode for the product's contract. In `std.lang.Optimize`,
+   `.debug` and `.safe` enable runtime safety checks by default. `.fast` and `.small`
+   disable them by default. Validate external input in every mode.
 3. Run native tests with safety checks and the intended shipping mode. Build
    each target separately and execute smoke tests on available target systems.
 4. Install under distinct prefixes, or use `addInstallArtifact` with a
@@ -91,14 +94,14 @@ files under a different install prefix to catch hardcoded paths.
 For the bundled example, a compile-only Linux release check is:
 
 ```bash
-zig build -Dtarget=x86_64-linux-musl -Doptimize=ReleaseSafe --prefix out/linux
+zig build -Dtarget=x86_64-linux-musl -Doptimize=safe --prefix out/linux
 ```
 
 ## Sources and validation
 
 The [official build guide](https://ziglang.org/learn/build-system/) explains
 step dependencies, generated files, and target-specific installation. It is a
-living page; recheck examples against 0.16.0. Inspect `std/Build.zig`,
+living page; recheck examples against the pinned SDK. Inspect `std/Build.zig`,
 `std/Build/Module.zig`, and `std/Build/Step/Run.zig` for exact contracts.
 The collection's [verifier](../scripts/verify_examples.py) runs the bundled
 project, checks a changed generator input, and cross-compiles its check step.
