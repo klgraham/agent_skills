@@ -1,11 +1,11 @@
 {
   "name": "obsidian-toolkit",
-  "description": "Build and maintain Obsidian plugins and themes.",
+  "description": "Build Obsidian plugins and themes, and turn research papers into source notes.",
   "author": {
     "name": "Ken Graham"
   },
   "homepage": "https://github.com/klgraham/agent_skills",
   "repository": "https://github.com/klgraham/agent_skills",
   "license": "MIT",
-  "keywords": ["obsidian", "plugins", "themes"]
+  "keywords": ["obsidian", "plugins", "themes", "research"]
 }
