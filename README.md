@@ -51,7 +51,7 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 
 | Plugin | Skills |
 |---|---|
-| `obsidian-toolkit` | `obsidian-plugin`, `obsidian-theme` |
+| `obsidian-toolkit` | `obsidian-plugin`, `obsidian-theme`, `research-digest` |
 | `systems-thinking` | `systems-thinking` |
 | `code-review` | `concurrency-code-review` |
 | `skill-development` | `transcript-skill-miner` |
@@ -60,6 +60,8 @@ After installing or updating a plugin during a session, run `/reload-plugins` in
 | `kline` | `check-attribution`, `flow-and-conveyance`, `hide-incidental-complexity`, `justify-the-change`, `keep-changes-bounded`, `one-authoritative-representation`, `open-information`, `pragmatic-exceptions`, `pure-functions`, `simple-not-easy`, `test-real-behavior`, `values-not-places` |
 
 Claude namespaces installed skills by plugin. For example, invoke `/code-review:concurrency-code-review` to audit concurrent code.
+
+Use `/obsidian-toolkit:research-digest` with a paper URL, DOI, or PDF to draft the body or a full Obsidian source note with evidence locators. The [research-digest skill](skills/research-digest/SKILL.md) also works without a vault template.
 
 ### Update Claude plugins
 

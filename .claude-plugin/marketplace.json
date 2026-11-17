@@ -10,7 +10,7 @@
     {
       "name": "obsidian-toolkit",
       "source": "./plugins/obsidian-toolkit",
-      "description": "Build and maintain Obsidian plugins and themes.",
+      "description": "Build Obsidian plugins and themes, and turn research papers into source notes.",
       "category": "productivity"
     },
     {
